@@ -291,12 +291,35 @@ const siteConfig = {
   ],
 };
 
+/* Top 5 spoken EU languages — cycles every 3-5s */
+const EU_PHRASES = [
+  "Build something",    // English
+  "Construisez",        // French
+  "Etwas bauen",        // German
+  "Construye algo",     // Spanish
+  "Costruisci",         // Italian
+];
+
 export const Component = () => {
   const tablet = useMediaQueryLocal("(max-width: 1024px)");
+  const [phraseIndex, setPhraseIndex] = useState(0);
+
+  useEffect(() => {
+    const tick = () => {
+      setPhraseIndex((i) => (i + 1) % EU_PHRASES.length);
+      // Random interval between 3-5 seconds
+      const next = 3000 + Math.random() * 2000;
+      timerId = window.setTimeout(tick, next);
+    };
+    let timerId = window.setTimeout(tick, 4000);
+    return () => clearTimeout(timerId);
+  }, []);
+
+  const currentPhrase = EU_PHRASES[phraseIndex];
 
   return (
     <footer id="footer" className="w-full pb-0 bg-[#020408]">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between p-10">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between px-6 md:px-10 py-10">
         <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
           <a href="/" className="flex items-center gap-2">
             <Icons.logo />
@@ -313,11 +336,9 @@ export const Component = () => {
         </div>
         <div className="pt-5 md:w-1/2">
           <div className="flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between gap-y-5 lg:pl-10">
-            {siteConfig.footerLinks.map((column, columnIndex) => (
-              <ul key={columnIndex} className="flex flex-col gap-y-2">
-                <li className="mb-2 text-sm font-semibold text-[#DCE9F5]">
-                  {column.title}
-                </li>
+            {siteConfig.footerLinks.map((column, i) => (
+              <ul key={i} className="flex flex-col gap-y-2">
+                <li className="mb-2 text-sm font-semibold text-[#DCE9F5]">{column.title}</li>
                 {column.links.map((link) => (
                   <li key={link.id} className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[15px]/snug text-[#DCE9F5]/50">
                     <a href={link.url}>{link.title}</a>
@@ -331,7 +352,7 @@ export const Component = () => {
           </div>
         </div>
       </div>
-      <div className="px-10 py-4 flex flex-col md:flex-row items-center justify-between text-xs text-[#DCE9F5]/30 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex flex-col md:flex-row items-center justify-between text-xs text-[#DCE9F5]/30 border-t border-white/5">
         <span>© 2026 Bleucommerce SAS · Orleans, France</span>
         <span>
           Powered by{" "}
@@ -340,12 +361,12 @@ export const Component = () => {
           {" · "}<a href="https://scaleway.com" className="hover:text-[#DCE9F5]/60">Scaleway</a>
         </span>
       </div>
-      <div className="w-full h-48 md:h-64 relative mt-4 z-0">
+      <div className="w-full max-w-7xl mx-auto h-48 md:h-64 relative mt-4 z-0">
         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-[#020408] z-10 from-40%" />
         <div className="absolute inset-0 mx-6">
           <FlickeringGrid
-            text={tablet ? "Build" : "Build something"}
-            fontSize={tablet ? 70 : 90}
+            text={tablet ? currentPhrase.split(" ")[0] : currentPhrase}
+            fontSize={tablet ? 60 : 80}
             className="h-full w-full"
             squareSize={2}
             gridGap={tablet ? 2 : 3}
