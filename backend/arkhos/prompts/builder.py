@@ -305,24 +305,22 @@ If no match: use CSS gradient placeholder with emoji.
 
 ## MAP RULES
 
-NEVER use Google Maps (requires API key, blocked in WebContainers).
-For Contact sections: use OpenStreetMap iframe:
-<iframe
-  src="https://www.openstreetmap.org/export/embed.html?\
-bbox={LNG-0.05},{LAT-0.04},{LNG+0.05},{LAT+0.04}\
-&layer=mapnik&marker={LAT},{LNG}"
-  className="w-full h-64 rounded-xl border-0"
-  loading="lazy" title="Map" />
+NEVER use Google Maps or OpenStreetMap iframes (blocked by COEP).
+For Contact sections: show a styled address card with MapPin icon:
+<div className="rounded-xl bg-muted/30 border p-6 flex items-start gap-4">
+  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center
+    justify-center shrink-0">
+    <MapPin className="h-5 w-5 text-primary" />
+  </div>
+  <div>
+    <h4 className="font-semibold text-foreground">Our Address</h4>
+    <p className="text-sm text-muted-foreground mt-1">
+      {street address}<br/>{city}, France
+    </p>
+  </div>
+</div>
 
-Common city coordinates:
-- Paris: lat=48.8566, lng=2.3522
-- Lyon: lat=45.7640, lng=4.8357
-- Orléans: lat=47.9029, lng=1.9039
-- Bordeaux: lat=44.8378, lng=-0.5792
-- Marseille: lat=43.2965, lng=5.3698
-
-ALWAYS add OSM attribution below the map.
-If city unknown: show styled address card with MapPin icon, no map.
+NEVER use <iframe> for maps — it breaks in WebContainers preview.
 
 ## CONTENT
 

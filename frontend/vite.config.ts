@@ -12,6 +12,11 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    headers: {
+      /* Required for WebContainers (SharedArrayBuffer) */
+      "Cross-Origin-Embedder-Policy": "credentialless",
+      "Cross-Origin-Opener-Policy": "same-origin",
+    },
     proxy: {
       "/api": {
         target: "http://localhost:8000",
