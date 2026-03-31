@@ -3,7 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { CheckCircleIcon, StarIcon } from 'lucide-react';
-import { motion, Transition } from 'framer-motion';
+import { motion } from 'framer-motion';
+import type { Transition } from 'framer-motion';
 
 type FREQUENCY = 'monthly' | 'yearly';
 const frequencies: FREQUENCY[] = ['monthly', 'yearly'];
