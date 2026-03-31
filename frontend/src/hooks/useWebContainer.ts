@@ -8,7 +8,7 @@
  */
 
 import { WebContainer } from "@webcontainer/api";
-import { useState, useRef, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 export type WebContainerStatus =
   | "idle"
@@ -18,31 +18,34 @@ export type WebContainerStatus =
   | "ready"
   | "error";
 
+/* Module-level singleton — survives React StrictMode double-mount */
+let _booted = false;
+let _wcInstance: WebContainer | null = null;
+let _bootPromise: Promise<void> | null = null;
+
 export function useWebContainer() {
   const [status, setStatus] = useState<WebContainerStatus>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [buildError, setBuildError] = useState<string | null>(null);
-  const wcRef = useRef<WebContainer | null>(null);
-  const bootedRef = useRef(false);
 
   const bootEagerly = useCallback(async () => {
-    if (bootedRef.current) return;
-    bootedRef.current = true;
+    if (_booted) return;
+    _booted = true;
     setStatus("booting");
     setError(null);
 
     try {
-      wcRef.current = await WebContainer.boot();
-      await wcRef.current.mount(SKELETON_PROJECT);
+      _wcInstance = await WebContainer.boot();
+      await _wcInstance.mount(SKELETON_PROJECT);
 
       setStatus("installing");
-      const install = await wcRef.current.spawn("npm", ["install"]);
+      const install = await _wcInstance.spawn("npm", ["install"]);
       const installCode = await install.exit;
       if (installCode !== 0) throw new Error("npm install failed");
 
       setStatus("starting");
-      const dev = await wcRef.current.spawn("npm", ["run", "dev"]);
+      const dev = await _wcInstance.spawn("npm", ["run", "dev"]);
 
       // Watch Vite output for build errors
       dev.output.pipeTo(
@@ -63,7 +66,7 @@ export function useWebContainer() {
         })
       );
 
-      wcRef.current.on("server-ready", (_: number, url: string) => {
+      _wcInstance.on("server-ready", (_: number, url: string) => {
         setPreviewUrl(url);
         setStatus("ready");
       });
@@ -76,16 +79,16 @@ export function useWebContainer() {
   }, []);
 
   const writeFile = useCallback(async (path: string, content: string) => {
-    if (!wcRef.current) return;
+    if (!_wcInstance) return;
     const dir = path.split("/").slice(0, -1).join("/");
     if (dir) {
       try {
-        await wcRef.current.fs.mkdir(dir, { recursive: true });
+        await _wcInstance.fs.mkdir(dir, { recursive: true });
       } catch {
         /* dir exists */
       }
     }
-    await wcRef.current.fs.writeFile(path, content);
+    await _wcInstance.fs.writeFile(path, content);
   }, []);
 
   const clearBuildError = useCallback(() => setBuildError(null), []);

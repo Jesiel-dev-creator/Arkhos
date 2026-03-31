@@ -15,11 +15,11 @@ interface AgentStreamProps {
 }
 
 const AGENT_META: Record<string, { label: string; icon: typeof Brain }> = {
-  planner: { label: "Planner", icon: Brain },
-  designer: { label: "Designer", icon: Palette },
-  architect: { label: "Architect", icon: LayoutGrid },
-  builder: { label: "Builder", icon: Code2 },
-  reviewer: { label: "Reviewer", icon: ShieldCheck },
+  planner: { label: "Plan", icon: Brain },
+  designer: { label: "Design", icon: Palette },
+  architect: { label: "Arch", icon: LayoutGrid },
+  builder: { label: "Build", icon: Code2 },
+  reviewer: { label: "Review", icon: ShieldCheck },
 };
 
 export default function PipelineStrip({ agents, status, totalCostEur, totalDurationS, timeoutWarning }: AgentStreamProps) {
@@ -72,7 +72,7 @@ export default function PipelineStrip({ agents, status, totalCostEur, totalDurat
           Pipeline
         </span>
 
-        <div className="flex items-center gap-3 flex-1">
+        <div className="flex items-center gap-2 flex-1 overflow-x-auto">
           {agents.map((agent) => (
             <AgentPill
               key={agent.name}
@@ -170,19 +170,20 @@ function AgentPill({
       ) : (
         <span
           className="w-[7px] h-[7px] rounded-full border flex-shrink-0"
-          style={{ borderColor: "var(--muted)", opacity: 0.4 }}
+          style={{ borderColor: "var(--muted)" }}
         />
       )}
 
       {/* Name */}
       <span
-        className={`text-[12px] font-medium whitespace-nowrap ${
-          isRunning ? "text-[var(--cyan)]" :
-          isComplete ? "text-[var(--muted)]" :
-          isError ? "text-[var(--error)]" :
-          "text-[var(--muted)]/50"
-        }`}
-        style={{ fontFamily: "var(--font-body)" }}
+        className="text-[12px] font-medium whitespace-nowrap"
+        style={{
+          fontFamily: "var(--font-body)",
+          color: isRunning ? "var(--cyan)"
+            : isComplete ? "var(--frost)"
+            : isError ? "var(--error)"
+            : "var(--muted)",
+        }}
       >
         {meta.label}
       </span>
