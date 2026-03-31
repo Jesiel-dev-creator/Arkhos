@@ -151,8 +151,8 @@ export default function PreviewPane({
         {/* ── Loading State — Premium Skeleton ── */}
         {isLoading && !previewHtml && <PreviewSkeleton />}
 
-        {/* ── WebContainer status overlay ── */}
-        {wcBooting && (
+        {/* ── WebContainer status overlay (only during generation) ── */}
+        {wcBooting && isGenerating && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center"
                style={{ background: "rgba(2,4,8,0.9)" }}>
             <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mb-3"

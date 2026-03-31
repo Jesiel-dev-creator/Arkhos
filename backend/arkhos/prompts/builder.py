@@ -289,6 +289,8 @@ Current year in copyright. No lorem ipsum. No San Francisco.
 - NEVER use inline style={{ color: '#hex' }} for brand colors
 - NEVER use Google Maps iframes
 - NEVER invent Unsplash photo IDs not in the verified list
+- NEVER import NavigationMenu from @/components/ui/navigation-menu
+  (not pre-installed). Use plain <nav> with <a> links + Sheet for mobile.
 """
 
 
