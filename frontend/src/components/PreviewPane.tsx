@@ -119,39 +119,35 @@ export default function PreviewPane({
           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
         }}
       >
-        {/* ── Idle State (dot grid) — show before any generation ── */}
-        {status === "idle" && !hasGenerated && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            {/* Dot grid background */}
-            <div
-              className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)",
-                backgroundSize: "24px 24px",
-              }}
-            />
-            <div className="relative z-10 flex flex-col items-center text-center">
-              {/* Glowing ember icon */}
+        {/* ── Idle + Loading State — Interactive ember canvas ── */}
+        {((status === "idle" && !hasGenerated) || (isLoading && !previewHtml)) && (
+          <div className="absolute inset-0">
+            <EmberCanvas />
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
               <div className="relative mb-5">
                 <div className="absolute inset-0 bg-[var(--ember)]/20 blur-2xl rounded-full" />
                 <div className="relative w-14 h-14 rounded-2xl border border-[var(--ember)]/20 bg-gradient-to-br from-[var(--ember)]/10 to-transparent flex items-center justify-center">
                   <Zap size={24} className="text-[var(--ember)]" />
                 </div>
               </div>
-              <p className="text-sm text-[var(--frost)]/80 font-medium mb-1"
-                 style={{ fontFamily: "var(--font-body)" }}>
-                Your website will appear here
+              <p className="text-sm font-medium mb-1"
+                 style={{ color: "var(--frost)", fontFamily: "var(--font-body)" }}>
+                {isLoading ? "Building your website" : "Your website will appear here"}
               </p>
-              <p className="text-[11px] text-[var(--muted)]"
-                 style={{ fontFamily: "var(--font-body)" }}>
-                Describe your website or choose a template to start
-              </p>
+              {isLoading ? (
+                <p className="text-[11px] animate-pulse"
+                   style={{ color: "var(--ember)", fontFamily: "var(--font-code)" }}>
+                  agents working...
+                </p>
+              ) : (
+                <p className="text-[11px]"
+                   style={{ color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+                  Describe your website or choose a template
+                </p>
+              )}
             </div>
           </div>
         )}
-
-        {/* ── Loading State — Premium Skeleton ── */}
-        {isLoading && !previewHtml && <PreviewSkeleton />}
 
         {/* ── WebContainer status overlay (only during generation) ── */}
         {wcBooting && isGenerating && (
@@ -303,158 +299,83 @@ function BrowserChrome({ url, generationId, isGenerating }: {
   );
 }
 
-/* ── Premium Skeleton Loading — from Magic MCP ── */
-function SkeletonBar({ w, h, className = "" }: { w: string; h: number; className?: string }) {
+/* ── Interactive Ember Canvas (same as Landing hero) ── */
+function EmberCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    if (!parent) return;
+
+    canvas.width = parent.clientWidth;
+    canvas.height = parent.clientHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const spacing = 28;
+    const cols = Math.ceil(canvas.width / spacing);
+    const rows = Math.ceil(canvas.height / spacing);
+    const dots: { x: number; y: number; op: number; spd: number }[] = [];
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        dots.push({
+          x: i * spacing + spacing / 2,
+          y: j * spacing + spacing / 2,
+          op: Math.random() * 0.12 + 0.08,
+          spd: (Math.random() * 0.003 + 0.001) * (Math.random() > 0.5 ? 1 : -1),
+        });
+      }
+    }
+
+    let mx: number | null = null;
+    let my: number | null = null;
+    const onMove = (e: MouseEvent) => {
+      const r = canvas.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+    };
+    const onLeave = () => { mx = null; my = null; };
+    canvas.addEventListener("mousemove", onMove);
+    canvas.addEventListener("mouseleave", onLeave);
+
+    let frame: number;
+    const tick = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const d of dots) {
+        d.op += d.spd;
+        if (d.op > 0.22 || d.op < 0.06) d.spd = -d.spd;
+
+        let boost = 0;
+        if (mx !== null && my !== null) {
+          const dx = d.x - mx, dy = d.y - my;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) { boost = (1 - dist / 150) ** 2 * 0.6; }
+        }
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,107,53,${Math.min(1, d.op + boost).toFixed(3)})`;
+        ctx.arc(d.x, d.y, 1.5 + boost * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      canvas.removeEventListener("mousemove", onMove);
+      canvas.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
   return (
-    <div
-      className={`rounded-[5px] ${className}`}
-      style={{
-        width: w,
-        height: h,
-        background: "var(--border)",
-        opacity: 0.35,
-      }}
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 z-0 pointer-events-auto"
+      style={{ background: "var(--void)" }}
     />
-  );
-}
-
-function PreviewSkeleton() {
-  const [shimmerPos, setShimmerPos] = useState(-100);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setShimmerPos((p) => (p >= 200 ? -100 : p + 1.5));
-    }, 16);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setProgress((p) => (p >= 100 ? 0 : p + 0.4));
-    }, 30);
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      {/* Diagonal shimmer sweep — from Magic MCP */}
-      <div
-        className="absolute inset-0 pointer-events-none z-20"
-        style={{
-          background: `linear-gradient(135deg, transparent ${shimmerPos}%, rgba(0,212,238,0.02) ${shimmerPos + 10}%, rgba(0,212,238,0.06) ${shimmerPos + 20}%, rgba(0,212,238,0.02) ${shimmerPos + 30}%, transparent ${shimmerPos + 40}%)`,
-        }}
-      />
-
-      {/* Cyan progress line at top */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] z-30 overflow-hidden" style={{ background: "var(--border)", opacity: 0.3 }}>
-        <div
-          className="h-full transition-[width] duration-100 ease-linear"
-          style={{
-            width: `${progress}%`,
-            background: "linear-gradient(90deg, rgba(0,212,238,0.3), var(--cyan), rgba(0,212,238,0.3))",
-            boxShadow: "0 0 8px rgba(0,212,238,0.4)",
-          }}
-        />
-      </div>
-
-      {/* Skeleton page layout */}
-      <div className="relative z-10 p-6 space-y-5">
-        {/* Fake navbar */}
-        <div className="flex items-center justify-between">
-          <SkeletonBar w="100px" h={24} />
-          <div className="flex items-center gap-4">
-            <SkeletonBar w="50px" h={14} />
-            <SkeletonBar w="60px" h={14} />
-            <SkeletonBar w="55px" h={14} />
-            <SkeletonBar w="70px" h={28} className="rounded-full" />
-          </div>
-        </div>
-
-        {/* Fake hero */}
-        <div className="pt-6 pb-4 space-y-4">
-          <div className="flex justify-center">
-            <SkeletonBar w="70%" h={40} />
-          </div>
-          <div className="flex justify-center">
-            <SkeletonBar w="50%" h={40} />
-          </div>
-          <div className="flex justify-center pt-1">
-            <SkeletonBar w="60%" h={18} />
-          </div>
-          <div className="flex justify-center gap-3 pt-3">
-            <SkeletonBar w="120px" h={40} className="rounded-full" />
-            <SkeletonBar w="120px" h={40} className="rounded-full" />
-          </div>
-        </div>
-
-        {/* Fake 3-col cards */}
-        <div className="grid grid-cols-3 gap-4 pt-4">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="space-y-3 rounded-lg p-4" style={{ border: "1px solid rgba(28,46,66,0.3)" }}>
-              <SkeletonBar w="100%" h={100} className="rounded-md" />
-              <SkeletonBar w="75%" h={14} />
-              <SkeletonBar w="100%" h={10} />
-              <SkeletonBar w="85%" h={10} />
-            </div>
-          ))}
-        </div>
-
-        {/* Fake content section */}
-        <div className="space-y-2.5 pt-4">
-          <SkeletonBar w="40%" h={24} />
-          <SkeletonBar w="100%" h={12} />
-          <SkeletonBar w="92%" h={12} />
-          <SkeletonBar w="85%" h={12} />
-          <SkeletonBar w="78%" h={12} />
-        </div>
-
-        {/* Fake footer */}
-        <div className="pt-6" style={{ borderTop: "1px solid rgba(28,46,66,0.25)" }}>
-          <div className="flex items-center justify-between">
-            <SkeletonBar w="80px" h={16} />
-            <div className="flex gap-3">
-              <SkeletonBar w="30px" h={30} className="rounded-full" />
-              <SkeletonBar w="30px" h={30} className="rounded-full" />
-              <SkeletonBar w="30px" h={30} className="rounded-full" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Center status pill overlay */}
-      <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="flex items-center gap-2.5 px-5 py-2.5 rounded-full"
-          style={{
-            background: "rgba(13,27,42,0.85)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(255,107,53,0.2)",
-            boxShadow: "0 0 30px rgba(0,0,0,0.4), 0 0 15px rgba(255,107,53,0.1)",
-          }}
-        >
-          <motion.span
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: "var(--ember)", boxShadow: "0 0 8px rgba(255,107,53,0.6)" }}
-            animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-          <span className="text-[13px] font-medium text-[var(--frost)]" style={{ fontFamily: "var(--font-body)" }}>
-            Building your website
-          </span>
-          <motion.span
-            className="text-[13px] text-[var(--muted)]"
-            animate={{ opacity: [1, 0.2, 1] }}
-            transition={{ duration: 1.2, repeat: Infinity }}
-          >
-            ...
-          </motion.span>
-        </motion.div>
-      </div>
-    </div>
   );
 }
