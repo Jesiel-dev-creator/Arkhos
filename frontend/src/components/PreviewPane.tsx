@@ -84,15 +84,22 @@ export default function PreviewPane({
     }
   }, [status]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (generationId) {
-      // v0.2: download React project as zip from backend
-      const a = document.createElement("a");
-      a.href = `/api/download/${generationId}`;
-      a.download = `arkhos-${generationId.slice(0, 8)}.zip`;
-      a.click();
+      try {
+        const res = await fetch(`/api/download/${generationId}`);
+        if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `arkhos-${generationId.slice(0, 8)}.zip`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("Download failed:", err);
+      }
     } else if (finalHtml) {
-      // v0.1 fallback: download single HTML
       const blob = new Blob([finalHtml], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");

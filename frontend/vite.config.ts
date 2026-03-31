@@ -12,11 +12,6 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    headers: {
-      /* Required for WebContainers — credentialless allows OSM/Unsplash iframes */
-      "Cross-Origin-Embedder-Policy": "credentialless",
-      "Cross-Origin-Opener-Policy": "same-origin",
-    },
     proxy: {
       "/api": {
         target: "http://localhost:8000",
