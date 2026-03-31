@@ -1,92 +1,81 @@
-"""Designer agent — creates a design system from the Planner's spec."""
+"""Designer agent — creates a design system with HSL color values."""
+
+from __future__ import annotations
 
 SYSTEM_PROMPT = """\
-You are a senior UI/UX designer specializing in modern web design.
-Given a structured page specification, create a complete design system.
+You are a senior UI designer. Create a design system for a website.
 
-OUTPUT FORMAT — respond with ONLY a valid JSON object, no markdown, no explanation:
+Output ONLY valid JSON. No markdown fences. No explanation.
 
 {
+  "heading_font": "Playfair Display",
+  "body_font": "Lato",
+  "heading_weight": "700",
+  "body_weight": "400",
   "colors": {
-    "primary": "#hex",
-    "primary_hsl": "H S% L%",
-    "secondary": "#hex",
-    "secondary_hsl": "H S% L%",
-    "accent": "#hex",
-    "accent_hsl": "H S% L%",
-    "background": "#hex",
-    "background_hsl": "H S% L%",
-    "surface": "#hex",
-    "text_primary": "#hex",
-    "text_primary_hsl": "H S% L%",
-    "text_secondary": "#hex",
-    "text_secondary_hsl": "H S% L%"
+    "bg_hex": "#FFF8F0",
+    "fg_hex": "#1A0A00",
+    "primary_hex": "#8B4513",
+    "secondary_hex": "#D2691E",
+    "accent_hex": "#F5DEB3",
+    "border_hex": "#E8D5B7",
+    "muted_hex": "#A08060",
+    "bg_hsl": "30 100% 97%",
+    "fg_hsl": "20 90% 8%",
+    "primary_hsl": "25 61% 31%",
+    "secondary_hsl": "20 54% 45%",
+    "accent_hsl": "39 77% 83%",
+    "border_hsl": "35 50% 80%",
+    "muted_hsl": "30 25% 50%"
   },
-  "fonts": {
-    "heading": "Google Font Name",
-    "body": "Google Font Name"
-  },
-  "layout": {
-    "max_width": "1200px",
-    "section_order": ["hero", "features", ...],
-    "hero_style": "full_width" | "split" | "centered",
-    "grid_columns": 2 | 3 | 4
-  },
-  "spacing": "compact" | "normal" | "generous",
-  "border_radius": "none" | "small" | "medium" | "large",
-  "animations": "none" | "subtle" | "dynamic",
-  "mood": "brief description of the overall visual feeling"
+  "style_keywords": "warm, artisanal, generous whitespace",
+  "hero_image_id": "1509440159596-0249088772ff",
+  "animation_style": "subtle fade-in on scroll"
 }
 
-RULES:
-- Choose REAL Google Fonts that exist (verify: Playfair Display, Lato, Inter,
-  Poppins, Montserrat, Raleway, Open Sans, Roboto, Merriweather, Source Sans 3,
-  DM Sans, Space Grotesk, etc.)
-- Colors must have sufficient contrast (WCAG AA minimum)
-- Match the style to the industry and mood from the spec
-- Warm industries (food, hospitality) → warm palettes, serif or friendly sans
-- Tech/SaaS → dark or minimal palettes, geometric sans-serif
-- Creative/Agency → bold, distinctive, can break conventions
-- Output ONLY the JSON object. No markdown fences. No explanation.
+CRITICAL: Output BOTH hex AND hsl for every color.
+HSL format: ONLY space-separated numbers — e.g. "25 61% 31%"
+NEVER write "hsl(25, 61%, 31%)" — write "25 61% 31%"
 
-INDUSTRY-SPECIFIC DESIGN INTELLIGENCE:
+Industry color guidance:
+- bakery/food: warm earth tones, creams, browns (#8B4513, #F5DEB3)
+- restaurant: dark elegant, burgundy or gold accents
+- saas: dark bg (#0F172A), indigo/violet primary, cyan accent
+- portfolio: high contrast, minimal, single bold accent
+- agency: near-black bg, white text, orange or red accent
+- ecommerce: clean white, trust-building blues
+- healthcare: white, calming blues, accessible contrast
 
-BAKERY/FOOD/RESTAURANT:
-- Colors: Warm earth tones (browns, creams, terracotta, olive, warm whites)
-- Fonts: Heading=elegant serif (Playfair Display, Cormorant Garamond, Lora),
-  Body=clean sans (Lato, Open Sans, DM Sans)
-- Mood: Warm, inviting, appetizing, rustic-modern
+Choose REAL Google Fonts that render well. Common good pairings:
+- bakery: Playfair Display + Lato
+- restaurant: Cormorant Garamond + Raleway
+- saas: Plus Jakarta Sans + DM Sans (or Inter)
+- portfolio: Bebas Neue + Inter
+- agency: Syne + DM Sans
 
-SAAS/TECH:
-- Colors: Dark mode or clean minimal (navy, white, blue/purple/green accents)
-- Fonts: Heading=geometric sans (Inter, Space Grotesk, Plus Jakarta Sans),
-  Body=same family
-- Mood: Professional, modern, trustworthy, conversion-focused
-
-PORTFOLIO:
-- Colors: Minimal (black/white/gray + one bold accent)
-- Fonts: Heading=distinctive display (Syne, Space Grotesk, Outfit),
-  Body=clean sans (DM Sans, Inter)
-- Mood: Creative, confident, distinctive
-
-AGENCY/CREATIVE:
-- Colors: Bold high-contrast (black + neon, dark + gold, unexpected combos)
-- Fonts: Heading=bold display (Syne, Clash Display, Cabinet Grotesk),
-  Body=clean sans
-- Mood: Bold, edgy, premium
-
-ALWAYS:
-- Choose REAL Google Fonts that render well
-- Ensure WCAG AA contrast (4.5:1 text, 3:1 large text)
-- Never use pure blue #0000FF or pure red #FF0000
-- Pick 5-7 colors: primary, secondary, accent, background, surface, text_primary,
-  text_secondary
+Unsplash hero photo IDs by industry:
+- bakery: 1509440159596-0249088772ff
+- restaurant: 1414235077428-338989a2e8c0
+- saas: 1518770660439-4636190af475
+- portfolio: 1558618666-fcd25c85cd64
+- agency: 1497366216548-37526070297c
 """
 
 
-def format_user_message(planner_output: str) -> str:
-    """Format the Planner's JSON output for the Designer agent."""
-    return (
-        f"Create a design system for this page specification:\n\n"
-        f"{planner_output}"
+def format_user_message(
+    planner_output: str, design_intelligence: str = ""
+) -> str:
+    """Format Planner output + optional design intelligence for Designer."""
+    parts = [
+        f"Create a design system for this site:\n\n"
+        f"## SITE SPECIFICATION\n{planner_output}\n"
+    ]
+    if design_intelligence:
+        parts.append(
+            f"\n## DESIGN INTELLIGENCE (use as starting point)\n"
+            f"{design_intelligence}\n"
+        )
+    parts.append(
+        "\nOutput the JSON with BOTH hex AND hsl values for every color."
     )
+    return "\n".join(parts)

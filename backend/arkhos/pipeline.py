@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 
 from tramontane import Agent
 
+from arkhos.data.design_intelligence import get_design_for_industry
 from arkhos.prompts.architect import SYSTEM_PROMPT as ARCHITECT_PROMPT
 from arkhos.prompts.architect import format_user_message as format_architect_msg
 from arkhos.prompts.builder import SYSTEM_PROMPT as BUILDER_PROMPT
@@ -557,14 +558,24 @@ async def run_build_streaming(
     total_steps = 5  # designer, architect, builder, reviewer
 
     try:
-        # ── Designer ──
+        # ── Designer (with UX Pro Max design intelligence) ──
+        # Extract industry from planner output for design guidance
+        design_intel = ""
+        try:
+            planner_json = json.loads(planner_output)
+            industry = planner_json.get("industry", "other")
+            intel_data = get_design_for_industry(industry)
+            design_intel = json.dumps(intel_data, indent=2)
+        except (json.JSONDecodeError, KeyError):
+            pass
+
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "designer", "model": "mistral-small",
             "step": 2, "total_steps": total_steps,
         })
         t0 = time.monotonic()
         designer_response = await agents["designer"].run(
-            format_designer_msg(planner_output),
+            format_designer_msg(planner_output, design_intel),
         )
         designer_step = AgentStepResult(
             agent_name="designer",
