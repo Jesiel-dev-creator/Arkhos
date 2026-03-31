@@ -55,7 +55,16 @@ DO NOT output these (pre-installed in the environment):
 "tailwind-merge":"2.4.0","class-variance-authority":"0.7.0",\
 "@radix-ui/react-slot":"1.1.0","@radix-ui/react-separator":"1.1.0",\
 "@radix-ui/react-avatar":"1.1.1","@radix-ui/react-accordion":"1.2.0",\
-"@radix-ui/react-dialog":"1.1.1"},\
+"@radix-ui/react-dialog":"1.1.1",\
+"@radix-ui/react-navigation-menu":"1.2.0",\
+"@radix-ui/react-tabs":"1.1.0",\
+"@radix-ui/react-select":"2.1.1",\
+"@radix-ui/react-dropdown-menu":"2.1.1",\
+"@radix-ui/react-tooltip":"1.1.2",\
+"@radix-ui/react-switch":"1.1.0",\
+"react-hook-form":"7.52.1",\
+"@hookform/resolvers":"3.9.0",\
+"zod":"3.23.8"},\
 "devDependencies":{"typescript":"5.5.4","vite":"5.4.11",\
 "@vitejs/plugin-react":"4.3.4","tailwindcss":"3.4.17",\
 "postcss":"8.4.49","autoprefixer":"10.4.20",\
@@ -289,8 +298,22 @@ Current year in copyright. No lorem ipsum. No San Francisco.
 - NEVER use inline style={{ color: '#hex' }} for brand colors
 - NEVER use Google Maps iframes
 - NEVER invent Unsplash photo IDs not in the verified list
-- NEVER import NavigationMenu from @/components/ui/navigation-menu
-  (not pre-installed). Use plain <nav> with <a> links + Sheet for mobile.
+- For navbars: prefer plain <nav> + <a> links + Sheet for mobile.
+  NavigationMenu from @radix-ui is available but complex — use only if needed.
+
+AVAILABLE PACKAGES (pre-installed, safe to import):
+  react, react-dom, framer-motion, lucide-react,
+  clsx, tailwind-merge, class-variance-authority,
+  @radix-ui/react-slot, @radix-ui/react-dialog,
+  @radix-ui/react-separator, @radix-ui/react-avatar,
+  @radix-ui/react-accordion, @radix-ui/react-navigation-menu,
+  @radix-ui/react-tabs, @radix-ui/react-select,
+  @radix-ui/react-dropdown-menu, @radix-ui/react-tooltip,
+  @radix-ui/react-switch,
+  react-hook-form, @hookform/resolvers, zod
+
+NEVER import packages NOT in this list (next, gatsby, axios, swr,
+  styled-components, @emotion/*, @mui/*, @chakra-ui/*, @tanstack/*).
 """
 
 
