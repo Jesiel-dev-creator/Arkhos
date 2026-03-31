@@ -13,8 +13,11 @@ export default defineConfig({
   server: {
     port: 5173,
     headers: {
-      /* Required for WebContainers (SharedArrayBuffer) */
-      "Cross-Origin-Embedder-Policy": "require-corp",
+      /* Required for WebContainers (SharedArrayBuffer).
+         credentialless is less restrictive than require-corp —
+         allows Vite's own CSS/JS modules to load while still
+         enabling SharedArrayBuffer for WebContainers. */
+      "Cross-Origin-Embedder-Policy": "credentialless",
       "Cross-Origin-Opener-Policy": "same-origin",
     },
     proxy: {
