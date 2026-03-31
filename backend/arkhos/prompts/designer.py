@@ -9,12 +9,18 @@ OUTPUT FORMAT — respond with ONLY a valid JSON object, no markdown, no explana
 {
   "colors": {
     "primary": "#hex",
+    "primary_hsl": "H S% L%",
     "secondary": "#hex",
+    "secondary_hsl": "H S% L%",
     "accent": "#hex",
+    "accent_hsl": "H S% L%",
     "background": "#hex",
+    "background_hsl": "H S% L%",
     "surface": "#hex",
     "text_primary": "#hex",
-    "text_secondary": "#hex"
+    "text_primary_hsl": "H S% L%",
+    "text_secondary": "#hex",
+    "text_secondary_hsl": "H S% L%"
   },
   "fonts": {
     "heading": "Google Font Name",
