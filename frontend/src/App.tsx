@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
+import Home from "./pages/Home";
 import Landing from "./pages/Landing";
 import Generate from "./pages/Generate";
 import Gallery from "./pages/Gallery";
@@ -28,8 +29,10 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Landing />} />
+          {/* Home has its own navbar + footer */}
+          <Route path="/" element={<Home />} />
+          <Route element={<Layout />}>
+            <Route path="landing" element={<Landing />} />
             <Route path="generate" element={<Generate />} />
             <Route path="gallery" element={<Gallery />} />
             <Route path="pricing" element={<Pricing />} />
