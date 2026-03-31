@@ -210,7 +210,7 @@ Use the _hsl values from the Designer output directly.
 
 ## SECTION RULES
 
-Import from pre-installed @/components/ui/*:
+Import ONLY from these pre-installed @/components/ui/* files:
   import { Button } from "@/components/ui/button"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Badge } from "@/components/ui/badge"
@@ -219,6 +219,18 @@ Import from pre-installed @/components/ui/*:
   import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
   import { Separator } from "@/components/ui/separator"
   import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+  import { Accordion, AccordionItem, AccordionTrigger,
+    AccordionContent } from "@/components/ui/accordion"
+
+These are the ONLY 9 ui/ files that exist. NEVER import from:
+  @/components/ui/carousel, @/components/ui/table, @/components/ui/form,
+  @/components/ui/select, @/components/ui/tabs, @/components/ui/dialog,
+  @/components/ui/dropdown-menu, @/components/ui/tooltip,
+  @/components/ui/navigation-menu, @/components/ui/switch,
+  or ANY other @/components/ui/* file not listed above.
+For carousels: use a simple flex overflow-x-auto with scroll-snap.
+For selects: use native <select> styled with Tailwind.
+For tabs: use useState + conditional rendering.
 
 Import cn: import { cn } from "@/lib/utils"
 Import icons: import { Menu, X, ArrowRight, Star } from "lucide-react"
