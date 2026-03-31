@@ -30,18 +30,25 @@ Output files in THIS ORDER:
 6. index.html
 7. src/main.tsx
 8. src/index.css
-9. src/lib/utils.ts
-10. src/components/ui/button.tsx
-11. src/components/ui/card.tsx
-12. src/components/ui/badge.tsx
-13. src/components/ui/input.tsx
-14. src/components/ui/textarea.tsx
-15. src/components/ui/sheet.tsx (for mobile nav)
-16. src/sections/Navbar.tsx
-17. [each section from the Architect blueprint, in order]
-18. src/sections/Footer.tsx
+9. src/sections/Navbar.tsx
+10. [each section from the Architect blueprint, in order]
+11. src/sections/Footer.tsx
 
-DO NOT output src/App.tsx — it is generated automatically from your sections.
+DO NOT output these files — they are PRE-INSTALLED in the environment:
+- src/App.tsx (auto-generated from your sections)
+- src/lib/utils.ts (already exists)
+- src/components/ui/button.tsx (already exists)
+- src/components/ui/card.tsx (already exists)
+- src/components/ui/badge.tsx (already exists)
+- src/components/ui/input.tsx (already exists)
+- src/components/ui/textarea.tsx (already exists)
+- src/components/ui/separator.tsx (already exists)
+- src/components/ui/avatar.tsx (already exists)
+- src/components/ui/sheet.tsx (already exists)
+- src/components/ui/accordion.tsx (already exists)
+
+Just import them in your sections: import { Button } from "@/components/ui/button"
+
 Output each file COMPLETELY before starting the next <file> tag.
 Every </file> closing tag MUST be present.
 
