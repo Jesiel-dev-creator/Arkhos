@@ -4,6 +4,7 @@ import { useSSE } from "@/hooks/useSSE";
 import type { ChatMessage } from "@/hooks/useSSE";
 import { useWebContainer } from "@/hooks/useWebContainer";
 import PromptInput from "@/components/PromptInput";
+import { ChatInput } from "@/components/ui/bolt-style-chat";
 import PipelineStrip from "@/components/PipelineStrip";
 import PreviewPane from "@/components/PreviewPane";
 import CodeView from "@/components/CodeView";
@@ -158,7 +159,8 @@ export default function Generate() {
       );
     }
 
-    // Prompt mode (default)
+    // Prompt mode (default) — Bolt-style ChatInput + template selector
+    const isRunning = state.status === "running" || state.status === "starting";
     return (
       <motion.div
         key="prompt"
@@ -169,17 +171,29 @@ export default function Generate() {
         className="flex flex-col gap-5 overflow-y-auto"
       >
         <div>
-          <h1 className="text-2xl md:text-3xl text-[var(--frost)] mb-1.5">
-            What will you build?
+          <h1
+            className="text-2xl md:text-3xl font-bold mb-1.5"
+            style={{ color: "var(--frost)", fontFamily: "var(--font-display)" }}
+          >
+            What will you{" "}
+            <span className="bg-gradient-to-r from-[#FF6B35] to-[#FFB347] bg-clip-text text-transparent italic">
+              build
+            </span>
+            ?
           </h1>
           <p
-            className="text-sm text-[var(--muted)] leading-relaxed"
-            style={{ fontFamily: "var(--font-body)" }}
+            className="text-sm leading-relaxed"
+            style={{ color: "var(--muted)", fontFamily: "var(--font-body)" }}
           >
-            Describe your website and watch 4 AI agents build it live.
+            Describe your website and watch 5 AI agents build it live.
           </p>
         </div>
-        <PromptInput onSubmit={handleGenerate} status={state.status} />
+        <ChatInput
+          onSend={(msg) => handleGenerate(msg, "en")}
+          onPlan={(msg) => { if (msg.trim()) handleGenerate(msg.trim(), "en"); }}
+          placeholder="A landing page for a French bakery in Paris..."
+          disabled={isRunning}
+        />
       </motion.div>
     );
   };
