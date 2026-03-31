@@ -256,6 +256,22 @@ Every section: export default function Name() { ... }
 Responsive: mobile-first with sm: md: lg: breakpoints.
 Spacing: py-20 to py-32 between sections.
 
+HERO READABILITY (CRITICAL):
+- Background image MUST have a STRONG dark overlay: bg-black/60
+- ALL hero text MUST be text-white or text-white/90
+- NEVER use text-foreground on a photo background — invisible
+- Hero buttons: solid bg (variant="default"), NOT outline on photos
+- Hero badge: bg-white/20 text-white backdrop-blur, NOT bg-primary
+- Pattern: <div className="relative min-h-screen">
+    <img src="..." className="absolute inset-0 w-full h-full object-cover"/>
+    <div className="absolute inset-0 bg-black/60"/>
+    <div className="relative z-10 text-white">...content...</div>
+  </div>
+
+NAVBAR READABILITY:
+- Must have bg-background/90 backdrop-blur-md for contrast
+- Text: text-foreground (readable on solid bg, not photo)
+
 ## VERIFIED UNSPLASH PHOTO IDs — use ONLY these
 
 Hero backgrounds (w=1920&q=80):
