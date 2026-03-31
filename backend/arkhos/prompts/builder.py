@@ -69,29 +69,52 @@ src/lib/utils.ts:
   import { twMerge } from "tailwind-merge"
   export function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)) }
 
-## SHADCN/UI COMPONENTS (use REAL source, not imitations)
+## SHADCN/UI COMPONENTS — EXACT SOURCE CODE
 
-Include the actual shadcn/ui source for each component the Architect selected.
-Key components:
+COPY THESE EXACTLY. Do NOT invent imports that don't exist.
 
-button.tsx — cva variants (default/destructive/outline/secondary/ghost/link),
-  sizes (default/sm/lg/icon), uses @radix-ui/react-slot for asChild
+--- button.tsx ---
+Uses: @radix-ui/react-slot (Slot), class-variance-authority (cva)
+Exports: Button, buttonVariants
+Variants: default, destructive, outline, secondary, ghost, link
+Sizes: default, sm, lg, icon
 
-card.tsx — Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+--- card.tsx ---
+NO external deps. Pure divs with cn() classes.
+Exports: Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
 
-badge.tsx — cva variants (default/secondary/destructive/outline)
+--- badge.tsx ---
+Uses: class-variance-authority (cva)
+Exports: Badge, badgeVariants
 
-input.tsx — styled input with focus ring
+--- input.tsx ---
+NO external deps. Styled <input> with cn().
 
-textarea.tsx — styled textarea with focus ring
+--- textarea.tsx ---
+NO external deps. Styled <textarea> with cn().
 
-separator.tsx — uses @radix-ui/react-separator
+--- separator.tsx ---
+Uses: @radix-ui/react-separator (Root)
 
-avatar.tsx — uses @radix-ui/react-avatar (Root, Image, Fallback)
+--- avatar.tsx ---
+Uses: @radix-ui/react-avatar (Root, Image, Fallback)
 
-sheet.tsx — uses @radix-ui/react-dialog for mobile menu drawer
+--- sheet.tsx CRITICAL (most common error source) ---
+Uses ONLY these imports from @radix-ui/react-dialog:
+  import * as SheetPrimitive from "@radix-ui/react-dialog"
+Then use: SheetPrimitive.Root, SheetPrimitive.Trigger,
+  SheetPrimitive.Close, SheetPrimitive.Portal,
+  SheetPrimitive.Overlay, SheetPrimitive.Content
+SheetHeader and SheetFooter are PLAIN DIVS, not Radix imports!
+  function SheetHeader({ className, ...props }) {
+    return <div className={cn("flex flex-col gap-2 p-4", className)} {...props} />
+  }
+NEVER import DialogHeader, DialogFooter, DialogTitle from @radix-ui.
+Those DO NOT EXIST in @radix-ui/react-dialog exports.
 
-accordion.tsx — uses @radix-ui/react-accordion with ChevronDown animation
+--- accordion.tsx ---
+Uses: @radix-ui/react-accordion (Root, Item, Trigger, Content, Header)
+Uses: lucide-react (ChevronDown) for the toggle arrow
 
 All components import { cn } from "@/lib/utils"
 
