@@ -26,6 +26,7 @@ interface PreviewPaneProps {
   generationId?: string | null;
   wcStatus?: string;
   wcPreviewUrl?: string | null;
+  wcBuildError?: string | null;
   onToggleCode: () => void;
   showCode: boolean;
 }
@@ -37,6 +38,7 @@ export default function PreviewPane({
   generationId,
   wcStatus,
   wcPreviewUrl,
+  wcBuildError,
   onToggleCode,
   showCode,
 }: PreviewPaneProps) {
@@ -197,6 +199,16 @@ export default function PreviewPane({
                 if (iframeRef.current) iframeRef.current.style.opacity = "1";
               }}
             />
+          </div>
+        )}
+
+        {/* Build error banner (non-blocking) */}
+        {wcBuildError && (
+          <div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-between px-3 py-2"
+               style={{ background: "rgba(255,69,96,0.1)", borderTop: "1px solid rgba(255,69,96,0.3)" }}>
+            <span className="text-[11px] truncate" style={{ color: "var(--error)", fontFamily: "var(--font-code)" }}>
+              {wcBuildError.slice(0, 120)}
+            </span>
           </div>
         )}
       </div>

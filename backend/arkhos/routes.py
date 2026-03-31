@@ -350,6 +350,7 @@ async def iterate_endpoint(
         _run_iteration(
             gen_id=generation.id,
             current_html=original.html,
+            all_files=original.metadata.get("files"),
             modification=sanitized_mod,
             client_ip=client_ip,
         )
@@ -369,6 +370,7 @@ async def iterate_endpoint(
 async def _run_iteration(
     gen_id: str,
     current_html: str,
+    all_files: dict[str, str] | None,
     modification: str,
     client_ip: str,
 ) -> None:
@@ -383,7 +385,11 @@ async def _run_iteration(
     total_cost = 0.0
 
     try:
-        async for sse_event in run_iteration(current_html, modification):
+        async for sse_event in run_iteration(
+            modification_request=modification,
+            all_files=all_files,
+            current_html=current_html,
+        ):
             await generation.event_queue.put(sse_event)
 
             for line in sse_event.split("\n"):
@@ -397,6 +403,8 @@ async def _run_iteration(
                     total_cost = data["total_cost_eur"]
                 if data.get("stage") == "final" and "html" in data:
                     generation.html = data["html"]
+                if "files" in data and "file_count" in data:
+                    generation.metadata["files"] = data["files"]
 
         generation.status = GenerationStatus.COMPLETE
         generation.metadata["total_cost_eur"] = total_cost

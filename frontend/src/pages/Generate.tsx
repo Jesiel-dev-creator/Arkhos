@@ -245,6 +245,7 @@ export default function Generate() {
               generationId={state.generationId}
               wcStatus={wc.status}
               wcPreviewUrl={wc.previewUrl}
+              wcBuildError={wc.buildError}
               onToggleCode={() => setShowCode((v) => !v)}
               showCode={showCode}
             />

@@ -54,15 +54,22 @@ Every </file> closing tag MUST be present.
 
 ## BOILERPLATE FILES
 
-package.json dependencies MUST include:
-  react, react-dom, @types/react, @types/react-dom,
-  @vitejs/plugin-react, vite, typescript,
-  tailwindcss, postcss, autoprefixer,
-  @radix-ui/react-slot, @radix-ui/react-dialog,
-  @radix-ui/react-accordion, @radix-ui/react-avatar,
-  @radix-ui/react-separator,
-  class-variance-authority, clsx, tailwind-merge,
-  lucide-react, framer-motion
+package.json — use EXACT versions (no ^ or ~ prefixes):
+  "react": "18.3.1", "react-dom": "18.3.1",
+  "framer-motion": "11.2.10", "lucide-react": "0.400.0",
+  "clsx": "2.1.1", "tailwind-merge": "2.4.0",
+  "class-variance-authority": "0.7.0",
+  "@radix-ui/react-slot": "1.1.0",
+  "@radix-ui/react-dialog": "1.1.1",
+  "@radix-ui/react-separator": "1.1.0",
+  "@radix-ui/react-avatar": "1.1.0",
+  "@radix-ui/react-accordion": "1.2.0"
+  devDependencies:
+  "vite": "5.4.11", "@vitejs/plugin-react": "4.3.4",
+  "tailwindcss": "3.4.17", "postcss": "8.4.49",
+  "autoprefixer": "10.4.20", "typescript": "5.5.4",
+  "@types/react": "18.3.12", "@types/react-dom": "18.3.1"
+Exact versions = npm reuses cached node_modules between generations.
 
 vite.config.ts MUST include server: { host: true } for WebContainers.
   Also include path alias: "@" → "./src"

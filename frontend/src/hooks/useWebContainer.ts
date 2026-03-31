@@ -1,11 +1,10 @@
 /**
- * WebContainer hook — eager boot with skeleton project.
+ * WebContainer hook — eager boot with skeleton + build error detection.
  *
  * Architecture:
- *   Page load → boot WC → mount skeleton → npm install → Vite start → ready
- *   Generation → each file written via writeFile() → HMR updates preview live
- *
- * Only ONE WebContainer instance per page. Boot once, reuse forever.
+ *   Page load → boot → mount skeleton → npm install → Vite → ready
+ *   Generation → writeFile per chunk → HMR → sections appear live
+ *   Build error → buildError state → auto-fix flow
  */
 
 import { WebContainer } from "@webcontainer/api";
@@ -23,10 +22,10 @@ export function useWebContainer() {
   const [status, setStatus] = useState<WebContainerStatus>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [buildError, setBuildError] = useState<string | null>(null);
   const wcRef = useRef<WebContainer | null>(null);
   const bootedRef = useRef(false);
 
-  /** Call ONCE on page mount — boots WC and starts Vite before any generation. */
   const bootEagerly = useCallback(async () => {
     if (bootedRef.current) return;
     bootedRef.current = true;
@@ -43,7 +42,27 @@ export function useWebContainer() {
       if (installCode !== 0) throw new Error("npm install failed");
 
       setStatus("starting");
-      await wcRef.current.spawn("npm", ["run", "dev"]);
+      const dev = await wcRef.current.spawn("npm", ["run", "dev"]);
+
+      // Watch Vite output for build errors
+      dev.output.pipeTo(
+        new WritableStream({
+          write(data) {
+            if (
+              data.includes("[vite:import-analysis]") ||
+              data.includes("Failed to resolve import") ||
+              data.includes("Cannot find module") ||
+              data.includes("SyntaxError")
+            ) {
+              setBuildError(data.trim().slice(0, 300));
+            }
+            if (data.includes("page reload") || data.includes("hmr update")) {
+              setBuildError(null);
+            }
+          },
+        })
+      );
+
       wcRef.current.on("server-ready", (_: number, url: string) => {
         setPreviewUrl(url);
         setStatus("ready");
@@ -56,7 +75,6 @@ export function useWebContainer() {
     }
   }, []);
 
-  /** Write a single file into the running WebContainer. Triggers Vite HMR. */
   const writeFile = useCallback(async (path: string, content: string) => {
     if (!wcRef.current) return;
     const dir = path.split("/").slice(0, -1).join("/");
@@ -64,16 +82,26 @@ export function useWebContainer() {
       try {
         await wcRef.current.fs.mkdir(dir, { recursive: true });
       } catch {
-        /* dir already exists */
+        /* dir exists */
       }
     }
     await wcRef.current.fs.writeFile(path, content);
   }, []);
 
-  return { status, previewUrl, error, bootEagerly, writeFile };
+  const clearBuildError = useCallback(() => setBuildError(null), []);
+
+  return {
+    status,
+    previewUrl,
+    error,
+    buildError,
+    bootEagerly,
+    writeFile,
+    clearBuildError,
+  };
 }
 
-/* ═══ Skeleton project — enough for Vite to boot ═══ */
+/* ═══ Exact pinned versions — MUST match Builder prompt ═══ */
 
 const PKG = JSON.stringify(
   {
@@ -81,28 +109,28 @@ const PKG = JSON.stringify(
     version: "0.0.1",
     scripts: { dev: "vite --host" },
     dependencies: {
-      react: "^18.3.1",
-      "react-dom": "^18.3.1",
-      "framer-motion": "^11.0.0",
-      "lucide-react": "^0.400.0",
-      clsx: "^2.1.1",
-      "tailwind-merge": "^2.4.0",
-      "class-variance-authority": "^0.7.0",
-      "@radix-ui/react-slot": "^1.1.0",
-      "@radix-ui/react-dialog": "^1.1.0",
-      "@radix-ui/react-separator": "^1.1.0",
-      "@radix-ui/react-avatar": "^1.1.0",
-      "@radix-ui/react-accordion": "^1.2.0",
+      react: "18.3.1",
+      "react-dom": "18.3.1",
+      "framer-motion": "11.2.10",
+      "lucide-react": "0.400.0",
+      clsx: "2.1.1",
+      "tailwind-merge": "2.4.0",
+      "class-variance-authority": "0.7.0",
+      "@radix-ui/react-slot": "1.1.0",
+      "@radix-ui/react-dialog": "1.1.1",
+      "@radix-ui/react-separator": "1.1.0",
+      "@radix-ui/react-avatar": "1.1.0",
+      "@radix-ui/react-accordion": "1.2.0",
     },
     devDependencies: {
-      vite: "^5.4.0",
-      "@vitejs/plugin-react": "^4.3.1",
-      tailwindcss: "^3.4.0",
-      postcss: "^8.4.0",
-      autoprefixer: "^10.4.0",
-      typescript: "^5.5.0",
-      "@types/react": "^18.3.0",
-      "@types/react-dom": "^18.3.0",
+      vite: "5.4.11",
+      "@vitejs/plugin-react": "4.3.4",
+      tailwindcss: "3.4.17",
+      postcss: "8.4.49",
+      autoprefixer: "10.4.20",
+      typescript: "5.5.4",
+      "@types/react": "18.3.12",
+      "@types/react-dom": "18.3.1",
     },
   },
   null,
@@ -177,7 +205,7 @@ const TSCONFIG = JSON.stringify(
   2
 );
 
-/* ═══ Pre-baked shadcn/ui components (always the same) ═══ */
+/* ═══ Pre-baked shadcn/ui components ═══ */
 
 const UI_UTILS = `import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -213,7 +241,7 @@ export{Badge,badgeVariants}`;
 
 const UI_INPUT = `import * as React from "react"
 import { cn } from "@/lib/utils"
-const Input=React.forwardRef<HTMLInputElement,React.InputHTMLAttributes<HTMLInputElement>>(({className,type,...props},ref)=><input type={type} className={cn("flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",className)} ref={ref} {...props}/>)
+const Input=React.forwardRef<HTMLInputElement,React.InputHTMLAttributes<HTMLInputElement>>(({className,type,...props},ref)=><input type={type} className={cn("flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",className)} ref={ref} {...props}/>)
 Input.displayName="Input"
 export{Input}`;
 
@@ -233,32 +261,22 @@ export{Separator}`;
 const UI_AVATAR = `import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 import { cn } from "@/lib/utils"
-const Avatar=React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Root>,React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>>(({className,...props},ref)=><AvatarPrimitive.Root ref={ref} className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",className)} {...props}/>)
-Avatar.displayName=AvatarPrimitive.Root.displayName
-const AvatarImage=React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Image>,React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>>(({className,...props},ref)=><AvatarPrimitive.Image ref={ref} className={cn("aspect-square h-full w-full",className)} {...props}/>)
-AvatarImage.displayName=AvatarPrimitive.Image.displayName
-const AvatarFallback=React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Fallback>,React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>>(({className,...props},ref)=><AvatarPrimitive.Fallback ref={ref} className={cn("flex h-full w-full items-center justify-center rounded-full bg-muted",className)} {...props}/>)
-AvatarFallback.displayName=AvatarPrimitive.Fallback.displayName
+const Avatar=React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Root>,React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>>(({className,...props},ref)=><AvatarPrimitive.Root ref={ref} className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",className)} {...props}/>);Avatar.displayName=AvatarPrimitive.Root.displayName
+const AvatarImage=React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Image>,React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>>(({className,...props},ref)=><AvatarPrimitive.Image ref={ref} className={cn("aspect-square h-full w-full",className)} {...props}/>);AvatarImage.displayName=AvatarPrimitive.Image.displayName
+const AvatarFallback=React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Fallback>,React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>>(({className,...props},ref)=><AvatarPrimitive.Fallback ref={ref} className={cn("flex h-full w-full items-center justify-center rounded-full bg-muted",className)} {...props}/>);AvatarFallback.displayName=AvatarPrimitive.Fallback.displayName
 export{Avatar,AvatarImage,AvatarFallback}`;
 
 const UI_SHEET = `import * as React from "react"
 import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { cn } from "@/lib/utils"
 import { X } from "lucide-react"
-const Sheet=SheetPrimitive.Root
-const SheetTrigger=SheetPrimitive.Trigger
-const SheetClose=SheetPrimitive.Close
-const SheetPortal=SheetPrimitive.Portal
-const SheetOverlay=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Overlay>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>>(({className,...props},ref)=><SheetPrimitive.Overlay className={cn("fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",className)} {...props} ref={ref}/>)
-SheetOverlay.displayName=SheetPrimitive.Overlay.displayName
-const SheetContent=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Content>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>&{side?:"top"|"bottom"|"left"|"right"}>(({side="right",className,children,...props},ref)=><SheetPortal><SheetOverlay/><SheetPrimitive.Content ref={ref} className={cn("fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",side==="right"&&"inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",side==="left"&&"inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",side==="top"&&"inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",side==="bottom"&&"inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",className)} {...props}>{children}<SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary"><X className="h-4 w-4"/><span className="sr-only">Close</span></SheetPrimitive.Close></SheetPrimitive.Content></SheetPortal>)
-SheetContent.displayName=SheetPrimitive.Content.displayName
+const Sheet=SheetPrimitive.Root;const SheetTrigger=SheetPrimitive.Trigger;const SheetClose=SheetPrimitive.Close;const SheetPortal=SheetPrimitive.Portal
+const SheetOverlay=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Overlay>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>>(({className,...props},ref)=><SheetPrimitive.Overlay className={cn("fixed inset-0 z-50 bg-black/80",className)} {...props} ref={ref}/>);SheetOverlay.displayName=SheetPrimitive.Overlay.displayName
+const SheetContent=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Content>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>&{side?:"top"|"bottom"|"left"|"right"}>(({side="right",className,children,...props},ref)=><SheetPortal><SheetOverlay/><SheetPrimitive.Content ref={ref} className={cn("fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out",side==="right"&&"inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",side==="left"&&"inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",side==="top"&&"inset-x-0 top-0 border-b",side==="bottom"&&"inset-x-0 bottom-0 border-t",className)} {...props}>{children}<SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"><X className="h-4 w-4"/><span className="sr-only">Close</span></SheetPrimitive.Close></SheetPrimitive.Content></SheetPortal>);SheetContent.displayName=SheetPrimitive.Content.displayName
 function SheetHeader({className,...props}:React.HTMLAttributes<HTMLDivElement>){return<div className={cn("flex flex-col space-y-2 text-center sm:text-left",className)} {...props}/>}
 function SheetFooter({className,...props}:React.HTMLAttributes<HTMLDivElement>){return<div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",className)} {...props}/>}
-const SheetTitle=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Title>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>>(({className,...props},ref)=><SheetPrimitive.Title ref={ref} className={cn("text-lg font-semibold text-foreground",className)} {...props}/>)
-SheetTitle.displayName=SheetPrimitive.Title.displayName
-const SheetDescription=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Description>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>>(({className,...props},ref)=><SheetPrimitive.Description ref={ref} className={cn("text-sm text-muted-foreground",className)} {...props}/>)
-SheetDescription.displayName=SheetPrimitive.Description.displayName
+const SheetTitle=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Title>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>>(({className,...props},ref)=><SheetPrimitive.Title ref={ref} className={cn("text-lg font-semibold text-foreground",className)} {...props}/>);SheetTitle.displayName=SheetPrimitive.Title.displayName
+const SheetDescription=React.forwardRef<React.ElementRef<typeof SheetPrimitive.Description>,React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>>(({className,...props},ref)=><SheetPrimitive.Description ref={ref} className={cn("text-sm text-muted-foreground",className)} {...props}/>);SheetDescription.displayName=SheetPrimitive.Description.displayName
 export{Sheet,SheetPortal,SheetOverlay,SheetTrigger,SheetClose,SheetContent,SheetHeader,SheetFooter,SheetTitle,SheetDescription}`;
 
 const UI_ACCORDION = `import * as React from "react"
@@ -266,13 +284,12 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 const Accordion=AccordionPrimitive.Root
-const AccordionItem=React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Item>,React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>>(({className,...props},ref)=><AccordionPrimitive.Item ref={ref} className={cn("border-b",className)} {...props}/>)
-AccordionItem.displayName="AccordionItem"
-const AccordionTrigger=React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Trigger>,React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>>(({className,children,...props},ref)=><AccordionPrimitive.Header className="flex"><AccordionPrimitive.Trigger ref={ref} className={cn("flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",className)} {...props}>{children}<ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200"/></AccordionPrimitive.Trigger></AccordionPrimitive.Header>)
-AccordionTrigger.displayName=AccordionPrimitive.Trigger.displayName
-const AccordionContent=React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Content>,React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>>(({className,children,...props},ref)=><AccordionPrimitive.Content ref={ref} className="overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down" {...props}><div className={cn("pb-4 pt-0",className)}>{children}</div></AccordionPrimitive.Content>)
-AccordionContent.displayName=AccordionPrimitive.Content.displayName
+const AccordionItem=React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Item>,React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>>(({className,...props},ref)=><AccordionPrimitive.Item ref={ref} className={cn("border-b",className)} {...props}/>);AccordionItem.displayName="AccordionItem"
+const AccordionTrigger=React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Trigger>,React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>>(({className,children,...props},ref)=><AccordionPrimitive.Header className="flex"><AccordionPrimitive.Trigger ref={ref} className={cn("flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",className)} {...props}>{children}<ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200"/></AccordionPrimitive.Trigger></AccordionPrimitive.Header>);AccordionTrigger.displayName=AccordionPrimitive.Trigger.displayName
+const AccordionContent=React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Content>,React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>>(({className,children,...props},ref)=><AccordionPrimitive.Content ref={ref} className="overflow-hidden text-sm" {...props}><div className={cn("pb-4 pt-0",className)}>{children}</div></AccordionPrimitive.Content>);AccordionContent.displayName=AccordionPrimitive.Content.displayName
 export{Accordion,AccordionItem,AccordionTrigger,AccordionContent}`;
+
+/* ═══ Skeleton project tree ═══ */
 
 const SKELETON_PROJECT: Record<string, unknown> = {
   "package.json": { file: { contents: PKG } },
@@ -286,11 +303,7 @@ const SKELETON_PROJECT: Record<string, unknown> = {
       "main.tsx": { file: { contents: MAIN_TSX } },
       "App.tsx": { file: { contents: APP_TSX } },
       "index.css": { file: { contents: INDEX_CSS } },
-      lib: {
-        directory: {
-          "utils.ts": { file: { contents: UI_UTILS } },
-        },
-      },
+      lib: { directory: { "utils.ts": { file: { contents: UI_UTILS } } } },
       components: {
         directory: {
           ui: {

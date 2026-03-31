@@ -171,6 +171,28 @@ def _build_app_tsx(files: dict[str, str]) -> str:
     )
 
 
+def _build_arkhos_md(
+    prompt: str,
+    planner_output: str,
+    designer_output: str,
+    architect_output: str,
+) -> str:
+    """Project memory file for accurate iterations."""
+    return (
+        "# ARKHOS Project Memory\n\n"
+        f"## Original Prompt\n{prompt}\n\n"
+        f"## Site Spec (Planner)\n{planner_output}\n\n"
+        f"## Design System (Designer)\n{designer_output}\n\n"
+        f"## Component Structure (Architect)\n{architect_output}\n\n"
+        "## Rules for Iteration\n"
+        "- NEVER change design system colors/fonts unless explicitly asked\n"
+        "- NEVER remove sections unless explicitly asked\n"
+        "- Use shadcn/ui from @/components/ui/* (pre-installed)\n"
+        "- Use Framer Motion for animations\n"
+        "- Use Lucide React for icons\n"
+    )
+
+
 def _extract_files(builder_output: str) -> dict[str, str]:
     """Extract files from Builder output (file-tag or JSON format).
 
@@ -646,7 +668,14 @@ async def run_build_streaming(
                     "path": path,
                     "content": files[path],
                 })
-            # Also emit files_ready for zip download
+            # Add ARKHOS.md project memory for iterations
+            files["ARKHOS.md"] = _build_arkhos_md(
+                prompt=planner_output,
+                planner_output=planner_output,
+                designer_output=designer_step.output,
+                architect_output=architect_step.output,
+            )
+            # Emit files_ready for zip download
             yield format_sse("files_ready", {
                 "files": files,
                 "file_count": len(files),
