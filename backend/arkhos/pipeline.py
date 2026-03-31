@@ -166,7 +166,7 @@ async def run_pipeline_streaming(
             "agent": "planner",
             "model": "ministral-3b-latest",
             "step": 1,
-            "total_steps": 4,
+            "total_steps": 5,
         })
 
         t0 = time.monotonic()
@@ -204,7 +204,7 @@ async def run_pipeline_streaming(
             "agent": "designer",
             "model": "mistral-small",
             "step": 2,
-            "total_steps": 4,
+            "total_steps": 5,
         })
 
         t0 = time.monotonic()
@@ -242,7 +242,7 @@ async def run_pipeline_streaming(
             "agent": "builder",
             "model": "devstral-small",
             "step": 3,
-            "total_steps": 4,
+            "total_steps": 5,
         })
 
         t0 = time.monotonic()
@@ -288,7 +288,7 @@ async def run_pipeline_streaming(
             "agent": "reviewer",
             "model": "mistral-small",
             "step": 4,
-            "total_steps": 4,
+            "total_steps": 5,
         })
 
         t0 = time.monotonic()
@@ -380,7 +380,7 @@ async def run_planner_streaming(
             "agent": "planner",
             "model": "ministral-3b-latest",
             "step": 1,
-            "total_steps": 4,
+            "total_steps": 5,
         })
 
         t0 = time.monotonic()

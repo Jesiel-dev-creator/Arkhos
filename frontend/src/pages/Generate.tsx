@@ -37,7 +37,7 @@ export default function Generate() {
             {
               id: "gen-system",
               role: "system",
-              content: `Generated · 4 agents · ${state.totalDurationS}s`,
+              content: `Generated · 5 agents · ${state.totalDurationS}s`,
               costEur: state.totalCostEur,
               durationS: state.totalDurationS,
             },
