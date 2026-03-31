@@ -247,7 +247,20 @@ Example imports:
 ALL common shadcn components are pre-installed. You can freely import any of them.
 
 Import cn: import { cn } from "@/lib/utils"
-Import icons: import { Menu, X, ArrowRight, Star } from "lucide-react"
+Import icons: import { IconName } from "lucide-react"
+VERIFIED icon names (use ONLY these):
+  Menu, X, ArrowRight, ArrowLeft, Star, Check, ChevronDown, ChevronRight,
+  ChevronUp, ChevronLeft, Phone, Mail, MapPin, Clock, Heart, Share2,
+  Search, Home, User, Users, Settings, Shield, Zap, Eye, Download,
+  Upload, ExternalLink, Github, Twitter, Linkedin, Instagram, Facebook,
+  Send, MessageSquare, Calendar, CreditCard, ShoppingCart, Package,
+  Globe, Lock, Unlock, Award, TrendingUp, BarChart3, PieChart,
+  Code, Terminal, Database, Cloud, Server, Wifi, Play, Pause,
+  Plus, Minus, Edit, Trash2, Copy, Clipboard, Bookmark, Flag,
+  Bell, AlertTriangle, Info, HelpCircle, CheckCircle, XCircle,
+  Coffee, Utensils, Pizza, Cake, Wine, Music, Camera, Image,
+  Sun, Moon, Sparkles, Target, Layers, Grid, Layout, Palette
+NEVER invent icon names like "CloudSync" — they don't exist
 Import motion: import { motion } from "framer-motion"
 
 Use Tailwind CSS variable classes: bg-background, text-foreground,
