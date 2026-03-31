@@ -1,7 +1,7 @@
-"""ArkhosAI 4-agent website generation pipeline with SSE streaming.
+"""ArkhosAI 5-agent website generation pipeline with SSE streaming.
 
 Manual agent orchestration for per-agent SSE events.
-Planner → Designer → Builder → Reviewer
+v0.2: Planner → Designer → Architect → Builder → Reviewer
 
 Uses Agent.run(input_text) directly (not Pipeline.run()) so we can
 emit SSE events between each agent step.
@@ -13,6 +13,7 @@ Tramontane API (v0.1.4):
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 from dataclasses import dataclass, field
@@ -23,6 +24,8 @@ if TYPE_CHECKING:
 
 from tramontane import Agent
 
+from arkhos.prompts.architect import SYSTEM_PROMPT as ARCHITECT_PROMPT
+from arkhos.prompts.architect import format_user_message as format_architect_msg
 from arkhos.prompts.builder import SYSTEM_PROMPT as BUILDER_PROMPT
 from arkhos.prompts.builder import format_user_message as format_builder_msg
 from arkhos.prompts.designer import SYSTEM_PROMPT as DESIGNER_PROMPT
@@ -61,7 +64,7 @@ class PipelineResult:
 
 
 def _create_agents() -> dict[str, Agent]:
-    """Create the 4 pipeline agents.
+    """Create the 5 pipeline agents (v0.2).
 
     The backstory field carries the full system prompt instructions
     because Tramontane auto-builds the system message from
@@ -83,21 +86,57 @@ def _create_agents() -> dict[str, Agent]:
             reasoning=True,
             budget_eur=0.01,
         ),
+        "architect": Agent(
+            role="React Project Architect",
+            goal="Design optimal React component structure for landing pages",
+            backstory=ARCHITECT_PROMPT,
+            model="mistral-small",
+            reasoning=True,
+            budget_eur=0.005,
+        ),
         "builder": Agent(
             role="Frontend Builder",
-            goal="Generate production-quality HTML/CSS/JS",
+            goal="Generate complete multi-file React projects with shadcn/ui",
             backstory=BUILDER_PROMPT,
             model="devstral-small",
-            budget_eur=0.02,
+            budget_eur=0.03,
         ),
         "reviewer": Agent(
             role="Code Reviewer",
-            goal="Validate HTML quality, accessibility, and spec compliance",
+            goal="Validate React project quality, shadcn/ui usage, and spec compliance",
             backstory=REVIEWER_PROMPT,
             model="mistral-small",
             budget_eur=0.01,
         ),
     }
+
+
+def _extract_files(builder_output: str) -> dict[str, str]:
+    """Extract the files dict from Builder output, with JSON repair fallback."""
+    try:
+        parsed = json.loads(builder_output)
+        if isinstance(parsed, dict) and "files" in parsed:
+            return dict(parsed["files"])
+        if isinstance(parsed, dict):
+            return dict(parsed)
+    except json.JSONDecodeError:
+        pass
+
+    # Try json-repair
+    try:
+        from json_repair import repair_json
+
+        repaired = repair_json(builder_output)
+        parsed = json.loads(repaired)
+        if isinstance(parsed, dict) and "files" in parsed:
+            return dict(parsed["files"])
+        if isinstance(parsed, dict):
+            return dict(parsed)
+    except Exception:
+        pass
+
+    logger.error("Failed to parse Builder output as JSON")
+    return {}
 
 
 async def run_pipeline_streaming(
@@ -388,20 +427,22 @@ async def run_build_streaming(
     locale: str = "en",
     prior_cost: float = 0.0,
 ) -> AsyncGenerator[str, None]:
-    """Run Designer + Builder + Reviewer using the approved plan.
+    """Run Designer → Architect → Builder → Reviewer (v0.2 pipeline).
 
     Called after user approves the planner output.
+    Outputs multi-file React project via files_ready SSE event.
     """
     start_time = time.monotonic()
     agents = _create_agents()
     agent_results: list[AgentStepResult] = []
     cumulative_cost = prior_cost
+    total_steps = 5  # designer, architect, builder, reviewer
 
     try:
         # ── Designer ──
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "designer", "model": "mistral-small",
-            "step": 2, "total_steps": 4,
+            "step": 2, "total_steps": total_steps,
         })
         t0 = time.monotonic()
         designer_response = await agents["designer"].run(
@@ -427,14 +468,47 @@ async def run_build_streaming(
             designer_step.cost_eur, designer_step.duration_s,
         )
 
-        # ── Builder ──
+        # ── Architect (NEW in v0.2) ──
+        yield format_sse(SSEEventType.AGENT_START, {
+            "agent": "architect", "model": "mistral-small",
+            "step": 3, "total_steps": total_steps,
+        })
+        t0 = time.monotonic()
+        architect_response = await agents["architect"].run(
+            format_architect_msg(planner_output, designer_step.output),
+        )
+        architect_step = AgentStepResult(
+            agent_name="architect",
+            model_used=architect_response.model_used,
+            output=architect_response.output,
+            cost_eur=architect_response.cost_eur,
+            duration_s=round(time.monotonic() - t0, 2),
+        )
+        agent_results.append(architect_step)
+        cumulative_cost += architect_step.cost_eur
+        yield format_sse(SSEEventType.AGENT_COMPLETE, {
+            "agent": "architect", "model": architect_step.model_used,
+            "cost_eur": architect_step.cost_eur,
+            "duration_s": architect_step.duration_s,
+            "cumulative_cost_eur": round(cumulative_cost, 6),
+        })
+        logger.info(
+            "Architect complete: cost=EUR%.4f duration=%.1fs",
+            architect_step.cost_eur, architect_step.duration_s,
+        )
+
+        # ── Builder (v0.2: multi-file JSON output) ──
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "builder", "model": "devstral-small",
-            "step": 3, "total_steps": 4,
+            "step": 4, "total_steps": total_steps,
         })
         t0 = time.monotonic()
         builder_response = await agents["builder"].run(
-            format_builder_msg(planner_output, designer_step.output),
+            format_builder_msg(
+                planner_output,
+                designer_step.output,
+                architect_step.output,
+            ),
         )
         builder_step = AgentStepResult(
             agent_name="builder",
@@ -455,14 +529,26 @@ async def run_build_streaming(
             "Builder complete: cost=EUR%.4f duration=%.1fs",
             builder_step.cost_eur, builder_step.duration_s,
         )
-        yield format_sse(SSEEventType.PREVIEW_READY, {
-            "html": builder_step.output, "stage": "pre_review",
-        })
+
+        # Parse multi-file JSON output
+        files = _extract_files(builder_step.output)
+        if files:
+            yield format_sse("files_ready", {
+                "files": files,
+                "file_count": len(files),
+            })
+            logger.info("files_ready: %d files", len(files))
+        else:
+            # Fallback: treat entire output as single HTML (v0.1 compat)
+            logger.warning("Builder output not valid JSON, falling back to HTML")
+            yield format_sse(SSEEventType.PREVIEW_READY, {
+                "html": builder_step.output, "stage": "pre_review",
+            })
 
         # ── Reviewer ──
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "reviewer", "model": "mistral-small",
-            "step": 4, "total_steps": 4,
+            "step": 5, "total_steps": total_steps,
         })
         t0 = time.monotonic()
         reviewer_response = await agents["reviewer"].run(
@@ -487,9 +573,20 @@ async def run_build_streaming(
             "Reviewer complete: cost=EUR%.4f duration=%.1fs",
             reviewer_step.cost_eur, reviewer_step.duration_s,
         )
-        yield format_sse(SSEEventType.PREVIEW_READY, {
-            "html": reviewer_step.output, "stage": "final",
-        })
+
+        # If reviewer fixed files, emit updated files_ready
+        reviewer_files = _extract_files(reviewer_step.output)
+        if reviewer_files:
+            yield format_sse("files_ready", {
+                "files": reviewer_files,
+                "file_count": len(reviewer_files),
+                "stage": "final",
+            })
+        elif not files:
+            # v0.1 compat: treat reviewer output as HTML
+            yield format_sse(SSEEventType.PREVIEW_READY, {
+                "html": reviewer_step.output, "stage": "final",
+            })
 
         total_duration = round(time.monotonic() - start_time, 2)
         yield format_sse(SSEEventType.GENERATION_COMPLETE, {
