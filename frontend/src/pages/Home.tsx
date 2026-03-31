@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Shield, Eye, Unlock, Check, X, AlertTriangle, Globe, Cpu, Cloud, GitBranch } from "lucide-react";
 
 import ShadcnBlocksNavbar from "@/components/ui/shadcnblocks-navbar";
 import AnimatedShaderHero from "@/components/shaders/animated-shader-hero";
@@ -10,48 +12,48 @@ import NotificationCenterFeed from "@/components/ui/live-feed";
 import AppFooter from "@/components/AppFooter";
 import { Card, CardContent } from "@/components/ui/card";
 
-/* ═══════ Animation variants ═══════ */
+/* ======= Animation variants ======= */
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
 };
 
-/* ═══════ Section 4: Pipeline logs ═══════ */
+/* ======= Section 4: Pipeline logs ======= */
 const pipelineLogs = [
   { type: "INFO" as const, message: "Planner: Analyzing website requirements..." },
-  { type: "SUCCESS" as const, message: "Planner: Plan generated — 6 sections identified" },
+  { type: "SUCCESS" as const, message: "Planner: Plan generated \u2014 6 sections identified" },
   { type: "INFO" as const, message: "Designer: Selecting color palette and typography..." },
-  { type: "SUCCESS" as const, message: "Designer: Warm amber palette — Playfair Display" },
+  { type: "SUCCESS" as const, message: "Designer: Warm amber palette \u2014 Playfair Display" },
   { type: "INFO" as const, message: "Architect: Planning React component structure..." },
-  { type: "SUCCESS" as const, message: "Architect: Blueprint ready — Hero, Menu, About, Contact" },
+  { type: "SUCCESS" as const, message: "Architect: Blueprint ready \u2014 Hero, Menu, About, Contact" },
   { type: "INFO" as const, message: "Builder: Writing Hero.tsx (47 lines)..." },
   { type: "SUCCESS" as const, message: "Builder: Hero.tsx complete" },
   { type: "INFO" as const, message: "Builder: Writing Features.tsx (89 lines)..." },
   { type: "SUCCESS" as const, message: "Builder: All 6 sections generated" },
   { type: "SUCCESS" as const, message: "Reviewer: Security scan passed. 0 vulnerabilities." },
-  { type: "SUCCESS" as const, message: "Generation complete: €0.004 · 17.3s · 23 files" },
+  { type: "SUCCESS" as const, message: "Generation complete: \u20AC0.004 \u00B7 17.3s \u00B7 23 files" },
 ];
 
-/* ═══════ Section 5: Why ArkhosAI cards ═══════ */
+/* ======= Section 5: Why ArkhosAI cards ======= */
 const whyCards = [
   {
-    emoji: "\u{1F1EA}\u{1F1FA}",
+    icon: <Shield className="w-8 h-8 text-[#00D4EE]" />,
     title: "EU Sovereign",
     desc: "Scaleway Paris. Mistral AI. Your data never leaves Europe. GDPR on all plans.",
   },
   {
-    emoji: "\u{1F4B6}",
+    icon: <Eye className="w-8 h-8 text-[#FF6B35]" />,
     title: "Transparent Pricing",
     desc: "See exactly what each agent costs. \u20AC0.004 avg per site. No hidden credits.",
   },
   {
-    emoji: "\u{1F513}",
+    icon: <Unlock className="w-8 h-8 text-[#DCE9F5]" />,
     title: "Open Source",
     desc: "MIT license. Self-host it. Fork it. Own your stack forever.",
   },
 ];
 
-/* ═══════ Section 6: Agents ═══════ */
+/* ======= Section 6: Agents ======= */
 const agents = [
   { name: "Planner", model: "ministral-3b", desc: "Understands your requirements", color: "#00D4EE", initial: "P" },
   { name: "Designer", model: "mistral-small", desc: "Chooses colors, fonts, visual style", color: "#E040FB", initial: "D" },
@@ -60,16 +62,67 @@ const agents = [
   { name: "Reviewer", model: "mistral-small", desc: "Security scan & quality check", color: "#22D68A", initial: "R" },
 ];
 
-/* ═══════ Section 7: Comparison data ═══════ */
-const comparisonRows = [
-  { feature: "Data residency", arkhos: "EU \u{1F1EA}\u{1F1FA} \u2705", lovable: "US \u26A0\uFE0F", bolt: "US \u274C", v0: "US \u274C" },
-  { feature: "Cost/generation", arkhos: "\u20AC0.004 \u2705", lovable: "~\u20AC0.50 \u26A0\uFE0F", bolt: "~\u20AC0.30 \u274C", v0: "~\u20AC0.20 \u274C" },
-  { feature: "Transparency", arkhos: "Full \u2705", lovable: "Hidden \u274C", bolt: "Hidden \u274C", v0: "Hidden \u274C" },
-  { feature: "Open source", arkhos: "MIT \u2705", lovable: "No \u274C", bolt: "No \u274C", v0: "No \u274C" },
-  { feature: "GDPR all plans", arkhos: "Yes \u2705", lovable: "No \u274C", bolt: "No \u274C", v0: "No \u274C" },
+/* ======= Comparison helper ======= */
+type CellStatus = "yes" | "no" | "warn";
+
+interface ComparisonRow {
+  feature: string;
+  arkhos: { text: string; status: CellStatus };
+  lovable: { text: string; status: CellStatus };
+  bolt: { text: string; status: CellStatus };
+  v0: { text: string; status: CellStatus };
+}
+
+function StatusIcon({ status }: { status: CellStatus }) {
+  switch (status) {
+    case "yes":
+      return <Check className="inline h-4 w-4 text-[#22D68A]" />;
+    case "no":
+      return <X className="inline h-4 w-4 text-[#FF4560]" />;
+    case "warn":
+      return <AlertTriangle className="inline h-4 w-4 text-[#FFB020]" />;
+  }
+}
+
+const comparisonRows: ComparisonRow[] = [
+  {
+    feature: "Data residency",
+    arkhos: { text: "EU", status: "yes" },
+    lovable: { text: "US", status: "warn" },
+    bolt: { text: "US", status: "no" },
+    v0: { text: "US", status: "no" },
+  },
+  {
+    feature: "Cost/generation",
+    arkhos: { text: "\u20AC0.004", status: "yes" },
+    lovable: { text: "~\u20AC0.50", status: "warn" },
+    bolt: { text: "~\u20AC0.30", status: "no" },
+    v0: { text: "~\u20AC0.20", status: "no" },
+  },
+  {
+    feature: "Transparency",
+    arkhos: { text: "Full", status: "yes" },
+    lovable: { text: "Hidden", status: "no" },
+    bolt: { text: "Hidden", status: "no" },
+    v0: { text: "Hidden", status: "no" },
+  },
+  {
+    feature: "Open source",
+    arkhos: { text: "MIT", status: "yes" },
+    lovable: { text: "No", status: "no" },
+    bolt: { text: "No", status: "no" },
+    v0: { text: "No", status: "no" },
+  },
+  {
+    feature: "GDPR all plans",
+    arkhos: { text: "Yes", status: "yes" },
+    lovable: { text: "No", status: "no" },
+    bolt: { text: "No", status: "no" },
+    v0: { text: "No", status: "no" },
+  },
 ];
 
-/* ═══════ Section 8: Pricing plans ═══════ */
+/* ======= Section 8: Pricing plans ======= */
 const pricingPlans = [
   {
     name: "Free",
@@ -113,7 +166,7 @@ const pricingPlans = [
   },
 ];
 
-/* ═══════ Section 9: FAQ data ═══════ */
+/* ======= Section 9: FAQ data ======= */
 const faqCategories = {
   general: "General",
   pricing: "Pricing",
@@ -192,7 +245,7 @@ const faqData = {
   ],
 };
 
-/* ═══════ Stats data ═══════ */
+/* ======= Stats data ======= */
 const stats = [
   { value: "\u20AC0.004", label: "avg per generation" },
   { value: "5", label: "agents work in parallel" },
@@ -200,18 +253,33 @@ const stats = [
   { value: "EU", label: "sovereign by default" },
 ];
 
-/* ═══════════════════════════════════════════════════════
+/* ======= Cookie consent storage key ======= */
+const COOKIE_KEY = "arkhos_cookie_consent";
+
+/* ===============================================
    HOME PAGE
-   ═══════════════════════════════════════════════════════ */
+   =============================================== */
 export default function Home() {
   const navigate = useNavigate();
+  const [showCookieBanner, setShowCookieBanner] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem(COOKIE_KEY)) {
+      setShowCookieBanner(true);
+    }
+  }, []);
+
+  const acceptCookies = () => {
+    localStorage.setItem(COOKIE_KEY, "accepted");
+    setShowCookieBanner(false);
+  };
 
   return (
     <div className="min-h-screen bg-[#020408]">
-      {/* ── SECTION 1: Navbar ── */}
+      {/* -- SECTION 1: Navbar -- */}
       <ShadcnBlocksNavbar />
 
-      {/* ── SECTION 2: Hero ── */}
+      {/* -- SECTION 2: Hero -- */}
       <AnimatedShaderHero
         headline={{ line1: "The EU Answer", line2: "to Lovable." }}
         subtitle="4 Mistral agents build your site live. Real React + shadcn/ui. \u20AC0.004 per generation."
@@ -221,11 +289,11 @@ export default function Home() {
         }}
         trustBadge={{
           text: "EU Sovereign \u00B7 Mistral AI \u00B7 Scaleway Paris \u00B7 MIT Open Source",
-          icons: ["\u{1F1EB}\u{1F1F7}"],
+          icons: [<Globe key="globe" className="h-4 w-4" />],
         }}
       />
 
-      {/* ── SECTION 3: Stats Strip ── */}
+      {/* -- SECTION 3: Stats Strip -- */}
       <section className="bg-[#020408] py-20 px-6">
         <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map((stat, i) => (
@@ -248,7 +316,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 4: Pipeline Visualization ── */}
+      {/* -- SECTION 3.5: Powered by EU AI & Cloud -- */}
+      <section className="bg-[#020408] py-20 px-6">
+        <div className="mx-auto max-w-4xl">
+          <motion.h2
+            className="mb-10 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            Powered by EU AI &amp; Cloud
+          </motion.h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0 }}
+              className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
+              <Cpu className="w-10 h-10 text-[#00D4EE] mb-3" />
+              <p className="text-lg font-semibold text-[#00D4EE]">Mistral AI</p>
+              <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">French AI models</p>
+            </motion.div>
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.12 }}
+              className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
+              <Cloud className="w-10 h-10 text-[#FF6B35] mb-3" />
+              <p className="text-lg font-semibold text-[#FF6B35]">Scaleway</p>
+              <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">Paris data centers</p>
+            </motion.div>
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.24 }}
+              className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
+              <GitBranch className="w-10 h-10 text-[#DCE9F5] mb-3" />
+              <p className="text-lg font-semibold text-[#DCE9F5]">Tramontane</p>
+              <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">Open source orchestration</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* -- SECTION 4: Pipeline Visualization -- */}
       <section className="py-24">
         <KineticLogStream
           logs={pipelineLogs}
@@ -256,7 +360,7 @@ export default function Home() {
         />
       </section>
 
-      {/* ── SECTION 5: Why ArkhosAI ── */}
+      {/* -- SECTION 5: Why ArkhosAI -- */}
       <section className="bg-[#020408] py-24 px-6">
         <div className="mx-auto max-w-5xl">
           <motion.h2
@@ -280,7 +384,9 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: i * 0.12 }}
                 className="rounded-2xl border border-[#00D4EE]/10 bg-[#0D1B2A] p-8"
               >
-                <span className="text-4xl">{card.emoji}</span>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#00D4EE]/10">
+                  {card.icon}
+                </div>
                 <h3 className="mt-4 text-xl font-semibold text-[#DCE9F5]">{card.title}</h3>
                 <p className="mt-2 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{card.desc}</p>
               </motion.div>
@@ -289,7 +395,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 6: Agents Section ── */}
+      {/* -- SECTION 6: Agents Section -- */}
       <section className="bg-[#020408] py-24 px-6">
         <div className="mx-auto max-w-5xl">
           <motion.h2
@@ -331,7 +437,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 7: Comparison Table ── */}
+      {/* -- SECTION 7: Comparison Table -- */}
       <section className="bg-[#020408] py-24 px-6">
         <div className="mx-auto max-w-4xl">
           <motion.h2
@@ -370,10 +476,18 @@ export default function Home() {
                     style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
                   >
                     <td className="px-5 py-3.5 font-medium text-[#DCE9F5]">{row.feature}</td>
-                    <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35]">{row.arkhos}</td>
-                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">{row.lovable}</td>
-                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">{row.bolt}</td>
-                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">{row.v0}</td>
+                    <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35]">
+                      {row.arkhos.text} <StatusIcon status={row.arkhos.status} />
+                    </td>
+                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">
+                      {row.lovable.text} <StatusIcon status={row.lovable.status} />
+                    </td>
+                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">
+                      {row.bolt.text} <StatusIcon status={row.bolt.status} />
+                    </td>
+                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">
+                      {row.v0.text} <StatusIcon status={row.v0.status} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -382,7 +496,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 8: Pricing ── */}
+      {/* -- SECTION 8: Pricing -- */}
       <section id="pricing" className="bg-[#020408] py-24 px-6">
         <PricingSection
           heading="Simple, transparent pricing"
@@ -391,7 +505,7 @@ export default function Home() {
         />
       </section>
 
-      {/* ── SECTION 9: FAQ ── */}
+      {/* -- SECTION 9: FAQ -- */}
       <section className="bg-[#020408] py-24">
         <FAQ
           title="Frequently Asked Questions"
@@ -401,15 +515,43 @@ export default function Home() {
         />
       </section>
 
-      {/* ── SECTION 10: Live Feed ── */}
+      {/* -- SECTION 10: Live Feed -- */}
       <section className="bg-[#020408] py-24 px-6">
         <div className="mx-auto flex max-w-5xl justify-center">
           <NotificationCenterFeed />
         </div>
       </section>
 
-      {/* ── SECTION 11: Footer ── */}
+      {/* -- SECTION 11: Footer -- */}
       <AppFooter />
+
+      {/* -- Cookie Consent Banner -- */}
+      <AnimatePresence>
+        {showCookieBanner && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-0 left-0 right-0 z-50 p-4"
+          >
+            <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 rounded-xl border border-[#1C2E42] bg-[#0D1B2A]/90 px-6 py-4 backdrop-blur-xl">
+              <p className="text-sm text-[#DCE9F5]/70 font-[DM_Sans]">
+                We use essential cookies only. No tracking.{" "}
+                <a href="/legal/cookies" className="text-[#DCE9F5] underline hover:text-white transition-colors">
+                  Learn more
+                </a>
+              </p>
+              <button
+                onClick={acceptCookies}
+                className="shrink-0 rounded-lg bg-[#FF6B35] px-5 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#FF6B35]/90 hover:scale-[1.02]"
+              >
+                Accept
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

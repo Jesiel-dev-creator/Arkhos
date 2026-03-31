@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
 interface HeroProps {
-  trustBadge?: { text: string; icons?: string[]; };
+  trustBadge?: { text: string; icons?: React.ReactNode[]; };
   headline: { line1: string; line2: string; };
   subtitle: string;
   buttons?: {

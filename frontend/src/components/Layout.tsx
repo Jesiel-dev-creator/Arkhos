@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { Globe } from "lucide-react";
 import Logo from "./Logo";
 
 const CookieConsent = lazy(() => import("./CookieConsent"));
@@ -115,9 +116,10 @@ export default function Layout() {
               </NavLink>
             ))}
             <div className="mx-2 h-4 w-px" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
-            <span className="rounded-full px-2.5 py-1 text-[11px] font-medium"
+            <span className="rounded-full px-2.5 py-1 flex items-center gap-1"
                   style={{ fontFamily: "var(--font-body)", color: "var(--muted)", border: "1px solid var(--border)" }}>
-              🇫🇷
+              <Globe size={12} />
+              <span className="text-[11px] font-medium">EU</span>
             </span>
           </div>
         </div>
