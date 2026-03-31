@@ -94,8 +94,10 @@ export function useWebContainer() {
     }
   }, []);
 
-  const writeFile = useCallback(async (path: string, content: string) => {
+  const writeFile = useCallback(async (path: string, content: unknown) => {
     if (!_wcInstance) return;
+    // Ensure content is always a string (SSE may deliver objects)
+    const str = typeof content === "string" ? content : JSON.stringify(content, null, 2);
     const dir = path.split("/").slice(0, -1).join("/");
     if (dir) {
       try {
@@ -104,7 +106,7 @@ export function useWebContainer() {
         /* dir exists */
       }
     }
-    await _wcInstance.fs.writeFile(path, content);
+    await _wcInstance.fs.writeFile(path, str);
   }, []);
 
   const clearBuildError = useCallback(() => setBuildError(null), []);
