@@ -5,20 +5,73 @@ from pathlib import Path
 TEMPLATES_DIR = Path(__file__).parent / "sections"
 
 SECTION_MAP: dict[str, list[str]] = {
-    "hero": ["hero-bakery", "hero-saas-dark", "hero-split", "hero-agency"],
-    "features": ["features-bento", "features-3col", "features-alternating"],
-    "testimonials": ["testimonials-cards"],
-    "social_proof": ["logo-cloud"],
-    "navbar": ["navbar-glass"],
-    "footer": ["footer-4col"],
-    "cta": ["cta-fullwidth"],
-    "pricing": ["pricing-3col"],
+    "hero": [
+        "hero-bakery", "hero-saas-dark", "hero-split", "hero-agency",
+        "hero-dark-gradient", "hero-dark-space", "hero-minimal-modern",
+        "hero-minimalist-clean", "hero-startup-landing", "hero-startup-centered",
+        "hero-video-background",
+    ],
+    "features": [
+        "features-bento", "features-3col", "features-alternating",
+        "features-icon-grid", "features-tabs-showcase", "features-comparison-table",
+        "features-timeline-steps", "features-bounce-cards", "features-grid-hover",
+        "features-zigzag-layout", "features-sidebar-list",
+    ],
+    "testimonials": [
+        "testimonials-cards", "testimonials-animated-carousel",
+        "testimonials-sliding-cards", "testimonials-bento-grid",
+        "testimonials-single-quote", "testimonials-star-ratings",
+        "testimonials-dark-photo-cards",
+    ],
+    "social_proof": [
+        "logo-cloud", "logo-cloud-marquee", "logo-cloud-grid",
+        "logo-marquee-scroller", "logo-partners-cards",
+    ],
+    "navbar": [
+        "navbar-glass", "navbar-floating-glass", "navbar-scroll-collapse",
+        "navbar-resizable-animated", "navbar-mega-menu",
+        "navbar-animated-mega-dropdown", "navbar-minimal-dark",
+    ],
+    "footer": [
+        "footer-4col", "footer-columns-links", "footer-advanced-social",
+        "footer-minimal-centered", "footer-newsletter-social", "footer-dark-modern",
+    ],
+    "cta": [
+        "cta-fullwidth", "cta-banner-stats", "cta-banner-buttons",
+        "cta-default-balanced", "cta-newsletter-blue", "cta-newsletter-card",
+        "cta-gradient-purple", "cta-gradient-radial", "cta-minimal-clean",
+        "cta-checklist", "cta-card-with-image",
+    ],
+    "pricing": [
+        "pricing-3col", "pricing-three-tiers", "pricing-animated-tiers",
+        "pricing-toggle-switch", "pricing-comparison-table",
+        "pricing-glassy-dark-light", "pricing-enterprise-suite",
+    ],
     "about": ["about-split"],
     "contact": ["contact-split"],
     "menu": ["menu-grid"],
-    "faq": ["faq-accordion"],
+    "faq": [
+        "faq-accordion", "accordion-faq-simple", "accordion-faq-categorized",
+        "accordion-animated-smooth", "accordion-collapsible-list",
+    ],
     "stats": ["stats-row"],
-    "team": ["team-grid"],
+    "team": ["team-grid", "card-team-member"],
+    "cards": [
+        "card-animated-hover", "card-floating-3d", "card-blog-post",
+        "card-feature-icon", "card-pricing-minimal", "card-product-showcase",
+    ],
+    "comparison": [
+        "comparison-table-features", "comparison-before-after",
+        "comparison-pricing-toggle",
+    ],
+    "scroll": [
+        "scroll-reveal-text", "scroll-reveal-direction", "scroll-progress-bar",
+        "scroll-horizontal-gallery", "scroll-infinite-marquee",
+    ],
+    "background": [
+        "background-pattern", "background-gradient-animated",
+        "background-particles-canvas",
+    ],
 }
 
 
@@ -66,6 +119,14 @@ def get_templates_for_section(section_name: str) -> list[str]:
         return [get_template(n) for n in SECTION_MAP["footer"]]
     if any(w in section_lower for w in ["logo", "partner", "trust", "client"]):
         return [get_template(n) for n in SECTION_MAP["social_proof"]]
+    if any(w in section_lower for w in ["card", "grid", "showcase"]):
+        return [get_template(n) for n in SECTION_MAP["cards"]]
+    if any(w in section_lower for w in ["compare", "comparison", "versus", "vs"]):
+        return [get_template(n) for n in SECTION_MAP["comparison"]]
+    if any(w in section_lower for w in ["scroll", "marquee", "reveal"]):
+        return [get_template(n) for n in SECTION_MAP["scroll"]]
+    if any(w in section_lower for w in ["background", "bg", "pattern", "particle"]):
+        return [get_template(n) for n in SECTION_MAP["background"]]
 
     return []
 
