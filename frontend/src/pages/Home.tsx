@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Eye, Unlock, Check, X, AlertTriangle, Globe, Cpu, Cloud, GitBranch } from "lucide-react";
+import { Shield, Eye, Unlock, Check, X, AlertTriangle, Globe } from "lucide-react";
 
 import ShadcnBlocksNavbar from "@/components/ui/shadcnblocks-navbar";
 import AnimatedShaderHero from "@/components/shaders/animated-shader-hero";
@@ -282,7 +282,7 @@ export default function Home() {
       {/* -- SECTION 2: Hero -- */}
       <AnimatedShaderHero
         headline={{ line1: "The EU Answer", line2: "to Lovable." }}
-        subtitle="4 Mistral agents build your site live. Real React + shadcn/ui. \u20AC0.004 per generation."
+        subtitle={"4 Mistral agents build your site live. Real React + shadcn/ui. \u20AC0.004 per generation."}
         buttons={{
           primary: { text: "Start building free \u2192", onClick: () => navigate("/generate") },
           secondary: { text: "See how it works" },
@@ -327,26 +327,26 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            Powered by EU AI &amp; Cloud
+            Powered by EU AI {"&"} Cloud
           </motion.h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0 }}
               className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
-              <Cpu className="w-10 h-10 text-[#00D4EE] mb-3" />
-              <p className="text-lg font-semibold text-[#00D4EE]">Mistral AI</p>
-              <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">French AI models</p>
+              <img src="/mistral-logo-color-white.png" alt="Mistral AI" className="h-10 w-auto mb-4 brightness-90" />
+              <p className="text-lg font-semibold text-[#DCE9F5]">Mistral AI</p>
+              <p className="mt-2 text-sm text-[#7B8FA3]">French AI models. EU data sovereignty.</p>
             </motion.div>
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.12 }}
               className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
-              <Cloud className="w-10 h-10 text-[#FF6B35] mb-3" />
-              <p className="text-lg font-semibold text-[#FF6B35]">Scaleway</p>
-              <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">Paris data centers</p>
+              <img src="/Scaleway-Logo-Purple.png" alt="Scaleway" className="h-10 w-auto mb-4" />
+              <p className="text-lg font-semibold text-[#DCE9F5]">Scaleway</p>
+              <p className="mt-2 text-sm text-[#7B8FA3]">Paris data centers. GDPR by default.</p>
             </motion.div>
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.24 }}
               className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
-              <GitBranch className="w-10 h-10 text-[#DCE9F5] mb-3" />
+              <img src="/Tramontane.png" alt="Tramontane" className="h-10 w-auto mb-4 brightness-90" />
               <p className="text-lg font-semibold text-[#DCE9F5]">Tramontane</p>
-              <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">Open source orchestration</p>
+              <p className="mt-2 text-sm text-[#7B8FA3]">Open source agent orchestration.</p>
             </motion.div>
           </div>
         </div>
