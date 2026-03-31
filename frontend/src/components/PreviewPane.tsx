@@ -158,7 +158,6 @@ export default function PreviewPane({
         )}
 
         {/* WC boots silently — ember canvas handles all loading states */}
-        )}
 
         {/* ── WebContainer preview (v0.2 — only after generation starts) ── */}
         {wcReady && hasGenerated && (
