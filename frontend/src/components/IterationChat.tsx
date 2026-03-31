@@ -143,6 +143,27 @@ export default function IterationChat({
         </AnimatePresence>
       </div>
 
+      {/* ── Quick action chips ── */}
+      {!isRunning && messages.length === 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-3 flex-shrink-0">
+          {QUICK_ACTIONS.map((action) => (
+            <button
+              key={action.label}
+              onClick={() => setInput(action.prefill)}
+              className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] rounded-lg transition-all duration-200 hover:bg-white/[0.06]"
+              style={{
+                border: "1px solid var(--border)",
+                color: "var(--muted)",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              <span>{action.emoji}</span>
+              <span>{action.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* ── Premium Chat Input — from Magic MCP ── */}
       <div className="flex-shrink-0">
         <div className="relative">
@@ -221,9 +242,17 @@ export default function IterationChat({
           className="text-[10px] mt-2 text-right pr-1"
           style={{ color: "var(--muted)", fontFamily: "var(--font-code)" }}
         >
-          ~€0.001 per iteration
+          +€0.001 per change
         </p>
       </div>
     </div>
   );
 }
+
+const QUICK_ACTIONS = [
+  { emoji: "🎨", label: "Change colors", prefill: "Change the color scheme to " },
+  { emoji: "✏️", label: "Edit text", prefill: "Update the hero headline to " },
+  { emoji: "📱", label: "Check mobile", prefill: "Optimize for mobile, fix any layout issues" },
+  { emoji: "🌑", label: "Dark mode", prefill: "Convert to a dark color scheme" },
+  { emoji: "⚡", label: "Add section", prefill: "Add a testimonials section with " },
+];
