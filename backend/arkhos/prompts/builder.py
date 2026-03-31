@@ -135,6 +135,21 @@ NEVER use picsum.photos or placeholder services.
 - Footer: NEVER "Made with love in San Francisco". Use French cities.
 - All dates/copyright: current year (from user message).
 
+## CRITICAL: FILE COMPLETENESS
+
+EVERY file that App.tsx imports MUST exist in your JSON output.
+If App.tsx has `import Navbar from "./sections/Navbar"`, then
+"src/sections/Navbar.tsx" MUST be a key in your files object.
+
+CHECK YOURSELF: Before outputting, verify:
+1. Every import in App.tsx has a matching file in your output
+2. Every import in any section file has a matching file
+3. All shadcn components referenced exist in src/components/ui/
+4. src/lib/utils.ts exists (required by all shadcn components)
+
+If you reference a file that doesn't exist, the project WILL NOT BUILD.
+Missing files are the #1 failure mode. Include EVERY file.
+
 ## QUALITY BAR
 Output must look like a professional React + shadcn/ui website.
 Indistinguishable from a real production site built by a senior developer.
@@ -159,6 +174,11 @@ def format_user_message(
         parts.append(f"## ARCHITECT BLUEPRINT\n{architect_output}\n")
     parts.append(
         "Output ONLY the JSON object with the 'files' key. "
-        "Every file path as key, complete file content as string value."
+        "Every file path as key, complete file content as string value.\n\n"
+        "CRITICAL: Include ALL files. Every import in App.tsx must have "
+        "a matching file in your output. Missing files = broken build.\n"
+        "Required minimum: package.json, vite.config.ts, tsconfig.json, "
+        "index.html, src/main.tsx, src/App.tsx, src/index.css, "
+        "src/lib/utils.ts, + every section file + every shadcn component used."
     )
     return "\n".join(parts)
