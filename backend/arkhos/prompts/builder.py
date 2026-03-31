@@ -378,6 +378,7 @@ def format_user_message(
     planner_output: str,
     designer_output: str,
     architect_output: str = "",
+    template_refs: str = "",
 ) -> str:
     """Format all agent outputs for the Builder."""
     now = datetime.now()
@@ -391,6 +392,8 @@ def format_user_message(
     ]
     if architect_output:
         parts.append(f"## ARCHITECT BLUEPRINT\n{architect_output}\n")
+    if template_refs:
+        parts.append(template_refs)
     parts.append(
         "Output each file using <file path=\"...\">content</file> tags.\n"
         "Start with <file path=\"package.json\">.\n"

@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 from tramontane import Agent
 
 from arkhos.data.design_intelligence import get_design_for_industry
+from arkhos.templates import get_builder_context
 from arkhos.prompts.architect import SYSTEM_PROMPT as ARCHITECT_PROMPT
 from arkhos.prompts.architect import format_user_message as format_architect_msg
 from arkhos.prompts.builder import SYSTEM_PROMPT as BUILDER_PROMPT
@@ -660,6 +661,20 @@ async def run_build_streaming(
             architect_step.cost_eur, architect_step.duration_s,
         )
 
+        # ── Inject template references for Builder ──
+        template_refs = ""
+        try:
+            arch_data = json.loads(architect_step.output)
+            section_names = [s["name"] for s in arch_data.get("sections", [])]
+            template_refs = get_builder_context(section_names, max_templates=3)
+            if template_refs:
+                logger.info(
+                    "Injected %d template references for Builder",
+                    template_refs.count("# Premium reference"),
+                )
+        except (json.JSONDecodeError, KeyError, TypeError):
+            pass
+
         # ── Builder (v0.2: multi-file JSON output) ──
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "builder", "model": "devstral-small",
@@ -671,6 +686,7 @@ async def run_build_streaming(
                 planner_output,
                 designer_step.output,
                 architect_step.output,
+                template_refs,
             ),
         )
         builder_step = AgentStepResult(
