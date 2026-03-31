@@ -21,30 +21,46 @@ export type WebContainerStatus =
 /* Module-level singleton — survives React StrictMode double-mount */
 let _booted = false;
 let _wcInstance: WebContainer | null = null;
-let _bootPromise: Promise<void> | null = null;
+let _status: WebContainerStatus = "idle";
+let _previewUrl: string | null = null;
 
 export function useWebContainer() {
-  const [status, setStatus] = useState<WebContainerStatus>("idle");
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [status, setStatus] = useState<WebContainerStatus>(_status);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(_previewUrl);
   const [error, setError] = useState<string | null>(null);
   const [buildError, setBuildError] = useState<string | null>(null);
 
+  /* Sync module state → React state on re-mount */
+  const syncStatus = useCallback((s: WebContainerStatus) => {
+    _status = s;
+    setStatus(s);
+  }, []);
+  const syncUrl = useCallback((u: string | null) => {
+    _previewUrl = u;
+    setPreviewUrl(u);
+  }, []);
+
   const bootEagerly = useCallback(async () => {
-    if (_booted) return;
+    /* If already booted (StrictMode re-mount), just sync state */
+    if (_booted) {
+      setStatus(_status);
+      setPreviewUrl(_previewUrl);
+      return;
+    }
     _booted = true;
-    setStatus("booting");
+    syncStatus("booting");
     setError(null);
 
     try {
       _wcInstance = await WebContainer.boot();
       await _wcInstance.mount(SKELETON_PROJECT);
 
-      setStatus("installing");
+      syncStatus("installing");
       const install = await _wcInstance.spawn("npm", ["install"]);
       const installCode = await install.exit;
       if (installCode !== 0) throw new Error("npm install failed");
 
-      setStatus("starting");
+      syncStatus("starting");
       const dev = await _wcInstance.spawn("npm", ["run", "dev"]);
 
       // Watch Vite output for build errors
@@ -67,14 +83,14 @@ export function useWebContainer() {
       );
 
       _wcInstance.on("server-ready", (_: number, url: string) => {
-        setPreviewUrl(url);
-        setStatus("ready");
+        syncUrl(url);
+        syncStatus("ready");
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "WebContainer error";
       console.error("WC boot:", msg);
       setError(msg);
-      setStatus("error");
+      syncStatus("error");
     }
   }, []);
 

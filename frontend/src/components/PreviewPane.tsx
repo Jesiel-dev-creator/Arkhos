@@ -202,6 +202,20 @@ export default function PreviewPane({
           </div>
         )}
 
+        {/* ── WC error fallback — show message when nothing else renders ── */}
+        {!wcReady && !wcBooting && !previewHtml && wcStatus === "error" && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center px-8">
+              <p className="text-sm mb-2" style={{ color: "var(--frost)" }}>
+                Preview sandbox failed to start
+              </p>
+              <p className="text-xs" style={{ color: "var(--muted)" }}>
+                Try refreshing the page. Your generation data is saved.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Build error banner (non-blocking) */}
         {wcBuildError && (
           <div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-between px-3 py-2"
