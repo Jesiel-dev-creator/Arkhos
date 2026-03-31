@@ -85,14 +85,22 @@ export default function PreviewPane({
   }, [status]);
 
   const handleDownload = () => {
-    if (!finalHtml) return;
-    const blob = new Blob([finalHtml], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "arkhos-site.html";
-    a.click();
-    URL.revokeObjectURL(url);
+    if (generationId) {
+      // v0.2: download React project as zip from backend
+      const a = document.createElement("a");
+      a.href = `/api/download/${generationId}`;
+      a.download = `arkhos-${generationId.slice(0, 8)}.zip`;
+      a.click();
+    } else if (finalHtml) {
+      // v0.1 fallback: download single HTML
+      const blob = new Blob([finalHtml], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "arkhos-site.html";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   const handleCopy = async () => {
@@ -227,7 +235,7 @@ export default function PreviewPane({
 
       {/* ── Action Buttons ── */}
       <AnimatePresence>
-        {isComplete && finalHtml && (
+        {isComplete && (finalHtml || generationId) && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -241,7 +249,7 @@ export default function PreviewPane({
               style={{ boxShadow: "0 0 20px rgba(255, 107, 53, 0.25)" }}
             >
               <Download size={14} />
-              Download HTML
+              Download
             </button>
             <button
               onClick={onToggleCode}

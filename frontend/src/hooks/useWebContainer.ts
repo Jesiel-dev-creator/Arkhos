@@ -149,6 +149,8 @@ const PKG = JSON.stringify(
       "@radix-ui/react-dropdown-menu": "2.1.1",
       "@radix-ui/react-tooltip": "1.1.2",
       "@radix-ui/react-switch": "1.1.0",
+      "@radix-ui/react-toggle": "1.1.0",
+      "@radix-ui/react-toggle-group": "1.1.0",
       /* Forms + validation */
       "react-hook-form": "7.52.1",
       "@hookform/resolvers": "3.9.0",
@@ -175,7 +177,7 @@ const VITE_CFG = `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
-  server: { host: true },
+  server: { host: true, hmr: { overlay: false } },
   resolve: { alias: { '@': '/src' } },
 })`;
 
@@ -405,6 +407,13 @@ const DialogHeader=({className,...props}:React.HTMLAttributes<HTMLDivElement>)=>
 const DialogTitle=React.forwardRef<React.ElementRef<typeof DialogPrimitive.Title>,React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>>(({className,...props},ref)=><DialogPrimitive.Title ref={ref} className={cn("text-lg font-semibold leading-none tracking-tight",className)} {...props}/>);DialogTitle.displayName=DialogPrimitive.Title.displayName
 export{Dialog,DialogPortal,DialogOverlay,DialogTrigger,DialogClose,DialogContent,DialogHeader,DialogTitle}`;
 
+const UI_TOGGLE_GROUP = `import * as React from "react"
+import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
+import { cn } from "@/lib/utils"
+const ToggleGroup=React.forwardRef<React.ElementRef<typeof ToggleGroupPrimitive.Root>,React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root>>(({className,...props},ref)=><ToggleGroupPrimitive.Root ref={ref} className={cn("inline-flex items-center justify-center gap-1 rounded-lg bg-muted p-1",className)} {...props}/>);ToggleGroup.displayName=ToggleGroupPrimitive.Root.displayName
+const ToggleGroupItem=React.forwardRef<React.ElementRef<typeof ToggleGroupPrimitive.Item>,React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>>(({className,...props},ref)=><ToggleGroupPrimitive.Item ref={ref} className={cn("inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow",className)} {...props}/>);ToggleGroupItem.displayName=ToggleGroupPrimitive.Item.displayName
+export{ToggleGroup,ToggleGroupItem}`;
+
 /* ═══ Skeleton project tree ═══ */
 
 const SKELETON_PROJECT: Record<string, unknown> = {
@@ -440,6 +449,7 @@ const SKELETON_PROJECT: Record<string, unknown> = {
               "carousel.tsx": { file: { contents: UI_CAROUSEL } },
               "form.tsx": { file: { contents: UI_FORM } },
               "dialog.tsx": { file: { contents: UI_DIALOG } },
+              "toggle-group.tsx": { file: { contents: UI_TOGGLE_GROUP } },
             },
           },
         },

@@ -211,9 +211,10 @@ Use the _hsl values from the Designer output directly.
 
 ## SECTION RULES
 
-Import from these 16 pre-installed @/components/ui/* files:
+Import from these 17 pre-installed @/components/ui/* files:
   button, card, badge, input, textarea, sheet, separator, avatar,
-  accordion, tabs, select, tooltip, dropdown-menu, carousel, form, dialog
+  accordion, tabs, select, tooltip, dropdown-menu, carousel, form,
+  dialog, toggle-group
 
 Example imports:
   import { Button } from "@/components/ui/button"
@@ -240,7 +241,9 @@ Example imports:
   import { Form, FormField, FormItem, FormLabel,
     FormControl, FormMessage } from "@/components/ui/form"
 
-These 16 files are ALL that exist. NEVER import any other ui/ file
+  import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+
+These 17 files are ALL that exist. NEVER import any other ui/ file
 (no table, no navigation-menu, no switch, no popover, no command).
 
 Import cn: import { cn } from "@/lib/utils"
