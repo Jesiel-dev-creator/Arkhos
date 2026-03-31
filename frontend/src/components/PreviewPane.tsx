@@ -51,6 +51,8 @@ export default function PreviewPane({
   const wcReady = wcStatus === "ready" && !!wcPreviewUrl;
   const wcBooting = !!wcStatus && wcStatus !== "idle" && wcStatus !== "ready" && wcStatus !== "error";
   const isGenerating = status === "running" || status === "starting";
+  // Only show WC iframe after generation has started or completed (not before)
+  const hasGenerated = status === "complete" || status === "running" || !!previewHtml;
 
   /* GSAP reveal when preview first appears */
   useEffect(() => {
@@ -117,8 +119,8 @@ export default function PreviewPane({
           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
         }}
       >
-        {/* ── Idle State ── */}
-        {status === "idle" && !previewHtml && (
+        {/* ── Idle State (dot grid) — show before any generation ── */}
+        {status === "idle" && !hasGenerated && (
           <div className="absolute inset-0 flex items-center justify-center">
             {/* Dot grid background */}
             <div
@@ -172,8 +174,8 @@ export default function PreviewPane({
           </div>
         )}
 
-        {/* ── WebContainer preview (v0.2 mode) ── */}
-        {wcReady && (
+        {/* ── WebContainer preview (v0.2 — only after generation starts) ── */}
+        {wcReady && hasGenerated && (
           <div className="h-full flex flex-col">
             <BrowserChrome url={wcPreviewUrl ?? undefined} generationId={generationId} isGenerating={isGenerating} />
             <iframe
