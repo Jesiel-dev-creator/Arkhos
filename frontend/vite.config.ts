@@ -14,7 +14,7 @@ export default defineConfig({
     port: 5173,
     headers: {
       /* Required for WebContainers (SharedArrayBuffer) */
-      "Cross-Origin-Embedder-Policy": "credentialless",
+      "Cross-Origin-Embedder-Policy": "require-corp",
       "Cross-Origin-Opener-Policy": "same-origin",
     },
     proxy: {

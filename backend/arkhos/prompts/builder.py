@@ -300,6 +300,10 @@ People/team (w=800&q=80):
 - Team: photo-1522071820081-009f0129c71c
 
 Format: https://images.unsplash.com/{ID}?auto=format&fit=crop&w={W}&q=80
+CRITICAL: ALL <img> tags MUST have crossOrigin="anonymous" attribute.
+  <img src="https://images.unsplash.com/..." crossOrigin="anonymous"
+    alt="..." className="..." />
+Without crossOrigin="anonymous", images are blocked by COEP in preview.
 NEVER invent random Unsplash IDs — use ONLY the list above.
 If no match: use CSS gradient placeholder with emoji.
 
