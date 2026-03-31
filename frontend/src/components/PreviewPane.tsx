@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Download, Code, Copy, X, Check, Zap, Globe } from "lucide-react";
 import gsap from "gsap";
 import type { GenerationStatus } from "@/hooks/useSSE";
+import { FallingPattern } from "@/components/shaders/falling-pattern";
 /* WebContainer state received via props from Generate.tsx */
 
 /** Inject <base target="_self"> so all links stay inside the iframe */
@@ -137,7 +138,12 @@ export default function PreviewPane({
         {/* ── Idle + Loading State — Interactive ember canvas ── */}
         {((status === "idle" && !hasGenerated) || (isLoading && !previewHtml)) && (
           <div className="absolute inset-0">
-            <EmberCanvas />
+            <FallingPattern
+              color="#00D4EE"
+              backgroundColor="#020408"
+              density={2}
+              duration={150}
+            />
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
               <div className="relative mb-5">
                 <div className="absolute inset-0 bg-[var(--ember)]/20 blur-2xl rounded-full" />
@@ -295,83 +301,3 @@ function BrowserChrome({ url, generationId, isGenerating }: {
   );
 }
 
-/* ── Interactive Ember Canvas (same as Landing hero) ── */
-function EmberCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const parent = canvas.parentElement;
-    if (!parent) return;
-
-    canvas.width = parent.clientWidth;
-    canvas.height = parent.clientHeight;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const spacing = 28;
-    const cols = Math.ceil(canvas.width / spacing);
-    const rows = Math.ceil(canvas.height / spacing);
-    const dots: { x: number; y: number; op: number; spd: number }[] = [];
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
-        dots.push({
-          x: i * spacing + spacing / 2,
-          y: j * spacing + spacing / 2,
-          op: Math.random() * 0.12 + 0.08,
-          spd: (Math.random() * 0.003 + 0.001) * (Math.random() > 0.5 ? 1 : -1),
-        });
-      }
-    }
-
-    let mx: number | null = null;
-    let my: number | null = null;
-    const onMove = (e: MouseEvent) => {
-      const r = canvas.getBoundingClientRect();
-      mx = e.clientX - r.left;
-      my = e.clientY - r.top;
-    };
-    const onLeave = () => { mx = null; my = null; };
-    canvas.addEventListener("mousemove", onMove);
-    canvas.addEventListener("mouseleave", onLeave);
-
-    let frame: number;
-    const tick = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (const d of dots) {
-        d.op += d.spd;
-        if (d.op > 0.22 || d.op < 0.06) d.spd = -d.spd;
-
-        let boost = 0;
-        if (mx !== null && my !== null) {
-          const dx = d.x - mx, dy = d.y - my;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) { boost = (1 - dist / 150) ** 2 * 0.6; }
-        }
-
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255,107,53,${Math.min(1, d.op + boost).toFixed(3)})`;
-        ctx.arc(d.x, d.y, 1.5 + boost * 2.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      canvas.removeEventListener("mousemove", onMove);
-      canvas.removeEventListener("mouseleave", onLeave);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 z-0 pointer-events-auto"
-      style={{ background: "var(--void)" }}
-    />
-  );
-}

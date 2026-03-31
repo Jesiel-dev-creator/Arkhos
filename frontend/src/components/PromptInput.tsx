@@ -10,11 +10,27 @@ interface PromptInputProps {
   status: GenerationStatus;
 }
 
+const PLACEHOLDERS = [
+  "A landing page for a French bakery in Paris...",
+  "A dark SaaS product for project management...",
+  "A portfolio for a creative photographer...",
+  "An Italian restaurant with online reservations...",
+  "A fitness studio with class schedule and pricing...",
+];
+
 export default function PromptInput({ onSubmit, status }: PromptInputProps) {
   const [value, setValue] = useState("");
   const [locale, setLocale] = useState("en");
   const [activeCategory, setActiveCategory] = useState<Category>("all");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex((i) => (i + 1) % PLACEHOLDERS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const isRunning = status === "running" || status === "starting";
   const charCount = value.length;
@@ -95,7 +111,7 @@ export default function PromptInput({ onSubmit, status }: PromptInputProps) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Describe the website you want to build..."
+            placeholder={PLACEHOLDERS[placeholderIndex]}
             disabled={isRunning}
             maxLength={1000}
             className="relative w-full px-5 py-5 bg-transparent resize-none text-[var(--frost)] text-[15px] leading-relaxed placeholder:text-[var(--muted)]/50 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"

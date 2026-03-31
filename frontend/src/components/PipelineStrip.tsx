@@ -23,6 +23,14 @@ const LABELS: Record<string, string> = {
   reviewer: "Review",
 };
 
+const AGENT_SUBTITLES: Record<string, string> = {
+  planner: "Understanding your website requirements...",
+  designer: "Choosing colors, fonts, and visual style...",
+  architect: "Planning React component structure...",
+  builder: "Writing your website code...",
+  reviewer: "Checking quality and security...",
+};
+
 export default function PipelineStrip({
   agents,
   status,
@@ -84,6 +92,16 @@ export default function PipelineStrip({
             >
               {LABELS[agent.name] || agent.name}
             </span>
+
+            {/* Subtitle for active agent */}
+            {agent.status === "running" && AGENT_SUBTITLES[agent.name] && (
+              <span
+                className="text-[9px] whitespace-nowrap hidden lg:inline"
+                style={{ color: "var(--muted)", fontFamily: "var(--font-body)" }}
+              >
+                {AGENT_SUBTITLES[agent.name]}
+              </span>
+            )}
           </div>
 
           {/* Connector line between pills */}

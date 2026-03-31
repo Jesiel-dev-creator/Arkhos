@@ -10,6 +10,7 @@ import CodeView from "@/components/CodeView";
 import IterationChat from "@/components/IterationChat";
 import PlanReview from "@/components/PlanReview";
 import ErrorBanner from "@/components/ErrorBanner";
+import { Banner } from "@/components/ui/banner";
 
 export default function Generate() {
   const wc = useWebContainer();
@@ -31,6 +32,11 @@ export default function Generate() {
   const [showCode, setShowCode] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatMode, setChatMode] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+
+  useEffect(() => {
+    if (state.status === "complete") setShowSuccessBanner(true);
+  }, [state.status]);
 
   const handleGenerate = useCallback(
     (prompt: string, locale: string) => {
@@ -179,7 +185,18 @@ export default function Generate() {
   };
 
   return (
-    <div className="relative flex h-[calc(100vh-5rem)] overflow-hidden">
+    <div className="relative flex flex-col h-[calc(100vh-5rem)] overflow-hidden">
+      <Banner
+        variant="success"
+        title="Your site is ready"
+        description={`5 agents · ${state.totalCostEur ? `€${state.totalCostEur.toFixed(4)}` : ''}`}
+        show={showSuccessBanner}
+        onHide={() => setShowSuccessBanner(false)}
+        closable
+        autoHide={8000}
+      />
+
+      <div className="relative flex flex-1 min-h-0 overflow-hidden">
       {/* Subtle top gradient */}
       <div
         className="absolute top-0 left-0 right-0 h-[200px] pointer-events-none z-0"
@@ -258,6 +275,7 @@ export default function Generate() {
             </AnimatePresence>
           </>
         )}
+      </div>
       </div>
     </div>
   );
