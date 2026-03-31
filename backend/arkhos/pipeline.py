@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
@@ -111,32 +112,127 @@ def _create_agents() -> dict[str, Agent]:
     }
 
 
+def _parse_file_tags(text: str) -> dict[str, str]:
+    """Parse <file path="...">content</file> blocks from Builder output.
+
+    Returns all files with complete closing tags. Partial files are discarded.
+    """
+    files: dict[str, str] = {}
+    pattern = re.compile(
+        r'<file\s+path=["\']([^"\']+)["\']\s*>(.*?)</file>',
+        re.DOTALL,
+    )
+    for match in pattern.finditer(text):
+        path = match.group(1).strip()
+        content = match.group(2)
+        if content.startswith("\n"):
+            content = content[1:]
+        if content.endswith("\n"):
+            content = content[:-1]
+        files[path] = content
+    return files
+
+
+def _build_app_tsx(files: dict[str, str]) -> str:
+    """Generate App.tsx from the section files that were actually produced."""
+    section_names: list[str] = []
+    for path in sorted(files):
+        if path.startswith("src/sections/") and path.endswith(".tsx"):
+            name = path.replace("src/sections/", "").replace(".tsx", "")
+            section_names.append(name)
+
+    ordered: list[str] = []
+    if "Navbar" in section_names:
+        ordered.append("Navbar")
+        section_names.remove("Navbar")
+    footer = None
+    if "Footer" in section_names:
+        footer = "Footer"
+        section_names.remove("Footer")
+    ordered.extend(section_names)
+    if footer:
+        ordered.append(footer)
+
+    imports = "\n".join(
+        f'import {n} from "./sections/{n}";' for n in ordered
+    )
+    renders = "\n      ".join(f"<{n} />" for n in ordered)
+
+    return (
+        'import React from "react";\n'
+        f"{imports}\n\n"
+        "export default function App() {\n"
+        "  return (\n"
+        '    <div className="min-h-screen">\n'
+        f"      {renders}\n"
+        "    </div>\n"
+        "  );\n"
+        "}\n"
+    )
+
+
 def _extract_files(builder_output: str) -> dict[str, str]:
-    """Extract the files dict from Builder output, with JSON repair fallback."""
-    try:
-        parsed = json.loads(builder_output)
-        if isinstance(parsed, dict) and "files" in parsed:
-            return dict(parsed["files"])
-        if isinstance(parsed, dict):
-            return dict(parsed)
-    except json.JSONDecodeError:
-        pass
+    """Extract files from Builder output (file-tag or JSON format).
 
-    # Try json-repair
-    try:
-        from json_repair import repair_json
+    1. Try file-tag format: <file path="...">content</file>
+    2. Fallback: try JSON format: {"files": {...}}
+    3. If successful, generate App.tsx from the section files found.
+    """
+    raw = builder_output.strip()
 
-        repaired = repair_json(builder_output)
-        parsed = json.loads(repaired)
-        if isinstance(parsed, dict) and "files" in parsed:
-            return dict(parsed["files"])
-        if isinstance(parsed, dict):
-            return dict(parsed)
-    except Exception:
-        pass
+    # Method 1: file-tag format (preferred, streaming-friendly)
+    files = _parse_file_tags(raw)
+    if files:
+        logger.info("Parsed %d files from file-tag format", len(files))
 
-    logger.error("Failed to parse Builder output as JSON")
-    return {}
+    # Method 2: JSON fallback
+    if len(files) < 3:
+        try:
+            cleaned = raw
+            if cleaned.startswith("```"):
+                cleaned = cleaned.split("```", 2)[1]
+                if cleaned.startswith("json"):
+                    cleaned = cleaned[4:]
+            parsed = json.loads(cleaned)
+            if isinstance(parsed, dict) and "files" in parsed:
+                files = dict(parsed["files"])
+            elif isinstance(parsed, dict):
+                files = dict(parsed)
+            if files:
+                logger.info("Parsed %d files from JSON format", len(files))
+        except (json.JSONDecodeError, IndexError):
+            pass
+
+        # Method 2b: json-repair
+        if len(files) < 3:
+            try:
+                from json_repair import repair_json
+
+                repaired = repair_json(raw)
+                parsed = json.loads(repaired)
+                if isinstance(parsed, dict) and "files" in parsed:
+                    files = dict(parsed["files"])
+                elif isinstance(parsed, dict):
+                    files = dict(parsed)
+                if files:
+                    logger.info(
+                        "Parsed %d files from json-repair", len(files)
+                    )
+            except Exception:
+                pass
+
+    if not files:
+        logger.error("Failed to parse any files from Builder output")
+        return {}
+
+    # Generate App.tsx from the sections that were actually produced
+    if "src/App.tsx" not in files:
+        files["src/App.tsx"] = _build_app_tsx(files)
+        logger.info("Generated App.tsx from %d sections", len([
+            p for p in files if p.startswith("src/sections/")
+        ]))
+
+    return files
 
 
 async def run_pipeline_streaming(
