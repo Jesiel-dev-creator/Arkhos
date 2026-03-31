@@ -3,10 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Download, Code, Copy, X, Check, Zap, Globe } from "lucide-react";
 import gsap from "gsap";
 import type { GenerationStatus } from "@/hooks/useSSE";
-import {
-  useWebContainer,
-  type WebContainerStatus,
-} from "@/hooks/useWebContainer";
+/* WebContainer state received via props from Generate.tsx */
 
 /** Inject <base target="_self"> so all links stay inside the iframe */
 function sandboxHtml(html: string): string {
@@ -27,6 +24,8 @@ interface PreviewPaneProps {
   finalHtml: string | null;
   projectFiles: Record<string, string> | null;
   generationId?: string | null;
+  wcStatus?: string;
+  wcPreviewUrl?: string | null;
   onToggleCode: () => void;
   showCode: boolean;
 }
@@ -35,8 +34,9 @@ export default function PreviewPane({
   status,
   previewHtml,
   finalHtml,
-  projectFiles,
   generationId,
+  wcStatus,
+  wcPreviewUrl,
   onToggleCode,
   showCode,
 }: PreviewPaneProps) {
@@ -45,46 +45,10 @@ export default function PreviewPane({
   const [copied, setCopied] = useState(false);
   const revealDone = useRef(false);
 
-  /* WebContainers for multi-file React projects (optional — graceful fallback) */
-  const wc = useWebContainer();
-  const wcMounted = useRef(false);
-  const wcFailed = useRef(false);
-
-  useEffect(() => {
-    if (
-      projectFiles &&
-      Object.keys(projectFiles).length > 3 &&
-      !wcMounted.current &&
-      !wcFailed.current
-    ) {
-      wcMounted.current = true;
-      wc.mountProject(projectFiles).catch(() => {
-        wcFailed.current = true;
-      });
-    }
-  }, [projectFiles, wc]);
-
-  useEffect(() => {
-    if (status === "idle" || status === "starting") {
-      wcMounted.current = false;
-      wcFailed.current = false;
-    }
-  }, [status]);
-
-  /* If WebContainer errored, treat as HTML mode */
-  useEffect(() => {
-    if (wc.status === "error") {
-      wcFailed.current = true;
-    }
-  }, [wc.status]);
-
-  const wcActive = wc.status === "ready" && wc.previewUrl && !wcFailed.current;
-  const wcLoading =
-    !wcFailed.current &&
-    wcMounted.current &&
-    wc.status !== "idle" &&
-    wc.status !== "ready" &&
-    wc.status !== "error";
+  /* WC state from parent (Generate.tsx owns the WebContainer) */
+  const wcReady = wcStatus === "ready" && !!wcPreviewUrl;
+  const wcBooting = !!wcStatus && wcStatus !== "idle" && wcStatus !== "ready" && wcStatus !== "error";
+  const isGenerating = status === "running" || status === "starting";
 
   /* GSAP reveal when preview first appears */
   useEffect(() => {
@@ -186,40 +150,40 @@ export default function PreviewPane({
         {isLoading && !previewHtml && <PreviewSkeleton />}
 
         {/* ── WebContainer status overlay ── */}
-        {wcLoading && (
+        {wcBooting && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center"
                style={{ background: "rgba(2,4,8,0.9)" }}>
             <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mb-3"
                  style={{ borderColor: "var(--cyan)", borderTopColor: "transparent" }} />
             <p className="text-sm font-medium" style={{ color: "var(--frost)", fontFamily: "var(--font-body)" }}>
-              {wc.status === "booting" && "Starting sandbox..."}
-              {wc.status === "installing" && "Installing packages..."}
-              {wc.status === "starting" && "Starting dev server..."}
-              {wc.status === "error" && "Sandbox error"}
+              {wcStatus === "booting" && "Starting sandbox..."}
+              {wcStatus === "installing" && "Installing packages..."}
+              {wcStatus === "starting" && "Starting dev server..."}
+              {wcStatus === "error" && "Sandbox error"}
             </p>
             <p className="text-[11px] mt-1" style={{ color: "var(--muted)" }}>
-              {wc.status === "booting" && "WebContainer initializing"}
-              {wc.status === "installing" && "npm install running"}
-              {wc.status === "starting" && "Vite HMR ready soon"}
-              {wc.status === "error" && (wc.error || "Falling back to static preview")}
+              {wcStatus === "booting" && "WebContainer initializing"}
+              {wcStatus === "installing" && "npm install running"}
+              {wcStatus === "starting" && "Vite HMR ready soon"}
+              {wcStatus === "error" && "Falling back to static preview"}
             </p>
           </div>
         )}
 
         {/* ── WebContainer preview (v0.2 mode) ── */}
-        {wcActive && (
+        {wcReady && (
           <div className="h-full flex flex-col">
-            <BrowserChrome url={wc.previewUrl} generationId={generationId} />
+            <BrowserChrome url={wcPreviewUrl ?? undefined} generationId={generationId} isGenerating={isGenerating} />
             <iframe
-              src={wc.previewUrl}
+              src={wcPreviewUrl ?? undefined}
               className="w-full flex-1 border-0 bg-white"
               title="Generated site preview (WebContainer)"
             />
           </div>
         )}
 
-        {/* ── HTML preview (v0.1 fallback) ── */}
-        {previewHtml && !wcActive && (
+        {/* ── HTML preview (v0.1 fallback — when WC not ready) ── */}
+        {previewHtml && !wcReady && (
           <div className="h-full flex flex-col">
             <BrowserChrome generationId={generationId} />
             <iframe
@@ -281,19 +245,30 @@ export default function PreviewPane({
 }
 
 /* ── Browser Chrome Bar ── */
-function BrowserChrome({ url, generationId }: { url?: string; generationId?: string | null }) {
-  const displayUrl = url || `arkhos.ai/preview/${generationId ? generationId.slice(0, 8) : "..."}`;
+function BrowserChrome({ url, generationId, isGenerating }: {
+  url?: string; generationId?: string | null; isGenerating?: boolean;
+}) {
   return (
-    <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[var(--border)] bg-[var(--void)]/60">
+    <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--border)] bg-[var(--void)]/60">
       <div className="flex gap-1.5">
         <div className="w-2.5 h-2.5 rounded-full bg-[var(--error)]/60" />
         <div className="w-2.5 h-2.5 rounded-full bg-[var(--warning)]/60" />
         <div className="w-2.5 h-2.5 rounded-full bg-[var(--success)]/60" />
       </div>
       <div className="flex-1 flex justify-center">
-        <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-[var(--deep)] text-[10px] text-[var(--muted)]">
-          <Globe size={10} />
-          <span style={{ fontFamily: "var(--font-code)" }}>{displayUrl}</span>
+        <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-[var(--deep)] text-[10px]">
+          {isGenerating ? (
+            <span className="animate-pulse" style={{ color: "var(--ember)", fontFamily: "var(--font-code)" }}>
+              building...
+            </span>
+          ) : (
+            <>
+              <Globe size={10} style={{ color: "var(--muted)" }} />
+              <span style={{ fontFamily: "var(--font-code)", color: "var(--muted)" }}>
+                {url || `arkhos.ai/preview/${generationId ? generationId.slice(0, 8) : "..."}`}
+              </span>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSSE } from "@/hooks/useSSE";
 import type { ChatMessage } from "@/hooks/useSSE";
+import { useWebContainer } from "@/hooks/useWebContainer";
 import PromptInput from "@/components/PromptInput";
 import PipelineStrip from "@/components/PipelineStrip";
 import PreviewPane from "@/components/PreviewPane";
@@ -11,7 +12,22 @@ import PlanReview from "@/components/PlanReview";
 import ErrorBanner from "@/components/ErrorBanner";
 
 export default function Generate() {
-  const { state, generate, iterate, approvePlan, reset } = useSSE();
+  const wc = useWebContainer();
+
+  /* Boot WebContainers eagerly on page mount */
+  useEffect(() => {
+    wc.bootEagerly();
+  }, [wc.bootEagerly]);
+
+  /* Write files to WC as they stream in */
+  const handleFileChunk = useCallback(
+    (path: string, content: string) => {
+      wc.writeFile(path, content);
+    },
+    [wc.writeFile]
+  );
+
+  const { state, generate, iterate, approvePlan, reset } = useSSE(handleFileChunk);
   const [showCode, setShowCode] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatMode, setChatMode] = useState(false);
@@ -227,6 +243,8 @@ export default function Generate() {
               finalHtml={state.finalHtml}
               projectFiles={state.projectFiles}
               generationId={state.generationId}
+              wcStatus={wc.status}
+              wcPreviewUrl={wc.previewUrl}
               onToggleCode={() => setShowCode((v) => !v)}
               showCode={showCode}
             />

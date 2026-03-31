@@ -9,6 +9,7 @@ export type SSEEventType =
   | "generation_complete"
   | "plan_ready"
   | "files_ready"
+  | "file_chunk"
   | "error";
 
 export interface AgentStartEvent {
@@ -115,7 +116,9 @@ const API_BASE = import.meta.env.VITE_API_URL || "";
 const TIMEOUT_WARNING_MS = 90_000;
 const TIMEOUT_ERROR_MS = 180_000;
 
-export function useSSE() {
+export function useSSE(onFileChunk?: (path: string, content: string) => void) {
+  const fileChunkRef = useRef(onFileChunk);
+  fileChunkRef.current = onFileChunk;
   const [state, setState] = useState<GenerationState>({
     status: "idle",
     generationId: null,
@@ -287,6 +290,14 @@ export function useSSE() {
       );
       es.addEventListener("plan_ready", handleEvent("plan_ready"));
       es.addEventListener("files_ready", handleEvent("files_ready"));
+      es.addEventListener("file_chunk", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (data.path && data.content && fileChunkRef.current) {
+            fileChunkRef.current(data.path, data.content);
+          }
+        } catch { /* ignore */ }
+      });
       es.addEventListener("error", handleEvent("error"));
 
       es.onerror = () => {

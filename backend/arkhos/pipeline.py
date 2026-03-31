@@ -626,17 +626,35 @@ async def run_build_streaming(
             builder_step.cost_eur, builder_step.duration_s,
         )
 
-        # Parse multi-file JSON output
+        # Parse files from Builder output (file-tag or JSON format)
         files = _extract_files(builder_step.output)
         if files:
+            # Stream files one-by-one → frontend writes each to WC → HMR
+            ordered = sorted(files.keys(), key=lambda p: (
+                0 if p == "package.json" else
+                1 if p in ("vite.config.ts", "tailwind.config.ts",
+                           "postcss.config.js", "tsconfig.json") else
+                2 if p == "src/index.css" else
+                3 if p.startswith("src/lib/") else
+                4 if p.startswith("src/components/ui/") else
+                5 if p == "src/main.tsx" else
+                6 if p.startswith("src/sections/") else
+                7  # App.tsx last
+            ))
+            for path in ordered:
+                yield format_sse("file_chunk", {
+                    "path": path,
+                    "content": files[path],
+                })
+            # Also emit files_ready for zip download
             yield format_sse("files_ready", {
                 "files": files,
                 "file_count": len(files),
             })
-            logger.info("files_ready: %d files", len(files))
+            logger.info("Streamed %d files via file_chunk", len(files))
         else:
             # Fallback: treat entire output as single HTML (v0.1 compat)
-            logger.warning("Builder output not valid JSON, falling back to HTML")
+            logger.warning("No files parsed, falling back to HTML mode")
             yield format_sse(SSEEventType.PREVIEW_READY, {
                 "html": builder_step.output, "stage": "pre_review",
             })
