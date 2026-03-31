@@ -166,28 +166,36 @@ def _build_app_tsx(
     files: dict[str, str],
     section_order: list[str] | None = None,
 ) -> str:
-    """Generate App.tsx using Architect section order, not alphabetical."""
+    """Generate App.tsx using Architect section order, not alphabetical.
+
+    Always places Navbar first and Footer last if they exist,
+    regardless of whether the Architect listed them.
+    """
     available = {
         path.replace("src/sections/", "").replace(".tsx", "")
         for path in files
         if path.startswith("src/sections/") and path.endswith(".tsx")
     }
 
+    # Build the middle section list (everything except Navbar/Footer)
     if section_order:
         # Respect Architect order, only include files that were generated
-        ordered = [s for s in section_order if s in available]
-        # Append any generated sections not in blueprint
-        for s in sorted(available - set(ordered)):
-            if s not in ("Navbar", "Footer"):
-                ordered.append(s)
+        middle = [
+            s for s in section_order
+            if s in available and s not in ("Navbar", "Footer")
+        ]
+        # Append any generated sections not in blueprint (except Navbar/Footer)
+        for s in sorted(available - set(middle) - {"Navbar", "Footer"}):
+            middle.append(s)
     else:
-        # Fallback: Navbar first, Footer last
         middle = sorted(available - {"Navbar", "Footer"})
-        ordered = (
-            (["Navbar"] if "Navbar" in available else [])
-            + middle
-            + (["Footer"] if "Footer" in available else [])
-        )
+
+    # Always: Navbar first → middle sections → Footer last
+    ordered = (
+        (["Navbar"] if "Navbar" in available else [])
+        + middle
+        + (["Footer"] if "Footer" in available else [])
+    )
 
     imports = "\n".join(
         f'import {n} from "./sections/{n}"' for n in ordered
