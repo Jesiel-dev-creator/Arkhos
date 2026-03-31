@@ -1,0 +1,45 @@
+[project]
+name = "arkhos"
+version = "0.1.0"
+description = "ArkhosAI — EU-sovereign AI website generator powered by Mistral"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [{name = "Jesiel", email = "jesiel@bleucommerce.fr"}]
+
+dependencies = [
+    "tramontane>=0.1.3",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "python-dotenv>=1.0.0",
+    "pydantic-settings>=2.6.0",
+    "aiosqlite>=0.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.28.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 99
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "A", "SIM", "TCH"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true

@@ -1,0 +1,4 @@
+# ArkhosAI Docker Compose — Week 4
+# Placeholder: will contain frontend, backend, and nginx services
+version: "3.8"
+services: {}
