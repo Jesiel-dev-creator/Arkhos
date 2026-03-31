@@ -223,7 +223,55 @@ bg-[#hex] ONLY for decorative gradients or image overlays.
 Every section: export default function Name() { ... }
 Responsive: mobile-first with sm: md: lg: breakpoints.
 Spacing: py-20 to py-32 between sections.
-Images: https://images.unsplash.com/photo-{ID}?auto=format&fit=crop&w=1920&q=80
+
+## VERIFIED UNSPLASH PHOTO IDs — use ONLY these
+
+Hero backgrounds (w=1920&q=80):
+- Bakery: photo-1509440159596-0249088772ff
+- Pastries: photo-1504674900247-0877df9cc836
+- Restaurant: photo-1414235077428-338989a2e8c0
+- SaaS dark: photo-1518770660439-4636190af475
+- Agency: photo-1497366216548-37526070297c
+- Portfolio: photo-1558618666-fcd25c85cd64
+
+Product/menu cards (w=800&q=80):
+- Croissant: photo-1555507036-ab1f4038808a
+- Chocolate cake: photo-1578985545062-69928b1d9587
+- Macaron: photo-1569864358642-9d1684040f43
+- Coffee: photo-1495474472287-4d71bcdd2085
+- Bread: photo-1549931319-a545dcf3bc73
+- Pizza: photo-1565299624946-b28f40a0ae38
+- Pasta: photo-1551183053-bf91798b3312
+- Salad: photo-1512621776951-a57141f2eefd
+
+People/team (w=800&q=80):
+- Chef: photo-1556909114-f6e7ad7d3136
+- Team: photo-1522071820081-009f0129c71c
+
+Format: https://images.unsplash.com/{ID}?auto=format&fit=crop&w={W}&q=80
+NEVER invent random Unsplash IDs — use ONLY the list above.
+If no match: use CSS gradient placeholder with emoji.
+
+## MAP RULES
+
+NEVER use Google Maps (requires API key, blocked in WebContainers).
+For Contact sections: use OpenStreetMap iframe:
+<iframe
+  src="https://www.openstreetmap.org/export/embed.html?\
+bbox={LNG-0.05},{LAT-0.04},{LNG+0.05},{LAT+0.04}\
+&layer=mapnik&marker={LAT},{LNG}"
+  className="w-full h-64 rounded-xl border-0"
+  loading="lazy" title="Map" />
+
+Common city coordinates:
+- Paris: lat=48.8566, lng=2.3522
+- Lyon: lat=45.7640, lng=4.8357
+- Orléans: lat=47.9029, lng=1.9039
+- Bordeaux: lat=44.8378, lng=-0.5792
+- Marseille: lat=43.2965, lng=5.3698
+
+ALWAYS add OSM attribution below the map.
+If city unknown: show styled address card with MapPin icon, no map.
 
 ## CONTENT
 
@@ -239,6 +287,8 @@ Current year in copyright. No lorem ipsum. No San Francisco.
 - NEVER output src/App.tsx or src/components/ui/*.tsx
 - NEVER import from @radix-ui directly in sections
 - NEVER use inline style={{ color: '#hex' }} for brand colors
+- NEVER use Google Maps iframes
+- NEVER invent Unsplash photo IDs not in the verified list
 """
 
 

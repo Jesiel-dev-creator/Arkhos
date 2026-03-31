@@ -13,6 +13,7 @@ Tramontane API (v0.1.4):
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import re
@@ -134,40 +135,73 @@ def _parse_file_tags(text: str) -> dict[str, str]:
     return files
 
 
-def _build_app_tsx(files: dict[str, str]) -> str:
-    """Generate App.tsx from the section files that were actually produced."""
-    section_names: list[str] = []
-    for path in sorted(files):
-        if path.startswith("src/sections/") and path.endswith(".tsx"):
-            name = path.replace("src/sections/", "").replace(".tsx", "")
-            section_names.append(name)
+def _emission_order(path: str) -> int:
+    """Sort key for streaming files to WebContainers in optimal order."""
+    if path == "package.json":
+        return 0
+    if path in (
+        "vite.config.ts", "tailwind.config.ts",
+        "postcss.config.js", "tsconfig.json", "index.html",
+    ):
+        return 1
+    if path.startswith("src/lib/"):
+        return 2
+    if path.startswith("src/components/ui/"):
+        return 3
+    if path in ("src/index.css", "src/main.tsx"):
+        return 4
+    if path == "src/sections/Navbar.tsx":
+        return 5
+    if path.startswith("src/sections/") and "Footer" not in path:
+        return 6
+    if "Footer" in path:
+        return 7
+    if path == "src/App.tsx":
+        return 8
+    return 9
 
-    ordered: list[str] = []
-    if "Navbar" in section_names:
-        ordered.append("Navbar")
-        section_names.remove("Navbar")
-    footer = None
-    if "Footer" in section_names:
-        footer = "Footer"
-        section_names.remove("Footer")
-    ordered.extend(section_names)
-    if footer:
-        ordered.append(footer)
+
+def _build_app_tsx(
+    files: dict[str, str],
+    section_order: list[str] | None = None,
+) -> str:
+    """Generate App.tsx using Architect section order, not alphabetical."""
+    available = {
+        path.replace("src/sections/", "").replace(".tsx", "")
+        for path in files
+        if path.startswith("src/sections/") and path.endswith(".tsx")
+    }
+
+    if section_order:
+        # Respect Architect order, only include files that were generated
+        ordered = [s for s in section_order if s in available]
+        # Append any generated sections not in blueprint
+        for s in sorted(available - set(ordered)):
+            if s not in ("Navbar", "Footer"):
+                ordered.append(s)
+    else:
+        # Fallback: Navbar first, Footer last
+        middle = sorted(available - {"Navbar", "Footer"})
+        ordered = (
+            (["Navbar"] if "Navbar" in available else [])
+            + middle
+            + (["Footer"] if "Footer" in available else [])
+        )
 
     imports = "\n".join(
-        f'import {n} from "./sections/{n}";' for n in ordered
+        f'import {n} from "./sections/{n}"' for n in ordered
     )
     renders = "\n      ".join(f"<{n} />" for n in ordered)
 
     return (
-        'import React from "react";\n'
+        'import React from "react"\n'
         f"{imports}\n\n"
         "export default function App() {\n"
         "  return (\n"
         '    <div className="min-h-screen">\n'
         f"      {renders}\n"
         "    </div>\n"
-        "  );\n"
+        "  )\n"
         "}\n"
     )
 
@@ -661,31 +695,40 @@ async def run_build_streaming(
 
         # Parse files from Builder output (file-tag or JSON format)
         files = _extract_files(builder_step.output)
+
+        # Extract section order from Architect blueprint
+        section_order: list[str] | None = None
+        try:
+            arch_json = json.loads(architect_step.output)
+            section_order = [
+                s["name"] for s in arch_json.get("sections", [])
+            ]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            pass
+
         if files:
-            # Stream files one-by-one → frontend writes each to WC → HMR
-            ordered = sorted(files.keys(), key=lambda p: (
-                0 if p == "package.json" else
-                1 if p in ("vite.config.ts", "tailwind.config.ts",
-                           "postcss.config.js", "tsconfig.json") else
-                2 if p == "src/index.css" else
-                3 if p.startswith("src/lib/") else
-                4 if p.startswith("src/components/ui/") else
-                5 if p == "src/main.tsx" else
-                6 if p.startswith("src/sections/") else
-                7  # App.tsx last
-            ))
-            for path in ordered:
-                yield format_sse("file_chunk", {
-                    "path": path,
-                    "content": files[path],
-                })
-            # Add ARKHOS.md project memory for iterations
+            # Generate App.tsx with correct section order
+            files["src/App.tsx"] = _build_app_tsx(files, section_order)
+
+            # Add ARKHOS.md project memory
             files["ARKHOS.md"] = _build_arkhos_md(
                 prompt=planner_output,
                 planner_output=planner_output,
                 designer_output=designer_step.output,
                 architect_output=architect_step.output,
             )
+
+            # Stream files one-by-one: config → UI → sections → App.tsx
+            ordered = sorted(files.keys(), key=_emission_order)
+            for path in ordered:
+                yield format_sse("file_chunk", {
+                    "path": path,
+                    "content": files[path],
+                })
+                # Small delay for sections so HMR fires visibly
+                if path.startswith("src/sections/") or path == "src/App.tsx":
+                    await asyncio.sleep(0.08)
+
             # Emit files_ready for zip download
             yield format_sse("files_ready", {
                 "files": files,
