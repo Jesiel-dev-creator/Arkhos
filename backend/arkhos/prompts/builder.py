@@ -64,7 +64,8 @@ DO NOT output these (pre-installed in the environment):
 "@radix-ui/react-switch":"1.1.0",\
 "react-hook-form":"7.52.1",\
 "@hookform/resolvers":"3.9.0",\
-"zod":"3.23.8"},\
+"zod":"3.23.8",\
+"embla-carousel-react":"8.1.7"},\
 "devDependencies":{"typescript":"5.5.4","vite":"5.4.11",\
 "@vitejs/plugin-react":"4.3.4","tailwindcss":"3.4.17",\
 "postcss":"8.4.49","autoprefixer":"10.4.20",\
@@ -210,7 +211,11 @@ Use the _hsl values from the Designer output directly.
 
 ## SECTION RULES
 
-Import ONLY from these pre-installed @/components/ui/* files:
+Import from these 16 pre-installed @/components/ui/* files:
+  button, card, badge, input, textarea, sheet, separator, avatar,
+  accordion, tabs, select, tooltip, dropdown-menu, carousel, form, dialog
+
+Example imports:
   import { Button } from "@/components/ui/button"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Badge } from "@/components/ui/badge"
@@ -221,16 +226,22 @@ Import ONLY from these pre-installed @/components/ui/* files:
   import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
   import { Accordion, AccordionItem, AccordionTrigger,
     AccordionContent } from "@/components/ui/accordion"
+  import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+  import { Select, SelectTrigger, SelectContent,
+    SelectItem, SelectValue } from "@/components/ui/select"
+  import { Tooltip, TooltipTrigger,
+    TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
+  import { DropdownMenu, DropdownMenuTrigger,
+    DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+  import { Carousel, CarouselContent, CarouselItem,
+    CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
+  import { Dialog, DialogContent, DialogHeader,
+    DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+  import { Form, FormField, FormItem, FormLabel,
+    FormControl, FormMessage } from "@/components/ui/form"
 
-These are the ONLY 9 ui/ files that exist. NEVER import from:
-  @/components/ui/carousel, @/components/ui/table, @/components/ui/form,
-  @/components/ui/select, @/components/ui/tabs, @/components/ui/dialog,
-  @/components/ui/dropdown-menu, @/components/ui/tooltip,
-  @/components/ui/navigation-menu, @/components/ui/switch,
-  or ANY other @/components/ui/* file not listed above.
-For carousels: use a simple flex overflow-x-auto with scroll-snap.
-For selects: use native <select> styled with Tailwind.
-For tabs: use useState + conditional rendering.
+These 16 files are ALL that exist. NEVER import any other ui/ file
+(no table, no navigation-menu, no switch, no popover, no command).
 
 Import cn: import { cn } from "@/lib/utils"
 Import icons: import { Menu, X, ArrowRight, Star } from "lucide-react"
@@ -322,7 +333,7 @@ AVAILABLE PACKAGES (pre-installed, safe to import):
   @radix-ui/react-tabs, @radix-ui/react-select,
   @radix-ui/react-dropdown-menu, @radix-ui/react-tooltip,
   @radix-ui/react-switch,
-  react-hook-form, @hookform/resolvers, zod
+  react-hook-form, @hookform/resolvers, zod, embla-carousel-react
 
 NEVER import packages NOT in this list (next, gatsby, axios, swr,
   styled-components, @emotion/*, @mui/*, @chakra-ui/*, @tanstack/*).

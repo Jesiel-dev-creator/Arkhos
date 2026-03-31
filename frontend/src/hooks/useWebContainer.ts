@@ -153,6 +153,8 @@ const PKG = JSON.stringify(
       "react-hook-form": "7.52.1",
       "@hookform/resolvers": "3.9.0",
       zod: "3.23.8",
+      /* Carousel */
+      "embla-carousel-react": "8.1.7",
     },
     devDependencies: {
       vite: "5.4.11",
@@ -321,6 +323,88 @@ const AccordionTrigger=React.forwardRef<React.ElementRef<typeof AccordionPrimiti
 const AccordionContent=React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Content>,React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>>(({className,children,...props},ref)=><AccordionPrimitive.Content ref={ref} className="overflow-hidden text-sm" {...props}><div className={cn("pb-4 pt-0",className)}>{children}</div></AccordionPrimitive.Content>);AccordionContent.displayName=AccordionPrimitive.Content.displayName
 export{Accordion,AccordionItem,AccordionTrigger,AccordionContent}`;
 
+const UI_TABS = `import * as React from "react"
+import * as TabsPrimitive from "@radix-ui/react-tabs"
+import { cn } from "@/lib/utils"
+const Tabs=TabsPrimitive.Root
+const TabsList=React.forwardRef<React.ElementRef<typeof TabsPrimitive.List>,React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>>(({className,...props},ref)=><TabsPrimitive.List ref={ref} className={cn("inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",className)} {...props}/>);TabsList.displayName=TabsPrimitive.List.displayName
+const TabsTrigger=React.forwardRef<React.ElementRef<typeof TabsPrimitive.Trigger>,React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>>(({className,...props},ref)=><TabsPrimitive.Trigger ref={ref} className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow",className)} {...props}/>);TabsTrigger.displayName=TabsPrimitive.Trigger.displayName
+const TabsContent=React.forwardRef<React.ElementRef<typeof TabsPrimitive.Content>,React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>>(({className,...props},ref)=><TabsPrimitive.Content ref={ref} className={cn("mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",className)} {...props}/>);TabsContent.displayName=TabsPrimitive.Content.displayName
+export{Tabs,TabsList,TabsTrigger,TabsContent}`;
+
+const UI_SELECT = `import * as React from "react"
+import * as SelectPrimitive from "@radix-ui/react-select"
+import { Check,ChevronDown,ChevronUp } from "lucide-react"
+import { cn } from "@/lib/utils"
+const Select=SelectPrimitive.Root;const SelectGroup=SelectPrimitive.Group;const SelectValue=SelectPrimitive.Value
+const SelectTrigger=React.forwardRef<React.ElementRef<typeof SelectPrimitive.Trigger>,React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>>(({className,children,...props},ref)=><SelectPrimitive.Trigger ref={ref} className={cn("flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",className)} {...props}>{children}<SelectPrimitive.Icon asChild><ChevronDown className="h-4 w-4 opacity-50"/></SelectPrimitive.Icon></SelectPrimitive.Trigger>);SelectTrigger.displayName=SelectPrimitive.Trigger.displayName
+const SelectContent=React.forwardRef<React.ElementRef<typeof SelectPrimitive.Content>,React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>>(({className,children,position="popper",...props},ref)=><SelectPrimitive.Portal><SelectPrimitive.Content ref={ref} className={cn("relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",position==="popper"&&"translate-y-1",className)} position={position} {...props}><SelectPrimitive.Viewport className={cn("p-1",position==="popper"&&"h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]")}>{children}</SelectPrimitive.Viewport></SelectPrimitive.Content></SelectPrimitive.Portal>);SelectContent.displayName=SelectPrimitive.Content.displayName
+const SelectItem=React.forwardRef<React.ElementRef<typeof SelectPrimitive.Item>,React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>>(({className,children,...props},ref)=><SelectPrimitive.Item ref={ref} className={cn("relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",className)} {...props}><span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center"><SelectPrimitive.ItemIndicator><Check className="h-4 w-4"/></SelectPrimitive.ItemIndicator></span><SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText></SelectPrimitive.Item>);SelectItem.displayName=SelectPrimitive.Item.displayName
+export{Select,SelectGroup,SelectValue,SelectTrigger,SelectContent,SelectItem}`;
+
+const UI_TOOLTIP = `import * as React from "react"
+import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import { cn } from "@/lib/utils"
+const TooltipProvider=TooltipPrimitive.Provider;const Tooltip=TooltipPrimitive.Root;const TooltipTrigger=TooltipPrimitive.Trigger
+const TooltipContent=React.forwardRef<React.ElementRef<typeof TooltipPrimitive.Content>,React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>>(({className,sideOffset=4,...props},ref)=><TooltipPrimitive.Content ref={ref} sideOffset={sideOffset} className={cn("z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95",className)} {...props}/>);TooltipContent.displayName=TooltipPrimitive.Content.displayName
+export{Tooltip,TooltipTrigger,TooltipContent,TooltipProvider}`;
+
+const UI_DROPDOWN = `import * as React from "react"
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+import { Check,ChevronRight,Circle } from "lucide-react"
+import { cn } from "@/lib/utils"
+const DropdownMenu=DropdownMenuPrimitive.Root;const DropdownMenuTrigger=DropdownMenuPrimitive.Trigger;const DropdownMenuGroup=DropdownMenuPrimitive.Group;const DropdownMenuSub=DropdownMenuPrimitive.Sub
+const DropdownMenuContent=React.forwardRef<React.ElementRef<typeof DropdownMenuPrimitive.Content>,React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>>(({className,sideOffset=4,...props},ref)=><DropdownMenuPrimitive.Portal><DropdownMenuPrimitive.Content ref={ref} sideOffset={sideOffset} className={cn("z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",className)} {...props}/></DropdownMenuPrimitive.Portal>);DropdownMenuContent.displayName=DropdownMenuPrimitive.Content.displayName
+const DropdownMenuItem=React.forwardRef<React.ElementRef<typeof DropdownMenuPrimitive.Item>,React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>&{inset?:boolean}>(({className,inset,...props},ref)=><DropdownMenuPrimitive.Item ref={ref} className={cn("relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",inset&&"pl-8",className)} {...props}/>);DropdownMenuItem.displayName=DropdownMenuPrimitive.Item.displayName
+const DropdownMenuSeparator=React.forwardRef<React.ElementRef<typeof DropdownMenuPrimitive.Separator>,React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>>(({className,...props},ref)=><DropdownMenuPrimitive.Separator ref={ref} className={cn("-mx-1 my-1 h-px bg-muted",className)} {...props}/>);DropdownMenuSeparator.displayName=DropdownMenuPrimitive.Separator.displayName
+export{DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,DropdownMenuSeparator,DropdownMenuGroup,DropdownMenuSub}`;
+
+const UI_CAROUSEL = `import * as React from "react"
+import useEmblaCarousel,{type UseEmblaCarouselType} from "embla-carousel-react"
+import { ArrowLeft,ArrowRight } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+type CarouselApi=UseEmblaCarouselType[1]
+type CarouselProps={opts?:any;plugins?:any[];orientation?:"horizontal"|"vertical";setApi?:(api:CarouselApi)=>void}
+type CarouselContextProps=CarouselProps&{carouselRef:ReturnType<typeof useEmblaCarousel>[0];api:ReturnType<typeof useEmblaCarousel>[1];scrollPrev:()=>void;scrollNext:()=>void;canScrollPrev:boolean;canScrollNext:boolean}
+const CarouselContext=React.createContext<CarouselContextProps|null>(null)
+function useCarousel(){const c=React.useContext(CarouselContext);if(!c)throw new Error("useCarousel must be used within <Carousel>");return c}
+const Carousel=React.forwardRef<HTMLDivElement,React.HTMLAttributes<HTMLDivElement>&CarouselProps>(({orientation="horizontal",opts,setApi,plugins,className,children,...props},ref)=>{const[carouselRef,api]=useEmblaCarousel({...opts,axis:orientation==="horizontal"?"x":"y"},plugins);const[canScrollPrev,setCanScrollPrev]=React.useState(false);const[canScrollNext,setCanScrollNext]=React.useState(false);const onSelect=React.useCallback((api:CarouselApi)=>{if(!api)return;setCanScrollPrev(api.canScrollPrev());setCanScrollNext(api.canScrollNext())},[]);React.useEffect(()=>{if(!api||!setApi)return;setApi(api)},[api,setApi]);React.useEffect(()=>{if(!api)return;onSelect(api);api.on("reInit",onSelect);api.on("select",onSelect);return()=>{api?.off("select",onSelect)}},[api,onSelect]);return<CarouselContext.Provider value={{carouselRef,api,opts,orientation,scrollPrev:()=>api?.scrollPrev(),scrollNext:()=>api?.scrollNext(),canScrollPrev,canScrollNext}}><div ref={ref} className={cn("relative",className)} role="region" aria-roledescription="carousel" {...props}>{children}</div></CarouselContext.Provider>});Carousel.displayName="Carousel"
+const CarouselContent=React.forwardRef<HTMLDivElement,React.HTMLAttributes<HTMLDivElement>>(({className,...props},ref)=>{const{carouselRef,orientation}=useCarousel();return<div ref={carouselRef} className="overflow-hidden"><div ref={ref} className={cn("flex",orientation==="horizontal"?"-ml-4":"flex-col -mt-4",className)} {...props}/></div>});CarouselContent.displayName="CarouselContent"
+const CarouselItem=React.forwardRef<HTMLDivElement,React.HTMLAttributes<HTMLDivElement>>(({className,...props},ref)=>{const{orientation}=useCarousel();return<div ref={ref} role="group" aria-roledescription="slide" className={cn("min-w-0 shrink-0 grow-0 basis-full",orientation==="horizontal"?"pl-4":"pt-4",className)} {...props}/>});CarouselItem.displayName="CarouselItem"
+const CarouselPrevious=React.forwardRef<HTMLButtonElement,React.ComponentProps<typeof Button>>(({className,variant="outline",size="icon",...props},ref)=>{const{scrollPrev,canScrollPrev}=useCarousel();return<Button ref={ref} variant={variant} size={size} className={cn("absolute h-8 w-8 rounded-full -left-12 top-1/2 -translate-y-1/2",className)} disabled={!canScrollPrev} onClick={scrollPrev} {...props}><ArrowLeft className="h-4 w-4"/><span className="sr-only">Previous</span></Button>});CarouselPrevious.displayName="CarouselPrevious"
+const CarouselNext=React.forwardRef<HTMLButtonElement,React.ComponentProps<typeof Button>>(({className,variant="outline",size="icon",...props},ref)=>{const{scrollNext,canScrollNext}=useCarousel();return<Button ref={ref} variant={variant} size={size} className={cn("absolute h-8 w-8 rounded-full -right-12 top-1/2 -translate-y-1/2",className)} disabled={!canScrollNext} onClick={scrollNext} {...props}><ArrowRight className="h-4 w-4"/><span className="sr-only">Next</span></Button>});CarouselNext.displayName="CarouselNext"
+export{type CarouselApi,Carousel,CarouselContent,CarouselItem,CarouselPrevious,CarouselNext}`;
+
+const UI_FORM = `import * as React from "react"
+import type * as LabelPrimitive from "@radix-ui/react-label"
+import { Slot } from "@radix-ui/react-slot"
+import { Controller,FormProvider,useFormContext,type ControllerProps,type FieldPath,type FieldValues } from "react-hook-form"
+import { cn } from "@/lib/utils"
+const Form=FormProvider
+type FormFieldContextValue<TFieldValues extends FieldValues=FieldValues,TName extends FieldPath<TFieldValues>=FieldPath<TFieldValues>>={name:TName}
+const FormFieldContext=React.createContext<FormFieldContextValue>({} as FormFieldContextValue)
+const FormField=<TFieldValues extends FieldValues=FieldValues,TName extends FieldPath<TFieldValues>=FieldPath<TFieldValues>>({...props}:ControllerProps<TFieldValues,TName>)=><FormFieldContext.Provider value={{name:props.name}}><Controller {...props}/></FormFieldContext.Provider>
+const useFormField=()=>{const fieldContext=React.useContext(FormFieldContext);const{getFieldState,formState}=useFormContext();const fieldState=getFieldState(fieldContext.name,formState);return{...fieldContext,...fieldState}}
+type FormItemContextValue={id:string}
+const FormItemContext=React.createContext<FormItemContextValue>({} as FormItemContextValue)
+const FormItem=React.forwardRef<HTMLDivElement,React.HTMLAttributes<HTMLDivElement>>(({className,...props},ref)=>{const id=React.useId();return<FormItemContext.Provider value={{id}}><div ref={ref} className={cn("space-y-2",className)} {...props}/></FormItemContext.Provider>});FormItem.displayName="FormItem"
+const FormLabel=React.forwardRef<HTMLLabelElement,React.LabelHTMLAttributes<HTMLLabelElement>>(({className,...props},ref)=>{const{error}=useFormField();return<label ref={ref} className={cn(error&&"text-destructive",className)} {...props}/>});FormLabel.displayName="FormLabel"
+const FormControl=React.forwardRef<React.ElementRef<typeof Slot>,React.ComponentPropsWithoutRef<typeof Slot>>(({...props},ref)=>{const{error}=useFormField();return<Slot ref={ref} aria-invalid={!!error} {...props}/>});FormControl.displayName="FormControl"
+const FormMessage=React.forwardRef<HTMLParagraphElement,React.HTMLAttributes<HTMLParagraphElement>>(({className,children,...props},ref)=>{const{error}=useFormField();const body=error?String(error?.message):children;if(!body)return null;return<p ref={ref} className={cn("text-[0.8rem] font-medium text-destructive",className)} {...props}>{body}</p>});FormMessage.displayName="FormMessage"
+export{useFormField,Form,FormItem,FormLabel,FormControl,FormMessage,FormField}`;
+
+const UI_DIALOG = `import * as React from "react"
+import * as DialogPrimitive from "@radix-ui/react-dialog"
+import { X } from "lucide-react"
+import { cn } from "@/lib/utils"
+const Dialog=DialogPrimitive.Root;const DialogTrigger=DialogPrimitive.Trigger;const DialogPortal=DialogPrimitive.Portal;const DialogClose=DialogPrimitive.Close
+const DialogOverlay=React.forwardRef<React.ElementRef<typeof DialogPrimitive.Overlay>,React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>>(({className,...props},ref)=><DialogPrimitive.Overlay ref={ref} className={cn("fixed inset-0 z-50 bg-black/80",className)} {...props}/>);DialogOverlay.displayName=DialogPrimitive.Overlay.displayName
+const DialogContent=React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>,React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>>(({className,children,...props},ref)=><DialogPortal><DialogOverlay/><DialogPrimitive.Content ref={ref} className={cn("fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg sm:rounded-lg",className)} {...props}>{children}<DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"><X className="h-4 w-4"/></DialogPrimitive.Close></DialogPrimitive.Content></DialogPortal>);DialogContent.displayName=DialogPrimitive.Content.displayName
+const DialogHeader=({className,...props}:React.HTMLAttributes<HTMLDivElement>)=><div className={cn("flex flex-col space-y-1.5 text-center sm:text-left",className)} {...props}/>;DialogHeader.displayName="DialogHeader"
+const DialogTitle=React.forwardRef<React.ElementRef<typeof DialogPrimitive.Title>,React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>>(({className,...props},ref)=><DialogPrimitive.Title ref={ref} className={cn("text-lg font-semibold leading-none tracking-tight",className)} {...props}/>);DialogTitle.displayName=DialogPrimitive.Title.displayName
+export{Dialog,DialogPortal,DialogOverlay,DialogTrigger,DialogClose,DialogContent,DialogHeader,DialogTitle}`;
+
 /* ═══ Skeleton project tree ═══ */
 
 const SKELETON_PROJECT: Record<string, unknown> = {
@@ -349,6 +433,13 @@ const SKELETON_PROJECT: Record<string, unknown> = {
               "avatar.tsx": { file: { contents: UI_AVATAR } },
               "sheet.tsx": { file: { contents: UI_SHEET } },
               "accordion.tsx": { file: { contents: UI_ACCORDION } },
+              "tabs.tsx": { file: { contents: UI_TABS } },
+              "select.tsx": { file: { contents: UI_SELECT } },
+              "tooltip.tsx": { file: { contents: UI_TOOLTIP } },
+              "dropdown-menu.tsx": { file: { contents: UI_DROPDOWN } },
+              "carousel.tsx": { file: { contents: UI_CAROUSEL } },
+              "form.tsx": { file: { contents: UI_FORM } },
+              "dialog.tsx": { file: { contents: UI_DIALOG } },
             },
           },
         },
