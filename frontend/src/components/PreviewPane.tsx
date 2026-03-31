@@ -131,7 +131,7 @@ export default function PreviewPane({
         {((status === "idle" && !hasGenerated) || (isLoading && !previewHtml)) && (
           <div className="absolute inset-0">
             <EmberCanvas />
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
               <div className="relative mb-5">
                 <div className="absolute inset-0 bg-[var(--ember)]/20 blur-2xl rounded-full" />
                 <div className="relative w-14 h-14 rounded-2xl border border-[var(--ember)]/20 bg-gradient-to-br from-[var(--ember)]/10 to-transparent flex items-center justify-center">
@@ -157,25 +157,7 @@ export default function PreviewPane({
           </div>
         )}
 
-        {/* ── WebContainer status overlay (only during generation) ── */}
-        {wcBooting && isGenerating && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center"
-               style={{ background: "rgba(2,4,8,0.9)" }}>
-            <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mb-3"
-                 style={{ borderColor: "var(--cyan)", borderTopColor: "transparent" }} />
-            <p className="text-sm font-medium" style={{ color: "var(--frost)", fontFamily: "var(--font-body)" }}>
-              {wcStatus === "booting" && "Starting sandbox..."}
-              {wcStatus === "installing" && "Installing packages..."}
-              {wcStatus === "starting" && "Starting dev server..."}
-              {wcStatus === "error" && "Sandbox error"}
-            </p>
-            <p className="text-[11px] mt-1" style={{ color: "var(--muted)" }}>
-              {wcStatus === "booting" && "WebContainer initializing"}
-              {wcStatus === "installing" && "npm install running"}
-              {wcStatus === "starting" && "Vite HMR ready soon"}
-              {wcStatus === "error" && "Falling back to static preview"}
-            </p>
-          </div>
+        {/* WC boots silently — ember canvas handles all loading states */}
         )}
 
         {/* ── WebContainer preview (v0.2 — only after generation starts) ── */}

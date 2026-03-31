@@ -211,10 +211,11 @@ Use the _hsl values from the Designer output directly.
 
 ## SECTION RULES
 
-Import from these 17 pre-installed @/components/ui/* files:
+Import from these 28 pre-installed @/components/ui/* files:
   button, card, badge, input, textarea, sheet, separator, avatar,
   accordion, tabs, select, tooltip, dropdown-menu, carousel, form,
-  dialog, toggle-group
+  dialog, toggle-group, navigation-menu, switch, table, popover,
+  scroll-area, progress, label, checkbox, radio-group, slider
 
 Example imports:
   import { Button } from "@/components/ui/button"
@@ -243,8 +244,7 @@ Example imports:
 
   import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
-These 17 files are ALL that exist. NEVER import any other ui/ file
-(no table, no navigation-menu, no switch, no popover, no command).
+ALL common shadcn components are pre-installed. You can freely import any of them.
 
 Import cn: import { cn } from "@/lib/utils"
 Import icons: import { Menu, X, ArrowRight, Star } from "lucide-react"

@@ -151,6 +151,14 @@ const PKG = JSON.stringify(
       "@radix-ui/react-switch": "1.1.0",
       "@radix-ui/react-toggle": "1.1.0",
       "@radix-ui/react-toggle-group": "1.1.0",
+      "@radix-ui/react-navigation-menu": "1.2.0",
+      "@radix-ui/react-popover": "1.1.1",
+      "@radix-ui/react-scroll-area": "1.1.0",
+      "@radix-ui/react-progress": "1.1.0",
+      "@radix-ui/react-label": "2.1.0",
+      "@radix-ui/react-checkbox": "1.1.0",
+      "@radix-ui/react-radio-group": "1.1.0",
+      "@radix-ui/react-slider": "1.2.0",
       /* Forms + validation */
       "react-hook-form": "7.52.1",
       "@hookform/resolvers": "3.9.0",
@@ -414,6 +422,78 @@ const ToggleGroup=React.forwardRef<React.ElementRef<typeof ToggleGroupPrimitive.
 const ToggleGroupItem=React.forwardRef<React.ElementRef<typeof ToggleGroupPrimitive.Item>,React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>>(({className,...props},ref)=><ToggleGroupPrimitive.Item ref={ref} className={cn("inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow",className)} {...props}/>);ToggleGroupItem.displayName=ToggleGroupPrimitive.Item.displayName
 export{ToggleGroup,ToggleGroupItem}`;
 
+const UI_NAV_MENU = `import * as React from "react"
+import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+import { ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+const NavigationMenu=React.forwardRef<React.ElementRef<typeof NavigationMenuPrimitive.Root>,React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>>(({className,children,...props},ref)=><NavigationMenuPrimitive.Root ref={ref} className={cn("relative z-10 flex max-w-max flex-1 items-center justify-center",className)} {...props}><div className="flex flex-1 items-center justify-center">{children}</div></NavigationMenuPrimitive.Root>);NavigationMenu.displayName=NavigationMenuPrimitive.Root.displayName
+const NavigationMenuList=React.forwardRef<React.ElementRef<typeof NavigationMenuPrimitive.List>,React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>>(({className,...props},ref)=><NavigationMenuPrimitive.List ref={ref} className={cn("group flex flex-1 list-none items-center justify-center space-x-1",className)} {...props}/>);NavigationMenuList.displayName=NavigationMenuPrimitive.List.displayName
+const NavigationMenuItem=NavigationMenuPrimitive.Item
+const NavigationMenuLink=NavigationMenuPrimitive.Link
+export{NavigationMenu,NavigationMenuList,NavigationMenuItem,NavigationMenuLink}`;
+
+const UI_SWITCH = `import * as React from "react"
+import * as SwitchPrimitives from "@radix-ui/react-switch"
+import { cn } from "@/lib/utils"
+const Switch=React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>,React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>>(({className,...props},ref)=><SwitchPrimitives.Root className={cn("peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",className)} {...props} ref={ref}><SwitchPrimitives.Thumb className={cn("pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0")}/></SwitchPrimitives.Root>);Switch.displayName=SwitchPrimitives.Root.displayName
+export{Switch}`;
+
+const UI_TABLE = `import * as React from "react"
+import { cn } from "@/lib/utils"
+const Table=React.forwardRef<HTMLTableElement,React.HTMLAttributes<HTMLTableElement>>(({className,...props},ref)=><div className="relative w-full overflow-auto"><table ref={ref} className={cn("w-full caption-bottom text-sm",className)} {...props}/></div>);Table.displayName="Table"
+const TableHeader=React.forwardRef<HTMLTableSectionElement,React.HTMLAttributes<HTMLTableSectionElement>>(({className,...props},ref)=><thead ref={ref} className={cn("[&_tr]:border-b",className)} {...props}/>);TableHeader.displayName="TableHeader"
+const TableBody=React.forwardRef<HTMLTableSectionElement,React.HTMLAttributes<HTMLTableSectionElement>>(({className,...props},ref)=><tbody ref={ref} className={cn("[&_tr:last-child]:border-0",className)} {...props}/>);TableBody.displayName="TableBody"
+const TableRow=React.forwardRef<HTMLTableRowElement,React.HTMLAttributes<HTMLTableRowElement>>(({className,...props},ref)=><tr ref={ref} className={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",className)} {...props}/>);TableRow.displayName="TableRow"
+const TableHead=React.forwardRef<HTMLTableCellElement,React.ThHTMLAttributes<HTMLTableCellElement>>(({className,...props},ref)=><th ref={ref} className={cn("h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",className)} {...props}/>);TableHead.displayName="TableHead"
+const TableCell=React.forwardRef<HTMLTableCellElement,React.TdHTMLAttributes<HTMLTableCellElement>>(({className,...props},ref)=><td ref={ref} className={cn("p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",className)} {...props}/>);TableCell.displayName="TableCell"
+export{Table,TableHeader,TableBody,TableRow,TableHead,TableCell}`;
+
+const UI_POPOVER = `import * as React from "react"
+import * as PopoverPrimitive from "@radix-ui/react-popover"
+import { cn } from "@/lib/utils"
+const Popover=PopoverPrimitive.Root;const PopoverTrigger=PopoverPrimitive.Trigger
+const PopoverContent=React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Content>,React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>>(({className,align="center",sideOffset=4,...props},ref)=><PopoverPrimitive.Portal><PopoverPrimitive.Content ref={ref} align={align} sideOffset={sideOffset} className={cn("z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none",className)} {...props}/></PopoverPrimitive.Portal>);PopoverContent.displayName=PopoverPrimitive.Content.displayName
+export{Popover,PopoverTrigger,PopoverContent}`;
+
+const UI_SCROLL_AREA = `import * as React from "react"
+import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
+import { cn } from "@/lib/utils"
+const ScrollArea=React.forwardRef<React.ElementRef<typeof ScrollAreaPrimitive.Root>,React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>>(({className,children,...props},ref)=><ScrollAreaPrimitive.Root ref={ref} className={cn("relative overflow-hidden",className)} {...props}><ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">{children}</ScrollAreaPrimitive.Viewport><ScrollAreaPrimitive.Scrollbar orientation="vertical" className="flex touch-none select-none transition-colors h-full w-2.5 border-l border-l-transparent p-[1px]"><ScrollAreaPrimitive.Thumb className="relative flex-1 rounded-full bg-border"/></ScrollAreaPrimitive.Scrollbar></ScrollAreaPrimitive.Root>);ScrollArea.displayName=ScrollAreaPrimitive.Root.displayName
+export{ScrollArea}`;
+
+const UI_PROGRESS = `import * as React from "react"
+import * as ProgressPrimitive from "@radix-ui/react-progress"
+import { cn } from "@/lib/utils"
+const Progress=React.forwardRef<React.ElementRef<typeof ProgressPrimitive.Root>,React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>&{value?:number}>(({className,value,...props},ref)=><ProgressPrimitive.Root ref={ref} className={cn("relative h-2 w-full overflow-hidden rounded-full bg-primary/20",className)} {...props}><ProgressPrimitive.Indicator className="h-full w-full flex-1 bg-primary transition-all" style={{transform:\`translateX(-\${100-(value||0)}%)\`}}/></ProgressPrimitive.Root>);Progress.displayName=ProgressPrimitive.Root.displayName
+export{Progress}`;
+
+const UI_LABEL = `import * as React from "react"
+import * as LabelPrimitive from "@radix-ui/react-label"
+import { cn } from "@/lib/utils"
+const Label=React.forwardRef<React.ElementRef<typeof LabelPrimitive.Root>,React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>>(({className,...props},ref)=><LabelPrimitive.Root ref={ref} className={cn("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",className)} {...props}/>);Label.displayName=LabelPrimitive.Root.displayName
+export{Label}`;
+
+const UI_CHECKBOX = `import * as React from "react"
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
+import { Check } from "lucide-react"
+import { cn } from "@/lib/utils"
+const Checkbox=React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>,React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>>(({className,...props},ref)=><CheckboxPrimitive.Root ref={ref} className={cn("peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",className)} {...props}><CheckboxPrimitive.Indicator className={cn("flex items-center justify-center text-current")}><Check className="h-4 w-4"/></CheckboxPrimitive.Indicator></CheckboxPrimitive.Root>);Checkbox.displayName=CheckboxPrimitive.Root.displayName
+export{Checkbox}`;
+
+const UI_RADIO_GROUP = `import * as React from "react"
+import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
+import { Circle } from "lucide-react"
+import { cn } from "@/lib/utils"
+const RadioGroup=React.forwardRef<React.ElementRef<typeof RadioGroupPrimitive.Root>,React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>>(({className,...props},ref)=><RadioGroupPrimitive.Root className={cn("grid gap-2",className)} {...props} ref={ref}/>);RadioGroup.displayName=RadioGroupPrimitive.Root.displayName
+const RadioGroupItem=React.forwardRef<React.ElementRef<typeof RadioGroupPrimitive.Item>,React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>>(({className,...props},ref)=><RadioGroupPrimitive.Item ref={ref} className={cn("aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",className)} {...props}><RadioGroupPrimitive.Indicator className="flex items-center justify-center"><Circle className="h-3.5 w-3.5 fill-primary"/></RadioGroupPrimitive.Indicator></RadioGroupPrimitive.Item>);RadioGroupItem.displayName=RadioGroupPrimitive.Item.displayName
+export{RadioGroup,RadioGroupItem}`;
+
+const UI_SLIDER = `import * as React from "react"
+import * as SliderPrimitive from "@radix-ui/react-slider"
+import { cn } from "@/lib/utils"
+const Slider=React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>,React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>>(({className,...props},ref)=><SliderPrimitive.Root ref={ref} className={cn("relative flex w-full touch-none select-none items-center",className)} {...props}><SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20"><SliderPrimitive.Range className="absolute h-full bg-primary"/></SliderPrimitive.Track><SliderPrimitive.Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"/></SliderPrimitive.Root>);Slider.displayName=SliderPrimitive.Root.displayName
+export{Slider}`;
+
 /* ═══ Skeleton project tree ═══ */
 
 const SKELETON_PROJECT: Record<string, unknown> = {
@@ -450,6 +530,16 @@ const SKELETON_PROJECT: Record<string, unknown> = {
               "form.tsx": { file: { contents: UI_FORM } },
               "dialog.tsx": { file: { contents: UI_DIALOG } },
               "toggle-group.tsx": { file: { contents: UI_TOGGLE_GROUP } },
+              "navigation-menu.tsx": { file: { contents: UI_NAV_MENU } },
+              "switch.tsx": { file: { contents: UI_SWITCH } },
+              "table.tsx": { file: { contents: UI_TABLE } },
+              "popover.tsx": { file: { contents: UI_POPOVER } },
+              "scroll-area.tsx": { file: { contents: UI_SCROLL_AREA } },
+              "progress.tsx": { file: { contents: UI_PROGRESS } },
+              "label.tsx": { file: { contents: UI_LABEL } },
+              "checkbox.tsx": { file: { contents: UI_CHECKBOX } },
+              "radio-group.tsx": { file: { contents: UI_RADIO_GROUP } },
+              "slider.tsx": { file: { contents: UI_SLIDER } },
             },
           },
         },
