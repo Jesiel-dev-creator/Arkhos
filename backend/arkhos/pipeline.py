@@ -27,7 +27,6 @@ if TYPE_CHECKING:
 from tramontane import Agent
 
 from arkhos.data.design_intelligence import get_design_for_industry
-from arkhos.templates import get_builder_context
 from arkhos.prompts.architect import SYSTEM_PROMPT as ARCHITECT_PROMPT
 from arkhos.prompts.architect import format_user_message as format_architect_msg
 from arkhos.prompts.builder import SYSTEM_PROMPT as BUILDER_PROMPT
@@ -39,6 +38,7 @@ from arkhos.prompts.planner import format_user_message as format_planner_msg
 from arkhos.prompts.reviewer import SYSTEM_PROMPT as REVIEWER_PROMPT
 from arkhos.prompts.reviewer import format_user_message as format_reviewer_msg
 from arkhos.sse import SSEEventType, format_sse
+from arkhos.templates import get_builder_context
 
 logger = logging.getLogger(__name__)
 
@@ -736,14 +736,19 @@ async def run_build_streaming(
 
             # Stream files one-by-one: config → UI → sections → App.tsx
             ordered = sorted(files.keys(), key=_emission_order)
+            prev_path = ""
             for path in ordered:
                 yield format_sse("file_chunk", {
                     "path": path,
                     "content": files[path],
                 })
+                # index.css triggers full CSS recompile — wait longer
+                if prev_path in ("src/index.css", "src/main.tsx"):
+                    await asyncio.sleep(0.15)
                 # Small delay for sections so HMR fires visibly
-                if path.startswith("src/sections/") or path == "src/App.tsx":
+                elif path.startswith("src/sections/") or path == "src/App.tsx":
                     await asyncio.sleep(0.08)
+                prev_path = path
 
             # Emit files_ready for zip download
             yield format_sse("files_ready", {

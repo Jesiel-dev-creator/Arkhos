@@ -263,6 +263,16 @@ VERIFIED icon names (use ONLY these):
 NEVER invent icon names like "CloudSync" — they don't exist
 Import motion: import { motion } from "framer-motion"
 
+IMPORT RULE — EVERY component used in JSX MUST have a corresponding import
+statement at the top of the file. Before writing any JSX, list every
+component you will use and write its import. Never use a component without
+importing it.
+
+Self-check before outputting each section file:
+- Scan JSX for every capitalized component (<Badge>, <Card>, <Button>, etc.)
+- Verify each one has an import statement at top
+- If missing, add it before outputting the file
+
 Use Tailwind CSS variable classes: bg-background, text-foreground,
   bg-primary, text-primary-foreground, bg-card, border-border, etc.
 NEVER use bg-[#hex] for brand colors — use CSS variable classes.
