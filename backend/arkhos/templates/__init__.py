@@ -1,8 +1,15 @@
-"""Pre-built section templates for the Builder agent context."""
+"""Pre-built section templates for the Builder agent context.
+
+Two template sources, tagged differently for the Builder:
+- sections/   (21st.dev)  → SECTION REFERENCE: layout/structure base
+- aceternity/ (Aceternity) → EFFECT REFERENCE: backgrounds, animations,
+                              micro-interactions within sections
+"""
 
 from pathlib import Path
 
 TEMPLATES_DIR = Path(__file__).parent / "sections"
+ACETERNITY_DIR = Path(__file__).parent / "aceternity"
 
 SECTION_MAP: dict[str, list[str]] = {
     "hero": [
@@ -75,9 +82,42 @@ SECTION_MAP: dict[str, list[str]] = {
 }
 
 
+# Aceternity effects mapped by usage context
+ACETERNITY_MAP: dict[str, list[str]] = {
+    "hero_bg": [
+        "aurora-background", "spotlight", "lamp-effect",
+        "background-beams", "hero-highlight",
+    ],
+    "section_bg": [
+        "wavy-background", "background-gradient",
+        "grid-dot-backgrounds", "sparkles",
+    ],
+    "text_effect": [
+        "typewriter-effect", "text-generate-effect",
+    ],
+    "card_effect": [
+        "3d-card-effect", "card-hover-effect", "card-stack",
+        "moving-border", "animated-tooltip",
+    ],
+    "layout": [
+        "bento-grid", "infinite-moving-cards",
+        "sticky-scroll-reveal",
+    ],
+    "nav": [
+        "floating-navbar",
+    ],
+}
+
+
 def get_template(name: str) -> str:
     """Read a single template file by name (without extension)."""
     f = TEMPLATES_DIR / f"{name}.tsx"
+    return f.read_text() if f.exists() else ""
+
+
+def get_aceternity(name: str) -> str:
+    """Read an Aceternity effect template by name (without extension)."""
+    f = ACETERNITY_DIR / f"{name}.tsx"
     return f.read_text() if f.exists() else ""
 
 
@@ -131,29 +171,95 @@ def get_templates_for_section(section_name: str) -> list[str]:
     return []
 
 
+def _get_aceternity_for_section(section_name: str) -> list[str]:
+    """Return Aceternity effect code relevant to a section type."""
+    s = section_name.lower()
+
+    # Hero sections get hero backgrounds
+    if any(w in s for w in ["hero", "banner", "header", "jumbotron"]):
+        return [get_aceternity(n) for n in ACETERNITY_MAP["hero_bg"]
+                if (ACETERNITY_DIR / f"{n}.tsx").exists()]
+
+    # Content sections get subtle backgrounds
+    if any(w in s for w in ["feature", "about", "stat", "team",
+                             "testimonial", "pricing", "faq"]):
+        return [get_aceternity(n) for n in ACETERNITY_MAP["section_bg"]
+                if (ACETERNITY_DIR / f"{n}.tsx").exists()]
+
+    # Card-heavy sections get card effects
+    if any(w in s for w in ["card", "portfolio", "project", "work",
+                             "menu", "product"]):
+        return [get_aceternity(n) for n in ACETERNITY_MAP["card_effect"]
+                if (ACETERNITY_DIR / f"{n}.tsx").exists()]
+
+    # Nav sections
+    if any(w in s for w in ["nav", "navbar"]):
+        return [get_aceternity(n) for n in ACETERNITY_MAP["nav"]
+                if (ACETERNITY_DIR / f"{n}.tsx").exists()]
+
+    return []
+
+
 def get_builder_context(section_names: list[str], max_templates: int = 3) -> str:
-    """Build reference context for the Builder from section names."""
-    refs: list[str] = []
+    """Build reference context for the Builder from both template sources.
+
+    21st.dev sections → tagged as SECTION REFERENCE (layout/structure)
+    Aceternity effects → tagged as EFFECT REFERENCE (bg, animations)
+    """
+    section_refs: list[str] = []
+    effect_refs: list[str] = []
     seen: set[str] = set()
 
     for name in section_names:
+        # Layer 1: 21st.dev section structure (max 1 per section type)
         templates = get_templates_for_section(name)
-        for template in templates[:1]:  # max 1 per section type
+        for template in templates[:1]:
             key = template[:50]
             if key not in seen and template:
                 seen.add(key)
-                refs.append(
-                    f"# Premium reference for '{name}' "
-                    f"(adapt design system, don't copy verbatim):\n"
+                section_refs.append(
+                    f"# SECTION REFERENCE for '{name}' — "
+                    f"use as layout/structure base:\n"
                     f"{template[:1200]}\n..."
                 )
-        if len(refs) >= max_templates:
+        if len(section_refs) >= max_templates:
             break
 
-    if not refs:
+    # Layer 2: Aceternity effects (max 2 total, pick best matches)
+    effect_seen: set[str] = set()
+    for name in section_names:
+        effects = _get_aceternity_for_section(name)
+        for effect in effects[:1]:
+            ekey = effect[:50]
+            if ekey not in effect_seen and effect:
+                effect_seen.add(ekey)
+                effect_refs.append(
+                    f"# EFFECT REFERENCE — use for backgrounds, "
+                    f"animations, micro-interactions within sections:\n"
+                    f"{effect[:1000]}\n..."
+                )
+            if len(effect_refs) >= 2:
+                break
+        if len(effect_refs) >= 2:
+            break
+
+    parts: list[str] = []
+    if section_refs:
+        parts.append(
+            "## PREMIUM SECTION REFERENCES\n"
+            "Match this quality level. Adapt colors/fonts/content "
+            "to the design system.\n\n"
+            + "\n\n".join(section_refs)
+        )
+    if effect_refs:
+        parts.append(
+            "## ACETERNITY EFFECT REFERENCES\n"
+            "Layer these effects BEHIND or WITHIN section components "
+            "for premium visual quality. Combine a section structure "
+            "(above) with an effect (below).\n\n"
+            + "\n\n".join(effect_refs)
+        )
+
+    if not parts:
         return ""
-    return (
-        "\n\n## PREMIUM SECTION REFERENCES\n"
-        "Match this quality level. Adapt colors/fonts/content to the design system.\n\n"
-        + "\n\n".join(refs)
-    )
+    return "\n\n" + "\n\n".join(parts)
