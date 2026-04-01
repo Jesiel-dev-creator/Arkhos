@@ -13,26 +13,58 @@
 
 /* ── Design Tokens ── */
 :root {
-  /* ArkhosAI Palette */
-  --void: #020408;
-  --deep: #0D1B2A;
-  --border: #1C2E42;
-  --cyan: #00D4EE;
-  --ember: #FF6B35;
-  --frost: #DCE9F5;
-  --muted: #7B8FA3;
-  --success: #22D68A;
-  --warning: #FFB020;
-  --error: #FF4560;
+  /* ArkhosAI Dark Aurora Palette */
+  --void: #050507;
+  --deep: #0A0D16;
+  --surface: #111827;
+  --surface-2: #1C2333;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.12);
+  --ember: #FF5D3A;
+  --ember-glow: rgba(255,93,58,0.15);
+  --ember-hover: #FF7A5A;
+  --cyan: #22D3EE;
+  --cyan-dim: rgba(34,211,238,0.12);
+  --cyan-glow: rgba(34,211,238,0.08);
+  --violet: #818CF8;
+  --violet-dim: rgba(129,140,248,0.12);
+  --green: #34D399;
+  --green-dim: rgba(52,211,153,0.12);
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #475569;
+  --text-code: #22D3EE;
+  --frost: #F1F5F9;
+  --muted: #94A3B8;
+  --grad-ember: linear-gradient(135deg, #FF5D3A 0%, #FF8C5A 100%);
+  --grad-hero: radial-gradient(ellipse at 50% 0%, rgba(255,93,58,0.08) 0%, transparent 60%),
+               radial-gradient(ellipse at 100% 50%, rgba(34,211,238,0.06) 0%, transparent 50%),
+               radial-gradient(ellipse at 0% 100%, rgba(129,140,248,0.06) 0%, transparent 50%);
+  --grad-card: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
 
-  /* Derived */
-  --cyan-glow: rgba(0, 212, 238, 0.15);
-  --ember-glow: rgba(255, 107, 53, 0.2);
-  --ember-glow-strong: rgba(255, 107, 53, 0.4);
+  /* Shadcn/ui mappings */
+  --background: var(--void);
+  --foreground: var(--text-primary);
+  --card: var(--deep);
+  --card-foreground: var(--text-primary);
+  --popover: var(--deep);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--ember);
+  --primary-foreground: #ffffff;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text-secondary);
+  --muted-foreground: var(--muted);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--error);
+  --input: var(--border);
+  --ring: var(--ember);
+  --radius: 0.625rem;
 
   /* Typography */
   --font-display: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
   --font-code: 'Space Mono', monospace;
 
   /* Spacing */
@@ -53,28 +85,13 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-cyan: 0 0 20px rgba(0, 212, 238, 0.15);
-  --shadow-ember: 0 0 20px rgba(255, 107, 53, 0.2);
-  --shadow-ember-strong: 0 0 30px rgba(255, 107, 53, 0.35);
+  --shadow-cyan: 0 0 20px rgba(34, 211, 238, 0.15);
+  --shadow-ember: 0 0 20px rgba(255, 93, 58, 0.2);
+  --shadow-ember-strong: 0 0 30px rgba(255, 93, 58, 0.35);
 
-  /* Shadcn/ui mappings → ArkhosAI dark palette */
-  --background: var(--void);
-  --foreground: var(--frost);
-  --card: var(--deep);
-  --card-foreground: var(--frost);
-  --popover: var(--deep);
-  --popover-foreground: var(--frost);
-  --primary: var(--ember);
-  --primary-foreground: #ffffff;
-  --secondary: var(--deep);
-  --secondary-foreground: var(--frost);
-  --muted-foreground: var(--muted);
-  --accent: var(--deep);
-  --accent-foreground: var(--frost);
-  --destructive: var(--error);
-  --input: var(--border);
-  --ring: var(--cyan);
-  --radius: 0.625rem;
+  --success: #34D399;
+  --warning: #FBBF24;
+  --error: #EF4444;
 }
 
 /* ── Base ── */
@@ -86,12 +103,21 @@ html {
 
 body {
   background-color: var(--void);
-  color: var(--frost);
+  color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
   margin: 0;
   min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--grad-hero);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ── Typography ── */
@@ -108,7 +134,7 @@ code, pre, .font-mono {
 
 /* ── Selection ── */
 ::selection {
-  background: var(--ember-glow-strong);
+  background: var(--ember-glow);
   color: var(--frost);
 }
 

@@ -388,6 +388,10 @@ export default function Home() {
       {/* ============================================
           SECTION 2: Hero (WebGL Shader)
           ============================================ */}
+      {/* Hero ambient glow */}
+      <div className="absolute inset-0 z-[5] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(255,93,58,0.12) 0%, transparent 60%)' }} />
+
       <AnimatedShaderHero
         headline={{ line1: "The EU Answer", line2: "to Lovable." }}
         subtitle="5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation."
@@ -411,7 +415,14 @@ export default function Home() {
       {/* ============================================
           SECTION 3: Try it now (ChatInput)
           ============================================ */}
-      <section className="relative bg-[#020408] py-16 px-6 -mt-20 z-20">
+      <section className="relative bg-[var(--void)] py-16 px-6 -mt-20 z-20"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+          backgroundSize: '48px 48px'
+        }}>
+        <div className="max-w-3xl mx-auto text-center mb-2">
+          <p className="text-sm font-medium tracking-wider uppercase" style={{ color: 'var(--cyan)' }}>Try it now</p>
+        </div>
         <div className="max-w-3xl mx-auto text-center mb-8">
           <ShiningText text="Try it now -- no signup required" />
         </div>
