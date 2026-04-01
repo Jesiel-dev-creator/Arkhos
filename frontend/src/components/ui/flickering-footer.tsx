@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
+import { SocialIcons } from "@/components/ui/social-icons";
 import { clsx, type ClassValue } from "clsx";
 import * as Color from "color-bits";
 import { motion } from "framer-motion";
@@ -318,51 +319,57 @@ export const Component = () => {
   const currentPhrase = EU_PHRASES[phraseIndex];
 
   return (
-    <footer id="footer" className="w-full pb-0 bg-[#020408]">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between px-6 md:px-10 py-10">
-        <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
+    <footer id="footer" className="w-full pb-0 bg-[var(--void)]">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-start md:justify-between px-6 md:px-10 py-14 gap-10">
+        {/* Left column — brand, description, badges, social */}
+        <div className="flex flex-col items-start gap-y-5 max-w-xs shrink-0">
           <a href="/" className="flex items-center gap-2">
-            <Icons.logo />
-            <p className="text-xl font-semibold text-[#DCE9F5] font-[Syne]">ArkhosAI</p>
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'var(--ember)' }}>
+              <span className="text-white font-bold text-xs font-[Syne]">A</span>
+            </div>
+            <span className="text-lg font-semibold font-[Syne]" style={{ color: 'var(--text-primary)' }}>ArkhosAI</span>
           </a>
-          <p className="tracking-tight text-[#DCE9F5]/50 font-medium text-sm">
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
             {siteConfig.hero.description}
           </p>
           <div className="flex items-center gap-2">
-            <Icons.soc2Dark className="size-12" />
-            <Icons.gdprDark className="size-12" />
-            <Icons.mitDark className="size-12" />
+            <Icons.soc2Dark className="size-11" />
+            <Icons.gdprDark className="size-11" />
+            <Icons.mitDark className="size-11" />
           </div>
+          <SocialIcons />
         </div>
-        <div className="pt-5 md:w-1/2">
-          <div className="flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between gap-y-5 lg:pl-10">
-            {siteConfig.footerLinks.map((column, i) => (
-              <ul key={i} className="flex flex-col gap-y-2">
-                <li className="mb-2 text-sm font-semibold text-[#DCE9F5]">{column.title}</li>
-                {column.links.map((link) => (
-                  <li key={link.id} className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[15px]/snug text-[#DCE9F5]/50">
-                    <a href={link.url}>{link.title}</a>
-                    <div className="flex size-4 items-center justify-center border border-white/10 rounded translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
-                      <ChevronRight className="h-3 w-3" />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ))}
-          </div>
+
+        {/* Right columns — links */}
+        <div className="flex flex-col md:flex-row gap-10 lg:gap-16">
+          {siteConfig.footerLinks.map((column, i) => (
+            <ul key={i} className="flex flex-col gap-y-2.5">
+              <li className="mb-1 text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{column.title}</li>
+              {column.links.map((link) => (
+                <li key={link.id} className="group inline-flex cursor-pointer items-center justify-start gap-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  <a href={link.url} className="hover:text-[var(--text-primary)] transition-colors">{link.title}</a>
+                  <div className="flex size-4 items-center justify-center border border-white/10 rounded translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
+                    <ChevronRight className="h-3 w-3" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ))}
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex flex-col md:flex-row items-center justify-between text-xs text-[#DCE9F5]/30 border-t border-white/5">
+
+      {/* Bottom bar */}
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-4 flex flex-col md:flex-row items-center justify-between text-xs border-t border-white/5" style={{ color: 'var(--text-muted)' }}>
         <span>© 2026 Bleucommerce SAS · Orleans, France</span>
         <span>
           Powered by{" "}
-          <a href="https://github.com/Jesiel-dev-creator/Arkhos" className="text-[#FF6B35] hover:underline">Tramontane</a>
-          {" · "}<a href="https://mistral.ai" className="hover:text-[#DCE9F5]/60">Mistral AI</a>
-          {" · "}<a href="https://scaleway.com" className="hover:text-[#DCE9F5]/60">Scaleway</a>
+          <a href="https://github.com/Jesiel-dev-creator/Arkhos" className="hover:underline" style={{ color: 'var(--ember)' }}>Tramontane</a>
+          {" · "}<a href="https://mistral.ai" className="hover:text-[var(--text-secondary)] transition-colors">Mistral AI</a>
+          {" · "}<a href="https://scaleway.com" className="hover:text-[var(--text-secondary)] transition-colors">Scaleway</a>
         </span>
       </div>
-      <div className="w-full max-w-7xl mx-auto h-48 md:h-64 relative mt-4 z-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-[#020408] z-10 from-40%" />
+      <div className="w-full max-w-6xl mx-auto h-48 md:h-64 relative mt-8 z-0">
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-[var(--void)] z-10 from-40%" />
         <div className="absolute inset-0 mx-6">
           <FlickeringGrid
             text={tablet ? currentPhrase.split(" ")[0] : currentPhrase}
