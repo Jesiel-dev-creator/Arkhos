@@ -13,7 +13,8 @@ import {
 } from "lucide-react";
 
 import AnimatedShaderHero from "@/components/shaders/animated-shader-hero";
-import KineticLogStream from "@/components/ui/kinetic-log-stream";
+import { ShaderAnimation } from "@/components/shaders/shader-animation";
+import PipelinePlan from "@/components/PipelinePlan";
 import { PricingSection } from "@/components/ui/pricing-section";
 import { FAQ } from "@/components/ui/faq-tabs";
 import AppFooter from "@/components/AppFooter";
@@ -105,19 +106,13 @@ const showcaseOffers: Offer[] = [
 ];
 
 /* ======= Pipeline logs ======= */
-const pipelineLogs = [
-  { type: "INFO" as const, message: "Planner: Analyzing website requirements..." },
-  { type: "SUCCESS" as const, message: "Planner: Plan generated -- 6 sections identified" },
-  { type: "INFO" as const, message: "Designer: Selecting color palette and typography..." },
-  { type: "SUCCESS" as const, message: "Designer: Warm amber palette -- Playfair Display" },
-  { type: "INFO" as const, message: "Architect: Planning React component structure..." },
-  { type: "SUCCESS" as const, message: "Architect: Blueprint ready -- Hero, Menu, About, Contact" },
-  { type: "INFO" as const, message: "Builder: Writing Hero.tsx (47 lines)..." },
-  { type: "SUCCESS" as const, message: "Builder: Hero.tsx complete" },
-  { type: "INFO" as const, message: "Builder: Writing Features.tsx (89 lines)..." },
-  { type: "SUCCESS" as const, message: "Builder: All 6 sections generated" },
-  { type: "SUCCESS" as const, message: "Reviewer: Security scan passed. 0 vulnerabilities." },
-  { type: "SUCCESS" as const, message: "Generation complete: \u20AC0.007 \u00B7 1m 58s \u00B7 23 files" },
+/* Demo pipeline agents — shows completed state on the homepage */
+const demoPipelineAgents: import("@/hooks/useSSE").AgentState[] = [
+  { name: "planner", status: "complete", model: "ministral-3b", cost_eur: 0, duration_s: 1.2 },
+  { name: "designer", status: "complete", model: "mistral-small", cost_eur: 0.0003, duration_s: 1.9 },
+  { name: "architect", status: "complete", model: "mistral-small", cost_eur: 0.0007, duration_s: 9.5 },
+  { name: "builder", status: "complete", model: "devstral-small", cost_eur: 0.0042, duration_s: 95.3 },
+  { name: "reviewer", status: "complete", model: "mistral-small", cost_eur: 0.001, duration_s: 12.1 },
 ];
 
 /* ======= Why ArkhosAI cards ======= */
@@ -536,49 +531,53 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 5: How It Works (3 Steps + Terminal)
+          SECTION 5: The Pipeline (PipelinePlan + ShaderAnimation bg)
           ============================================ */}
-      <section className="py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
-        <motion.h2
-          className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          How it works
-        </motion.h2>
-        <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
-          From description to deployed website in three steps.
-        </p>
-
-        {/* 3-step explainer */}
-        <div className="mx-auto max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {[
-            { step: "1", title: "Describe", desc: "Tell us what you want in plain language. Industry, style, sections." },
-            { step: "2", title: "Generate", desc: "5 AI agents build your site. Under \u20AC0.01. Takes about 2 minutes." },
-            { step: "3", title: "Ship", desc: "Download, deploy, or iterate. Real React code you own." },
-          ].map((s, i) => (
-            <motion.div key={s.step} variants={fadeUp} initial="hidden" whileInView="visible"
-              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="text-center">
-              <div className="w-10 h-10 rounded-full mx-auto mb-4 flex items-center justify-center text-sm font-bold"
-                style={{ background: 'var(--ember-glow)', color: 'var(--ember)' }}>
-                {s.step}
-              </div>
-              <h3 className="font-[Syne] text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{s.title}</h3>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{s.desc}</p>
-            </motion.div>
-          ))}
+      <section className="relative py-20 md:py-28 px-6 overflow-hidden">
+        {/* ShaderAnimation background at low opacity */}
+        <div className="absolute inset-0 z-0 opacity-[0.15]">
+          <ShaderAnimation />
         </div>
+        <div className="relative z-10">
+          <motion.h2
+            className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            5 agents, one pipeline
+          </motion.h2>
+          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-12">
+            Each agent specializes. Click to explore what they do.
+          </p>
 
-        {/* Pipeline terminal */}
-        <KineticLogStream
-          logs={pipelineLogs}
-          title="Watch 5 agents build your site in real time"
-          subtitle="Each agent specializes -- from planning to security review"
-        />
+          {/* Interactive PipelinePlan — same component used in the generator */}
+          <div className="mx-auto max-w-2xl">
+            <PipelinePlan
+              agents={demoPipelineAgents}
+              status="complete"
+            />
+          </div>
+
+          {/* Stats in context below the pipeline */}
+          <div className="mx-auto max-w-3xl mt-12 flex flex-wrap items-center justify-center gap-6 md:gap-10">
+            {[
+              { value: "5 agents", label: "in sequence" },
+              { value: "<\u20AC0.01", label: "per generation" },
+              { value: "~2 min", label: "build time" },
+              { value: "MIT", label: "open source" },
+            ].map((stat, i) => (
+              <motion.div key={stat.label} variants={fadeUp} initial="hidden" whileInView="visible"
+                viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="text-center">
+                <p className="font-mono text-lg font-bold" style={{ color: 'var(--ember)' }}>{stat.value}</p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <SectionDivider />
