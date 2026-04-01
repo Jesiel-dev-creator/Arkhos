@@ -127,13 +127,17 @@ export default function PreviewPane({
       {/* ── Preview Container ── */}
       <div
         ref={containerRef}
-        className="relative flex-1 min-h-[500px] rounded-[16px] overflow-hidden"
+        className="relative flex-1 min-h-[500px] rounded-[16px] overflow-hidden transition-all duration-700"
         style={{
           background: "rgba(13, 27, 42, 0.6)",
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
-          border: "1px solid var(--border)",
-          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+          border: isLoading
+            ? "1px solid rgba(255, 107, 53, 0.3)"
+            : "1px solid rgba(0, 212, 238, 0.15)",
+          boxShadow: isLoading
+            ? "0 0 30px rgba(255, 107, 53, 0.08), inset 0 1px 0 rgba(255,255,255,0.03)"
+            : "0 0 30px rgba(0, 212, 238, 0.08), inset 0 1px 0 rgba(255,255,255,0.03)",
         }}
       >
         {/* ── Idle + Loading State — Interactive ember canvas ── */}
@@ -142,8 +146,9 @@ export default function PreviewPane({
             <FallingPattern
               color="#00D4EE"
               backgroundColor="#020408"
-              density={2}
-              duration={150}
+              density={1}
+              duration={120}
+              blurIntensity="0.6em"
             />
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
               <p className="text-sm font-medium mb-1"
@@ -282,28 +287,29 @@ function BrowserChrome({ url, generationId, isGenerating }: {
   url?: string; generationId?: string | null; isGenerating?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--border)] bg-[var(--void)]/60">
-      <div className="flex gap-1.5">
-        <div className="w-2.5 h-2.5 rounded-full bg-[var(--error)]/60" />
-        <div className="w-2.5 h-2.5 rounded-full bg-[var(--warning)]/60" />
-        <div className="w-2.5 h-2.5 rounded-full bg-[var(--success)]/60" />
-      </div>
-      <div className="flex-1 flex justify-center">
-        <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-[var(--deep)] text-[10px]">
-          {isGenerating ? (
-            <span className="animate-pulse" style={{ color: "var(--ember)", fontFamily: "var(--font-code)" }}>
-              building...
-            </span>
-          ) : (
-            <>
-              <Globe size={10} style={{ color: "var(--muted)" }} />
-              <span style={{ fontFamily: "var(--font-code)", color: "var(--muted)" }}>
-                {url || `arkhos.ai/preview/${generationId ? generationId.slice(0, 8) : "..."}`}
-              </span>
-            </>
-          )}
+    <div className="relative">
+      <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--border)] bg-[var(--void)]/60">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--error)]/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--warning)]/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--success)]/60" />
         </div>
-      </div>
+        <div className="flex-1 flex justify-center">
+          <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-[var(--deep)] text-[10px]">
+            {isGenerating ? (
+              <span className="animate-pulse" style={{ color: "var(--ember)", fontFamily: "var(--font-code)" }}>
+                building...
+              </span>
+            ) : (
+              <>
+                <Globe size={10} style={{ color: "var(--muted)" }} />
+                <span style={{ fontFamily: "var(--font-code)", color: "var(--muted)" }}>
+                  {url || `arkhos.ai/preview/${generationId ? generationId.slice(0, 8) : "..."}`}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       {url && !isGenerating && (
         <button
           onClick={() => window.open(url, "_blank")}
@@ -311,6 +317,26 @@ function BrowserChrome({ url, generationId, isGenerating }: {
         >
           <ExternalLink size={12} />
         </button>
+      )}
+      </div>
+      {/* Ember progress bar during generation */}
+      {isGenerating && (
+        <div className="h-[2px] w-full overflow-hidden bg-[#0D1B2A]">
+          <div
+            className="h-full bg-gradient-to-r from-[#FF6B35] via-[#FFB347] to-[#FF6B35] animate-pulse"
+            style={{
+              width: "60%",
+              animation: "progress-slide 2s ease-in-out infinite",
+            }}
+          />
+          <style>{`
+            @keyframes progress-slide {
+              0% { transform: translateX(-100%); }
+              50% { transform: translateX(80%); }
+              100% { transform: translateX(-100%); }
+            }
+          `}</style>
+        </div>
       )}
     </div>
   );
