@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, Code, Copy, X, Check, Zap, Globe } from "lucide-react";
+import { Download, Code, Copy, X, Check, Zap, Globe, ExternalLink, Smartphone } from "lucide-react";
 import gsap from "gsap";
 import type { GenerationStatus } from "@/hooks/useSSE";
 import { FallingPattern } from "@/components/shaders/falling-pattern";
@@ -46,6 +46,7 @@ export default function PreviewPane({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+  const [mobilePreview, setMobilePreview] = useState(false);
   const revealDone = useRef(false);
 
   /* WC state from parent (Generate.tsx owns the WebContainer) */
@@ -178,7 +179,8 @@ export default function PreviewPane({
             <BrowserChrome url={wcPreviewUrl ?? undefined} generationId={generationId} isGenerating={isGenerating} />
             <iframe
               src={wcPreviewUrl ?? undefined}
-              className="w-full flex-1 border-0 bg-white"
+              className={mobilePreview ? "flex-1 border-0 bg-white" : "w-full flex-1 border-0 bg-white"}
+              style={mobilePreview ? { width: 375, margin: "0 auto" } : undefined}
               title="Generated site preview (WebContainer)"
             />
           </div>
@@ -263,6 +265,17 @@ export default function PreviewPane({
               {copied ? <Check size={14} className="text-[var(--success)]" /> : <Copy size={14} />}
               {copied ? "Copied!" : "Copy HTML"}
             </button>
+            <button
+              onClick={() => setMobilePreview((v) => !v)}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-[10px] border text-sm font-medium transition-all duration-200 ${
+                mobilePreview
+                  ? "border-[var(--cyan)]/50 text-[var(--cyan)] bg-[var(--cyan)]/5"
+                  : "border-[var(--border)] text-[var(--frost)] hover:border-[var(--muted)] hover:bg-[var(--deep)]/50"
+              }`}
+            >
+              <Smartphone size={14} />
+              Mobile
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -297,6 +310,14 @@ function BrowserChrome({ url, generationId, isGenerating }: {
           )}
         </div>
       </div>
+      {url && !isGenerating && (
+        <button
+          onClick={() => window.open(url, "_blank")}
+          className="p-1 rounded-md hover:bg-white/10 text-[var(--muted)] hover:text-[var(--frost)]"
+        >
+          <ExternalLink size={12} />
+        </button>
+      )}
     </div>
   );
 }
