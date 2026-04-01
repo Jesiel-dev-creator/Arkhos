@@ -344,7 +344,7 @@ export default function Home() {
             </motion.div>
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.24 }}
               className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
-              <img src="/tramontane.webp" alt="Tramontane" className="h-10 w-auto mb-4" />
+              <img src="/tramontane logo no bg.png" alt="Tramontane" className="h-10 w-auto mb-4" />
               <p className="text-lg font-semibold text-[#DCE9F5]">Tramontane</p>
               <p className="mt-2 text-sm text-[#7B8FA3]">Open source agent orchestration.</p>
             </motion.div>
