@@ -693,12 +693,6 @@ export default function Home() {
                       {agent.desc}
                     </p>
                   </div>
-                  {/* Arrow connector (visible on md+) */}
-                  {i < agents.length - 1 && (
-                    <div className="hidden md:flex items-center text-[var(--text-muted)] self-center">
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  )}
                 </motion.div>
               ))}
             </div>
