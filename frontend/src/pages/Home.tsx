@@ -30,6 +30,7 @@ import AppFooter from "@/components/AppFooter";
 import { OfferCarousel, type Offer } from "@/components/ui/offer-carousel";
 import { SocialIcons } from "@/components/ui/social-icons";
 import { ChatInput } from "@/components/ui/bolt-style-chat";
+import GradientButton from "@/components/ui/gradient-button";
 
 /* ======= Animation variants ======= */
 const fadeUp = {
@@ -449,12 +450,9 @@ export default function Home() {
         </div>
 
         {/* CTA */}
-        <button
-          onClick={() => navigate("/generate")}
-          className="shrink-0 rounded-full bg-[#FF6B35] px-5 py-2 text-sm font-semibold font-[DM_Sans] text-white transition-all duration-200 hover:bg-[#FF6B35]/90 hover:scale-[1.02]"
-        >
+        <GradientButton onClick={() => navigate("/generate")} width="180px" height="38px">
           Start building free
-        </button>
+        </GradientButton>
       </nav>
 
       {/* ============================================

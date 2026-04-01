@@ -68,10 +68,11 @@ export function PricingSection({ plans, heading, description, ...props }: Pricin
             {plan.highlighted && (
               <BorderTrail style={{ boxShadow: '0px 0px 60px 30px rgb(255 255 255 / 50%), 0 0 100px 60px rgb(0 0 0 / 50%)' }} size={100} />
             )}
-            <div className={cn('bg-muted/20 rounded-t-lg border-b p-4', plan.highlighted && 'bg-muted/40')}>
+            <div className={cn('rounded-t-lg border-b border-white/5 p-4', plan.highlighted ? 'bg-[rgba(255,93,58,0.06)]' : 'bg-white/[0.02]')}>
               <div className="absolute top-2 right-2 z-10 flex items-center gap-2">
                 {plan.highlighted && (
-                  <p className="bg-background flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs">
+                  <p className="flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold"
+                    style={{ background: 'var(--ember-glow)', color: 'var(--ember)', border: '1px solid rgba(255,93,58,0.3)' }}>
                     <StarIcon className="h-3 w-3 fill-current" />Popular
                   </p>
                 )}
@@ -88,7 +89,7 @@ export function PricingSection({ plans, heading, description, ...props }: Pricin
                 <span className="text-muted-foreground">{plan.name !== 'Free' ? '/' + (frequency === 'monthly' ? 'month' : 'year') : ''}</span>
               </h3>
             </div>
-            <div className={cn('text-muted-foreground space-y-4 px-4 py-6 text-sm', plan.highlighted && 'bg-muted/10')}>
+            <div className={cn('text-muted-foreground space-y-4 px-4 py-6 text-sm')}>
               {plan.features.map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <CheckCircleIcon className="text-foreground h-4 w-4" />
@@ -96,10 +97,23 @@ export function PricingSection({ plans, heading, description, ...props }: Pricin
                 </div>
               ))}
             </div>
-            <div className={cn('mt-auto w-full border-t p-3', plan.highlighted && 'bg-muted/40')}>
-              <Button className="w-full" variant={plan.highlighted ? 'default' : 'outline'} asChild>
-                <a href={plan.btn.href}>{plan.btn.text}</a>
-              </Button>
+            <div className="mt-auto w-full border-t border-white/5 p-3">
+              {plan.highlighted ? (
+                <a href={plan.btn.href}
+                  className="flex items-center justify-center w-full px-4 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{
+                    background: 'linear-gradient(135deg, var(--ember) 0%, #FF8C5A 100%)',
+                    boxShadow: '0 0 20px rgba(255,93,58,0.3)',
+                  }}>
+                  {plan.btn.text}
+                </a>
+              ) : (
+                <a href={plan.btn.href}
+                  className="flex items-center justify-center w-full px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-white/5"
+                  style={{ color: 'var(--text-secondary)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  {plan.btn.text}
+                </a>
+              )}
             </div>
           </div>
         ))}
