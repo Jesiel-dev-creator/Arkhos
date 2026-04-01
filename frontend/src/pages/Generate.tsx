@@ -4,10 +4,10 @@ import { useSSE } from "@/hooks/useSSE";
 import type { ChatMessage } from "@/hooks/useSSE";
 import { useWebContainer } from "@/hooks/useWebContainer";
 import { ChatInput } from "@/components/ui/bolt-style-chat";
-import { ShiningText } from "@/components/ui/shining-text";
 import { Banner } from "@/components/ui/banner";
 import BasicModal from "@/components/ui/modal";
 import { SessionNavBar } from "@/components/ui/app-sidebar";
+import PipelinePlan from "@/components/PipelinePlan";
 import PipelineStrip from "@/components/PipelineStrip";
 import PreviewPane from "@/components/PreviewPane";
 import CodeDrawer from "@/components/CodeDrawer";
@@ -216,21 +216,17 @@ export default function Generate() {
           disabled={isRunning}
         />
 
-        {/* ShiningText during generation */}
+        {/* Pipeline progress during generation */}
         <AnimatePresence>
           {isRunning && (
             <motion.div
-              initial={{ opacity: 0, y: -4 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center justify-center gap-2"
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="flex-1 min-h-0"
             >
-              <div
-                className="w-1.5 h-1.5 rounded-full animate-pulse"
-                style={{ backgroundColor: "var(--ember)" }}
-              />
-              <ShiningText text="agents working..." />
+              <PipelinePlan agents={state.agents} status={state.status} />
             </motion.div>
           )}
         </AnimatePresence>
