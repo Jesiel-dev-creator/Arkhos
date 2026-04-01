@@ -13,6 +13,7 @@ interface PipelineStripProps {
   totalCostEur: number;
   totalDurationS: number;
   timeoutWarning?: boolean;
+  remainingToday?: number;
 }
 
 const LABELS: Record<string, string> = {
@@ -37,6 +38,7 @@ export default function PipelineStrip({
   totalCostEur,
   totalDurationS,
   timeoutWarning,
+  remainingToday,
 }: PipelineStripProps) {
   const showCost = status === "running" || status === "complete" || status === "starting";
 
@@ -139,6 +141,13 @@ export default function PipelineStrip({
             </span>
           )}
         </div>
+      )}
+
+      {/* Remaining generations counter */}
+      {remainingToday !== undefined && (
+        <span className="text-[10px] font-mono" style={{ color: "#7B8FA3" }}>
+          {remainingToday} free
+        </span>
       )}
     </div>
   );
