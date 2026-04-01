@@ -292,7 +292,7 @@ const siteConfig = {
   ],
 };
 
-/* Top 5 spoken EU languages — cycles every 3-5s */
+/* Top 5 spoken EU languages — typing effect cycles through them */
 const EU_PHRASES = [
   "Build something",    // English
   "Construisez",        // French
@@ -301,22 +301,50 @@ const EU_PHRASES = [
   "Costruisci",         // Italian
 ];
 
-export const Component = () => {
-  const tablet = useMediaQueryLocal("(max-width: 1024px)");
+function useTypingCycle(phrases: string[], typingSpeed = 50, pauseTime = 2500, deleteSpeed = 25) {
+  const [displayText, setDisplayText] = useState(phrases[0]);
   const [phraseIndex, setPhraseIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const [charIndex, setCharIndex] = useState(phrases[0].length);
 
   useEffect(() => {
-    const tick = () => {
-      setPhraseIndex((i) => (i + 1) % EU_PHRASES.length);
-      // Random interval between 3-5 seconds
-      const next = 3000 + Math.random() * 2000;
-      timerId = window.setTimeout(tick, next);
-    };
-    let timerId = window.setTimeout(tick, 4000);
-    return () => clearTimeout(timerId);
-  }, []);
+    const currentPhrase = phrases[phraseIndex];
+    let timeout: ReturnType<typeof setTimeout>;
 
-  const currentPhrase = EU_PHRASES[phraseIndex];
+    if (isTyping) {
+      if (charIndex < currentPhrase.length) {
+        timeout = setTimeout(() => {
+          setDisplayText(currentPhrase.slice(0, charIndex + 1));
+          setCharIndex(charIndex + 1);
+        }, typingSpeed + Math.random() * 20);
+      } else {
+        // Done typing — pause then start deleting
+        timeout = setTimeout(() => setIsTyping(false), pauseTime);
+      }
+    } else {
+      if (charIndex > 0) {
+        // Delete
+        timeout = setTimeout(() => {
+          setDisplayText(currentPhrase.slice(0, charIndex - 1));
+          setCharIndex(charIndex - 1);
+        }, deleteSpeed);
+      } else {
+        // Move to next phrase and start typing
+        const next = (phraseIndex + 1) % phrases.length;
+        setPhraseIndex(next);
+        setIsTyping(true);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, isTyping, phraseIndex, phrases, typingSpeed, pauseTime, deleteSpeed]);
+
+  return displayText;
+}
+
+export const Component = () => {
+  const tablet = useMediaQueryLocal("(max-width: 1024px)");
+  const typingText = useTypingCycle(EU_PHRASES);
 
   return (
     <footer id="footer" className="w-full pb-0 bg-[var(--void)]">
@@ -372,13 +400,13 @@ export const Component = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-[var(--void)] z-10 from-40%" />
         <div className="absolute inset-0 mx-6">
           <FlickeringGrid
-            text={tablet ? currentPhrase.split(" ")[0] : currentPhrase}
+            text={tablet ? typingText.split(" ")[0] : typingText}
             fontSize={tablet ? 60 : 80}
             className="h-full w-full"
             squareSize={2}
             gridGap={tablet ? 2 : 3}
-            color="#6B7280"
-            maxOpacity={0.3}
+            color="#FF5D3A"
+            maxOpacity={0.25}
             flickerChance={0.1}
           />
         </div>
