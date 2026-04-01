@@ -444,40 +444,31 @@ export default function Home() {
       {/* ============================================
           SECTION 2: Hero (WebGL Shader)
           ============================================ */}
-      <AnimatedShaderHero
-        headline={{ line1: "The EU Answer", line2: "to Lovable." }}
-        subtitle={`5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation.`}
-        buttons={{
-          primary: {
-            text: "Start building free \u2192",
-            onClick: () => navigate("/generate"),
-          },
-          secondary: {
-            text: "View on GitHub",
-            onClick: () =>
-              window.open("https://github.com/ArkhosAI/arkhos", "_blank"),
-          },
-        }}
-        trustBadge={{
-          text: "EU Sovereign \u00B7 Mistral AI \u00B7 Scaleway Paris \u00B7 MIT Open Source",
-          icons: [<Globe key="globe" className="h-4 w-4" />],
-        }}
-      />
-
-      {/* ============================================
-          SECTION 3: Try it now (ChatInput)
-          ============================================ */}
-      <section className="relative bg-[var(--void)] py-20 md:py-28 px-6 -mt-20 z-20">
-        <div className="max-w-3xl mx-auto text-center mb-8">
-          <ShiningText text="Try it now -- no signup required" />
-        </div>
-        <ChatInput
-          onSend={(msg) =>
-            navigate(`/generate?prompt=${encodeURIComponent(msg)}`)
-          }
-          placeholder="Describe your website -- a bakery, a SaaS product, a portfolio..."
+      {/* Hero with ChatInput as the CTA — like Lovable/Bolt/v0 */}
+      <div className="relative">
+        <AnimatedShaderHero
+          headline={{ line1: "The EU Answer", line2: "to Lovable." }}
+          subtitle={"5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation."}
+          trustBadge={{
+            text: "EU Sovereign \u00B7 Mistral AI \u00B7 Scaleway Paris \u00B7 MIT Open Source",
+            icons: [<Globe key="globe" className="h-4 w-4" />],
+          }}
         />
-      </section>
+        {/* ChatInput overlaid on hero bottom — THIS is the CTA */}
+        <div className="absolute bottom-16 left-0 right-0 z-20 px-4">
+          <div className="max-w-2xl mx-auto">
+            <ChatInput
+              onSend={(msg) =>
+                navigate(`/generate?prompt=${encodeURIComponent(msg)}`)
+              }
+              placeholder="Describe your website — a bakery, a SaaS product, a portfolio..."
+            />
+            <p className="text-center mt-3 text-xs" style={{ color: 'var(--text-muted)' }}>
+              No signup required · Free · 3 generations per day
+            </p>
+          </div>
+        </div>
+      </div>
 
       <SectionDivider />
 
