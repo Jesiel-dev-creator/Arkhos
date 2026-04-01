@@ -6,11 +6,11 @@ import { Shield, Eye, Unlock, Check, X, AlertTriangle, Globe } from "lucide-reac
 import ShadcnBlocksNavbar from "@/components/ui/shadcnblocks-navbar";
 import AnimatedShaderHero from "@/components/shaders/animated-shader-hero";
 import KineticLogStream from "@/components/ui/kinetic-log-stream";
-import PricingSection from "@/components/ui/pricing-section";
-import FAQ from "@/components/ui/faq-tabs";
-import NotificationCenterFeed from "@/components/ui/live-feed";
+import { PricingSection } from "@/components/ui/pricing-section";
+import { FAQ } from "@/components/ui/faq-tabs";
+import { NotificationCenterFeed } from "@/components/ui/live-feed";
 import AppFooter from "@/components/AppFooter";
-import { Card, CardContent } from "@/components/ui/card";
+import { ShiningText } from "@/components/ui/shining-text";
 
 /* ======= Animation variants ======= */
 const fadeUp = {
@@ -18,14 +18,14 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
-/* ======= Section 4: Pipeline logs ======= */
+/* ======= Section: Pipeline logs ======= */
 const pipelineLogs = [
   { type: "INFO" as const, message: "Planner: Analyzing website requirements..." },
-  { type: "SUCCESS" as const, message: "Planner: Plan generated \u2014 6 sections identified" },
+  { type: "SUCCESS" as const, message: "Planner: Plan generated — 6 sections identified" },
   { type: "INFO" as const, message: "Designer: Selecting color palette and typography..." },
-  { type: "SUCCESS" as const, message: "Designer: Warm amber palette \u2014 Playfair Display" },
+  { type: "SUCCESS" as const, message: "Designer: Warm amber palette — Playfair Display" },
   { type: "INFO" as const, message: "Architect: Planning React component structure..." },
-  { type: "SUCCESS" as const, message: "Architect: Blueprint ready \u2014 Hero, Menu, About, Contact" },
+  { type: "SUCCESS" as const, message: "Architect: Blueprint ready — Hero, Menu, About, Contact" },
   { type: "INFO" as const, message: "Builder: Writing Hero.tsx (47 lines)..." },
   { type: "SUCCESS" as const, message: "Builder: Hero.tsx complete" },
   { type: "INFO" as const, message: "Builder: Writing Features.tsx (89 lines)..." },
@@ -34,7 +34,7 @@ const pipelineLogs = [
   { type: "SUCCESS" as const, message: "Generation complete: \u20AC0.004 \u00B7 17.3s \u00B7 23 files" },
 ];
 
-/* ======= Section 5: Why ArkhosAI cards ======= */
+/* ======= Section: Why ArkhosAI cards ======= */
 const whyCards = [
   {
     icon: <Shield className="w-8 h-8 text-[#00D4EE]" />,
@@ -53,7 +53,7 @@ const whyCards = [
   },
 ];
 
-/* ======= Section 6: Agents ======= */
+/* ======= Section: Agents ======= */
 const agents = [
   { name: "Planner", model: "ministral-3b", desc: "Understands your requirements", color: "#00D4EE", initial: "P" },
   { name: "Designer", model: "mistral-small", desc: "Chooses colors, fonts, visual style", color: "#E040FB", initial: "D" },
@@ -122,7 +122,7 @@ const comparisonRows: ComparisonRow[] = [
   },
 ];
 
-/* ======= Section 8: Pricing plans ======= */
+/* ======= Section: Pricing plans ======= */
 const pricingPlans = [
   {
     name: "Free",
@@ -166,7 +166,7 @@ const pricingPlans = [
   },
 ];
 
-/* ======= Section 9: FAQ data ======= */
+/* ======= Section: FAQ data ======= */
 const faqCategories = {
   general: "General",
   pricing: "Pricing",
@@ -248,7 +248,7 @@ const faqData = {
 /* ======= Stats data ======= */
 const stats = [
   { value: "\u20AC0.004", label: "avg per generation" },
-  { value: "5", label: "agents work in parallel" },
+  { value: "5", label: "agents working in parallel" },
   { value: "MIT", label: "open source license" },
   { value: "EU", label: "sovereign by default" },
 ];
@@ -279,10 +279,10 @@ export default function Home() {
       {/* -- SECTION 1: Navbar -- */}
       <ShadcnBlocksNavbar />
 
-      {/* -- SECTION 2: Hero -- */}
+      {/* -- SECTION 2: Hero (WebGL Shader) -- */}
       <AnimatedShaderHero
         headline={{ line1: "The EU Answer", line2: "to Lovable." }}
-        subtitle={"4 Mistral agents build your site live. Real React + shadcn/ui. \u20AC0.004 per generation."}
+        subtitle="5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation."
         buttons={{
           primary: { text: "Start building free \u2192", onClick: () => navigate("/generate") },
           secondary: { text: "See how it works" },
@@ -294,33 +294,35 @@ export default function Home() {
       />
 
       {/* -- SECTION 3: Stats Strip -- */}
-      <section className="bg-[#020408] py-20 px-6">
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-4">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-            >
-              <Card className="bg-[#0D1B2A] border border-white/5 rounded-xl p-6 text-center ring-0">
-                <CardContent className="p-0">
-                  <p className="font-[Syne] text-4xl font-bold text-[#FF6B35]">{stat.value}</p>
-                  <p className="mt-1 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{stat.label}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+      <section className="bg-[#020408] py-24 px-6">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-8 flex justify-center">
+            <ShiningText text="5 agents working in parallel to build your site" />
+          </div>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="rounded-xl border border-white/5 bg-[#0D1B2A] p-6 text-center"
+              >
+                <p className="font-[Syne] text-4xl font-bold text-[#FF6B35]">{stat.value}</p>
+                <p className="mt-1 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* -- SECTION 3.5: Powered by EU AI & Cloud -- */}
-      <section className="bg-[#020408] py-20 px-6">
+      {/* -- SECTION 4: Powered by EU AI & Cloud -- */}
+      <section className="bg-[#020408] py-24 px-6">
         <div className="mx-auto max-w-4xl">
           <motion.h2
-            className="mb-10 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-12 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -330,41 +332,42 @@ export default function Home() {
             Powered by EU AI {"&"} Cloud
           </motion.h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0 }}
-              className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
-              <img src="/mistral-logo-color-white.png" alt="Mistral AI" className="h-10 w-auto mb-4 brightness-90" />
-              <p className="text-lg font-semibold text-[#DCE9F5]">Mistral AI</p>
-              <p className="mt-2 text-sm text-[#7B8FA3]">French AI models. EU data sovereignty.</p>
-            </motion.div>
-            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.12 }}
-              className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
-              <img src="/Scaleway-Logo-Purple.png" alt="Scaleway" className="h-10 w-auto mb-4" />
-              <p className="text-lg font-semibold text-[#DCE9F5]">Scaleway</p>
-              <p className="mt-2 text-sm text-[#7B8FA3]">Paris data centers. GDPR by default.</p>
-            </motion.div>
-            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.24 }}
-              className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center">
-              <img src="/tramontane logo no bg.png" alt="Tramontane" className="h-10 w-auto mb-4" />
-              <p className="text-lg font-semibold text-[#DCE9F5]">Tramontane</p>
-              <p className="mt-2 text-sm text-[#7B8FA3]">Open source agent orchestration.</p>
-            </motion.div>
+            {[
+              { src: "/mistral-logo-color-white.png", alt: "Mistral AI", name: "Mistral AI", desc: "French AI models. EU data sovereignty.", extra: "brightness-90" },
+              { src: "/Scaleway-Logo-Purple.png", alt: "Scaleway", name: "Scaleway", desc: "Paris data centers. GDPR by default.", extra: "" },
+              { src: "/tramontane logo no bg.png", alt: "Tramontane", name: "Tramontane", desc: "Open source agent orchestration.", extra: "" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.name}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: i * 0.12 }}
+                className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center"
+              >
+                <img src={item.src} alt={item.alt} className={`h-10 w-auto mb-4 ${item.extra}`} />
+                <p className="text-lg font-semibold text-[#DCE9F5]">{item.name}</p>
+                <p className="mt-2 text-sm text-[#7B8FA3]">{item.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* -- SECTION 4: Pipeline Visualization -- */}
-      <section className="py-24">
+      {/* -- SECTION 5: Pipeline Visualization -- */}
+      <section className="py-28">
         <KineticLogStream
           logs={pipelineLogs}
           title="Watch 5 agents build your site in real time"
         />
       </section>
 
-      {/* -- SECTION 5: Why ArkhosAI -- */}
-      <section className="bg-[#020408] py-24 px-6">
+      {/* -- SECTION 6: Why ArkhosAI -- */}
+      <section className="bg-[#020408] py-28 px-6">
         <div className="mx-auto max-w-5xl">
           <motion.h2
-            className="mb-12 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -387,7 +390,7 @@ export default function Home() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#00D4EE]/10">
                   {card.icon}
                 </div>
-                <h3 className="mt-4 text-xl font-semibold text-[#DCE9F5]">{card.title}</h3>
+                <h3 className="mt-4 font-[Syne] text-xl font-semibold text-[#DCE9F5]">{card.title}</h3>
                 <p className="mt-2 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{card.desc}</p>
               </motion.div>
             ))}
@@ -395,11 +398,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* -- SECTION 6: Agents Section -- */}
-      <section className="bg-[#020408] py-24 px-6">
+      {/* -- SECTION 7: Agents Section -- */}
+      <section className="bg-[#020408] py-28 px-6">
         <div className="mx-auto max-w-5xl">
           <motion.h2
-            className="mb-12 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -417,31 +420,28 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-5 text-center"
               >
-                <Card className="bg-[#0D1B2A] border border-white/5 rounded-xl p-5 ring-0">
-                  <CardContent className="flex flex-col items-center p-0 text-center">
-                    <div
-                      className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold text-white"
-                      style={{ backgroundColor: agent.color }}
-                    >
-                      {agent.initial}
-                    </div>
-                    <h3 className="mt-3 text-base font-semibold text-[#DCE9F5]">{agent.name}</h3>
-                    <p className="mt-1 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{agent.desc}</p>
-                    <p className="mt-2 font-mono text-xs text-[#DCE9F5]/40">{agent.model}</p>
-                  </CardContent>
-                </Card>
+                <div
+                  className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold text-white"
+                  style={{ backgroundColor: agent.color }}
+                >
+                  {agent.initial}
+                </div>
+                <h3 className="mt-3 font-[Syne] text-base font-semibold text-[#DCE9F5]">{agent.name}</h3>
+                <p className="mt-1 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{agent.desc}</p>
+                <p className="mt-2 font-mono text-xs text-[#DCE9F5]/40">{agent.model}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -- SECTION 7: Comparison Table -- */}
-      <section className="bg-[#020408] py-24 px-6">
+      {/* -- SECTION 8: Comparison Table -- */}
+      <section className="bg-[#020408] py-28 px-6">
         <div className="mx-auto max-w-4xl">
           <motion.h2
-            className="mb-12 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -496,8 +496,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* -- SECTION 8: Pricing -- */}
-      <section id="pricing" className="bg-[#020408] py-24 px-6">
+      {/* -- SECTION 9: Pricing -- */}
+      <section id="pricing" className="bg-[#020408] py-28 px-6">
         <PricingSection
           heading="Simple, transparent pricing"
           description="Per-workspace pricing. Add unlimited team members."
@@ -505,8 +505,8 @@ export default function Home() {
         />
       </section>
 
-      {/* -- SECTION 9: FAQ -- */}
-      <section className="bg-[#020408] py-24">
+      {/* -- SECTION 10: FAQ -- */}
+      <section className="bg-[#020408] py-28">
         <FAQ
           title="Frequently Asked Questions"
           subtitle="Everything you need to know"
@@ -515,14 +515,14 @@ export default function Home() {
         />
       </section>
 
-      {/* -- SECTION 10: Live Feed -- */}
-      <section className="bg-[#020408] py-24 px-6">
+      {/* -- SECTION 11: Live Feed -- */}
+      <section className="bg-[#020408] py-28 px-6">
         <div className="mx-auto flex max-w-5xl justify-center">
           <NotificationCenterFeed />
         </div>
       </section>
 
-      {/* -- SECTION 11: Footer -- */}
+      {/* -- SECTION 12: Footer -- */}
       <AppFooter />
 
       {/* -- Cookie Consent Banner -- */}
