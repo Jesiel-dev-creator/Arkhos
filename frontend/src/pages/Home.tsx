@@ -52,9 +52,9 @@ const navLinks = [
 
 /* ======= Stats data ======= */
 const stats = [
-  { value: "\u20AC0.004", label: "avg per generation" },
-  { value: "5 agents", label: "working in parallel" },
-  { value: "17s", label: "average build time" },
+  { value: "<\u20AC0.01", label: "per generation" },
+  { value: "5 agents", label: "working in sequence" },
+  { value: "~2 min", label: "build time" },
   { value: "MIT", label: "open source license" },
 ];
 
@@ -96,7 +96,7 @@ const pipelineLogs = [
   { type: "INFO" as const, message: "Builder: Writing Features.tsx (89 lines)..." },
   { type: "SUCCESS" as const, message: "Builder: All 6 sections generated" },
   { type: "SUCCESS" as const, message: "Reviewer: Security scan passed. 0 vulnerabilities." },
-  { type: "SUCCESS" as const, message: "Generation complete: \u20AC0.004 \u00B7 17.3s \u00B7 23 files" },
+  { type: "SUCCESS" as const, message: "Generation complete: \u20AC0.007 \u00B7 1m 58s \u00B7 23 files" },
 ];
 
 /* ======= Why ArkhosAI cards ======= */
@@ -111,7 +111,7 @@ const whyCards = [
   {
     icon: <Eye className="w-8 h-8 text-[#22D3EE]" />,
     title: "Transparent Pricing",
-    desc: "See exactly what each agent costs in real time. \u20AC0.004 avg. No hidden credits or tokens.",
+    desc: "See exactly what each agent costs in real time. Under \u20AC0.01 per site. No hidden credits or tokens.",
     hoverBorder: "hover:border-[#22D3EE]/30",
     iconBg: "bg-[#22D3EE]/10",
   },
@@ -205,7 +205,7 @@ const comparisonRows: ComparisonRow[] = [
   },
   {
     feature: "Cost/generation",
-    arkhos: { text: "\u20AC0.004", status: "yes" },
+    arkhos: { text: "<\u20AC0.01", status: "yes" },
     lovable: { text: "~$0.50", status: "warn" },
     bolt: { text: "~$0.50", status: "no" },
     v0: { text: "~$1.00", status: "no" },
@@ -324,9 +324,9 @@ const faqData = {
         "We believe teams shouldn\u2019t pay more for collaborating. One workspace price, unlimited team members. Add your whole team for \u20AC50/month.",
     },
     {
-      question: "What does \u20AC0.004 mean?",
+      question: "What does under \u20AC0.01 mean?",
       answer:
-        "That\u2019s the average AI cost per website generation. It covers all 5 agents (Planner, Designer, Architect, Builder, Reviewer) running on Mistral models.",
+        "That\u2019s the typical AI cost per website generation. It covers all 5 agents (Planner, Designer, Architect, Builder, Reviewer) running on Mistral models. Actual cost varies by complexity.",
     },
     {
       question: "Can I self-host for free?",
@@ -447,15 +447,15 @@ export default function Home() {
       {/* Hero with ChatInput as the CTA — like Lovable/Bolt/v0 */}
       <div className="relative">
         <AnimatedShaderHero
-          headline={{ line1: "The EU Answer", line2: "to Lovable." }}
-          subtitle={"5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation."}
+          headline={{ line1: "Describe it.", line2: "We build it." }}
+          subtitle={"AI builds your website in under 2 minutes. EU-hosted. Under \u20AC0.01 per site. Open source."}
           trustBadge={{
-            text: "EU Sovereign \u00B7 Mistral AI \u00B7 Scaleway Paris \u00B7 MIT Open Source",
+            text: "EU Data \u00B7 Mistral AI \u00B7 MIT License \u00B7 GDPR included",
             icons: [<Globe key="globe" className="h-4 w-4" />],
           }}
         />
-        {/* ChatInput overlaid on hero bottom — THIS is the CTA */}
-        <div className="absolute bottom-16 left-0 right-0 z-20 px-4">
+        {/* ChatInput overlaid on hero — THIS is the CTA */}
+        <div className="absolute bottom-[25%] left-0 right-0 z-20 px-4">
           <div className="max-w-2xl mx-auto">
             <ChatInput
               onSend={(msg) =>
