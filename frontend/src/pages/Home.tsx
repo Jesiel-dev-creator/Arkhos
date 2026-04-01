@@ -1,9 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Eye, Unlock, Check, X, AlertTriangle, Globe } from "lucide-react";
+import {
+  Shield,
+  Eye,
+  Unlock,
+  Check,
+  X,
+  AlertTriangle,
+  Globe,
+  ArrowRight,
+  Zap,
+  Code,
+  Server,
+} from "lucide-react";
 
-import ShadcnBlocksNavbar from "@/components/ui/shadcnblocks-navbar";
 import AnimatedShaderHero from "@/components/shaders/animated-shader-hero";
 import KineticLogStream from "@/components/ui/kinetic-log-stream";
 import { PricingSection } from "@/components/ui/pricing-section";
@@ -11,6 +22,9 @@ import { FAQ } from "@/components/ui/faq-tabs";
 import { NotificationCenterFeed } from "@/components/ui/live-feed";
 import AppFooter from "@/components/AppFooter";
 import { ShiningText } from "@/components/ui/shining-text";
+import ImageGallery from "@/components/ui/image-gallery";
+import { SocialIcons } from "@/components/ui/social-icons";
+import { ChatInput } from "@/components/ui/bolt-style-chat";
 
 /* ======= Animation variants ======= */
 const fadeUp = {
@@ -18,14 +32,55 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
-/* ======= Section: Pipeline logs ======= */
+/* ======= Navbar links ======= */
+const navLinks = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Gallery", href: "#gallery" },
+  { label: "Open Source", href: "https://github.com/ArkhosAI/arkhos", external: true },
+];
+
+/* ======= Stats data ======= */
+const stats = [
+  { value: "\u20AC0.004", label: "avg per generation" },
+  { value: "5 agents", label: "working in parallel" },
+  { value: "17s", label: "average build time" },
+  { value: "MIT", label: "open source license" },
+];
+
+/* ======= EU partners ======= */
+const euPartners = [
+  {
+    src: "/mistral-logo-color-white.png",
+    alt: "Mistral AI",
+    name: "Mistral AI",
+    desc: "French AI models",
+    extra: "brightness-90",
+  },
+  {
+    src: "/Scaleway-Logo-Purple.png",
+    alt: "Scaleway",
+    name: "Scaleway",
+    desc: "Paris data centers",
+    extra: "",
+  },
+  {
+    src: "/tramontane logo no bg.png",
+    alt: "Tramontane",
+    name: "Tramontane",
+    desc: "Open source orchestration",
+    extra: "",
+  },
+];
+
+/* ======= Pipeline logs ======= */
 const pipelineLogs = [
   { type: "INFO" as const, message: "Planner: Analyzing website requirements..." },
-  { type: "SUCCESS" as const, message: "Planner: Plan generated — 6 sections identified" },
+  { type: "SUCCESS" as const, message: "Planner: Plan generated -- 6 sections identified" },
   { type: "INFO" as const, message: "Designer: Selecting color palette and typography..." },
-  { type: "SUCCESS" as const, message: "Designer: Warm amber palette — Playfair Display" },
+  { type: "SUCCESS" as const, message: "Designer: Warm amber palette -- Playfair Display" },
   { type: "INFO" as const, message: "Architect: Planning React component structure..." },
-  { type: "SUCCESS" as const, message: "Architect: Blueprint ready — Hero, Menu, About, Contact" },
+  { type: "SUCCESS" as const, message: "Architect: Blueprint ready -- Hero, Menu, About, Contact" },
   { type: "INFO" as const, message: "Builder: Writing Hero.tsx (47 lines)..." },
   { type: "SUCCESS" as const, message: "Builder: Hero.tsx complete" },
   { type: "INFO" as const, message: "Builder: Writing Features.tsx (89 lines)..." },
@@ -34,7 +89,7 @@ const pipelineLogs = [
   { type: "SUCCESS" as const, message: "Generation complete: \u20AC0.004 \u00B7 17.3s \u00B7 23 files" },
 ];
 
-/* ======= Section: Why ArkhosAI cards ======= */
+/* ======= Why ArkhosAI cards ======= */
 const whyCards = [
   {
     icon: <Shield className="w-8 h-8 text-[#00D4EE]" />,
@@ -44,16 +99,16 @@ const whyCards = [
   {
     icon: <Eye className="w-8 h-8 text-[#FF6B35]" />,
     title: "Transparent Pricing",
-    desc: "See exactly what each agent costs. \u20AC0.004 avg per site. No hidden credits.",
+    desc: "See exactly what each agent costs in real time. \u20AC0.004 avg. No hidden credits or tokens.",
   },
   {
     icon: <Unlock className="w-8 h-8 text-[#DCE9F5]" />,
     title: "Open Source",
-    desc: "MIT license. Self-host it. Fork it. Own your stack forever.",
+    desc: "MIT license. Self-host on your own servers. Fork it, customize it, own your stack forever.",
   },
 ];
 
-/* ======= Section: Agents ======= */
+/* ======= Agents ======= */
 const agents = [
   { name: "Planner", model: "ministral-3b", desc: "Understands your requirements", color: "#00D4EE", initial: "P" },
   { name: "Designer", model: "mistral-small", desc: "Chooses colors, fonts, visual style", color: "#E040FB", initial: "D" },
@@ -62,7 +117,7 @@ const agents = [
   { name: "Reviewer", model: "mistral-small", desc: "Security scan & quality check", color: "#22D68A", initial: "R" },
 ];
 
-/* ======= Comparison helper ======= */
+/* ======= Comparison table ======= */
 type CellStatus = "yes" | "no" | "warn";
 
 interface ComparisonRow {
@@ -95,13 +150,13 @@ const comparisonRows: ComparisonRow[] = [
   {
     feature: "Cost/generation",
     arkhos: { text: "\u20AC0.004", status: "yes" },
-    lovable: { text: "~\u20AC0.50", status: "warn" },
-    bolt: { text: "~\u20AC0.30", status: "no" },
-    v0: { text: "~\u20AC0.20", status: "no" },
+    lovable: { text: "~$0.50", status: "warn" },
+    bolt: { text: "~$0.50", status: "no" },
+    v0: { text: "~$1.00", status: "no" },
   },
   {
-    feature: "Transparency",
-    arkhos: { text: "Full", status: "yes" },
+    feature: "Cost transparency",
+    arkhos: { text: "Real-time", status: "yes" },
     lovable: { text: "Hidden", status: "no" },
     bolt: { text: "Hidden", status: "no" },
     v0: { text: "Hidden", status: "no" },
@@ -110,19 +165,33 @@ const comparisonRows: ComparisonRow[] = [
     feature: "Open source",
     arkhos: { text: "MIT", status: "yes" },
     lovable: { text: "No", status: "no" },
-    bolt: { text: "No", status: "no" },
+    bolt: { text: "Yes", status: "yes" },
     v0: { text: "No", status: "no" },
   },
   {
     feature: "GDPR all plans",
     arkhos: { text: "Yes", status: "yes" },
-    lovable: { text: "No", status: "no" },
+    lovable: { text: "Business+", status: "warn" },
     bolt: { text: "No", status: "no" },
-    v0: { text: "No", status: "no" },
+    v0: { text: "$100/user", status: "warn" },
+  },
+  {
+    feature: "Security review",
+    arkhos: { text: "Built-in", status: "yes" },
+    lovable: { text: "None", status: "no" },
+    bolt: { text: "None", status: "no" },
+    v0: { text: "None", status: "no" },
+  },
+  {
+    feature: "Model routing",
+    arkhos: { text: "Intelligent", status: "yes" },
+    lovable: { text: "Manual", status: "warn" },
+    bolt: { text: "Manual", status: "warn" },
+    v0: { text: "Fixed", status: "no" },
   },
 ];
 
-/* ======= Section: Pricing plans ======= */
+/* ======= Pricing plans ======= */
 const pricingPlans = [
   {
     name: "Free",
@@ -166,7 +235,7 @@ const pricingPlans = [
   },
 ];
 
-/* ======= Section: FAQ data ======= */
+/* ======= FAQ data ======= */
 const faqCategories = {
   general: "General",
   pricing: "Pricing",
@@ -184,7 +253,7 @@ const faqData = {
     {
       question: "How does it differ from Lovable and Bolt?",
       answer:
-        "Three key differences: 1) EU data residency (Scaleway Paris), 2) Full cost transparency (you see what each agent costs), 3) MIT open source \u2014 self-host it, fork it, own your stack.",
+        "Three key differences: 1) EU data residency (Scaleway Paris), 2) Full cost transparency (you see what each agent costs), 3) MIT open source -- self-host it, fork it, own your stack.",
     },
     {
       question: "Is it really open source?",
@@ -245,14 +314,6 @@ const faqData = {
   ],
 };
 
-/* ======= Stats data ======= */
-const stats = [
-  { value: "\u20AC0.004", label: "avg per generation" },
-  { value: "5", label: "agents working in parallel" },
-  { value: "MIT", label: "open source license" },
-  { value: "EU", label: "sovereign by default" },
-];
-
 /* ======= Cookie consent storage key ======= */
 const COOKIE_KEY = "arkhos_cookie_consent";
 
@@ -276,16 +337,70 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#020408]">
-      {/* -- SECTION 1: Navbar -- */}
-      <ShadcnBlocksNavbar />
+      {/* ============================================
+          SECTION 1: Floating Navbar
+          ============================================ */}
+      <nav className="sticky top-4 z-50 mx-auto max-w-5xl backdrop-blur-lg bg-[#020408]/80 border border-white/10 rounded-full px-6 py-3 flex items-center justify-between">
+        {/* Logo */}
+        <a href="/" className="flex items-center gap-2 shrink-0">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF6B35] font-[Syne] text-sm font-bold text-white">
+            A
+          </span>
+          <span className="font-[Syne] text-lg font-bold text-[#DCE9F5]">
+            ArkhosAI
+          </span>
+        </a>
 
-      {/* -- SECTION 2: Hero (WebGL Shader) -- */}
+        {/* Links (hidden on mobile) */}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) =>
+            link.external ? (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-[DM_Sans] text-[#7B8FA3] hover:text-[#DCE9F5] transition-colors"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm font-[DM_Sans] text-[#7B8FA3] hover:text-[#DCE9F5] transition-colors"
+              >
+                {link.label}
+              </a>
+            )
+          )}
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => navigate("/generate")}
+          className="shrink-0 rounded-full bg-[#FF6B35] px-5 py-2 text-sm font-semibold font-[DM_Sans] text-white transition-all duration-200 hover:bg-[#FF6B35]/90 hover:scale-[1.02]"
+        >
+          Start building free
+        </button>
+      </nav>
+
+      {/* ============================================
+          SECTION 2: Hero (WebGL Shader)
+          ============================================ */}
       <AnimatedShaderHero
         headline={{ line1: "The EU Answer", line2: "to Lovable." }}
         subtitle="5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation."
         buttons={{
-          primary: { text: "Start building free \u2192", onClick: () => navigate("/generate") },
-          secondary: { text: "See how it works" },
+          primary: {
+            text: "Start building free \u2192",
+            onClick: () => navigate("/generate"),
+          },
+          secondary: {
+            text: "View on GitHub",
+            onClick: () =>
+              window.open("https://github.com/ArkhosAI/arkhos", "_blank"),
+          },
         }}
         trustBadge={{
           text: "EU Sovereign \u00B7 Mistral AI \u00B7 Scaleway Paris \u00B7 MIT Open Source",
@@ -293,12 +408,26 @@ export default function Home() {
         }}
       />
 
-      {/* -- SECTION 3: Stats Strip -- */}
+      {/* ============================================
+          SECTION 3: Try it now (ChatInput)
+          ============================================ */}
+      <section className="relative bg-[#020408] py-16 px-6 -mt-20 z-20">
+        <div className="max-w-3xl mx-auto text-center mb-8">
+          <ShiningText text="Try it now -- no signup required" />
+        </div>
+        <ChatInput
+          onSend={(msg) =>
+            navigate(`/generate?prompt=${encodeURIComponent(msg)}`)
+          }
+          placeholder="Describe your website -- a bakery, a SaaS product, a portfolio..."
+        />
+      </section>
+
+      {/* ============================================
+          SECTION 4: Stats Strip
+          ============================================ */}
       <section className="bg-[#020408] py-24 px-6">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-8 flex justify-center">
-            <ShiningText text="5 agents working in parallel to build your site" />
-          </div>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {stats.map((stat, i) => (
               <motion.div
@@ -310,15 +439,21 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="rounded-xl border border-white/5 bg-[#0D1B2A] p-6 text-center"
               >
-                <p className="font-[Syne] text-4xl font-bold text-[#FF6B35]">{stat.value}</p>
-                <p className="mt-1 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{stat.label}</p>
+                <p className="font-mono text-4xl font-bold text-[#FF6B35]">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-sm text-[#7B8FA3] font-[DM_Sans]">
+                  {stat.label}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -- SECTION 4: Powered by EU AI & Cloud -- */}
+      {/* ============================================
+          SECTION 5: Powered by EU AI & Cloud
+          ============================================ */}
       <section className="bg-[#020408] py-24 px-6">
         <div className="mx-auto max-w-4xl">
           <motion.h2
@@ -332,11 +467,7 @@ export default function Home() {
             Powered by EU AI {"&"} Cloud
           </motion.h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {[
-              { src: "/mistral-logo-color-white.png", alt: "Mistral AI", name: "Mistral AI", desc: "French AI models. EU data sovereignty.", extra: "brightness-90" },
-              { src: "/Scaleway-Logo-Purple.png", alt: "Scaleway", name: "Scaleway", desc: "Paris data centers. GDPR by default.", extra: "" },
-              { src: "/tramontane logo no bg.png", alt: "Tramontane", name: "Tramontane", desc: "Open source agent orchestration.", extra: "" },
-            ].map((item, i) => (
+            {euPartners.map((item, i) => (
               <motion.div
                 key={item.name}
                 variants={fadeUp}
@@ -346,25 +477,38 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: i * 0.12 }}
                 className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center"
               >
-                <img src={item.src} alt={item.alt} className={`h-10 w-auto mb-4 ${item.extra}`} />
-                <p className="text-lg font-semibold text-[#DCE9F5]">{item.name}</p>
-                <p className="mt-2 text-sm text-[#7B8FA3]">{item.desc}</p>
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  className={`h-10 w-auto mb-4 ${item.extra}`}
+                />
+                <p className="text-lg font-semibold text-[#DCE9F5] font-[DM_Sans]">
+                  {item.name}
+                </p>
+                <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">
+                  {item.desc}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -- SECTION 5: Pipeline Visualization -- */}
+      {/* ============================================
+          SECTION 6: Pipeline Visualization
+          ============================================ */}
       <section className="py-28">
         <KineticLogStream
           logs={pipelineLogs}
           title="Watch 5 agents build your site in real time"
+          subtitle="Each agent specializes -- from planning to security review"
         />
       </section>
 
-      {/* -- SECTION 6: Why ArkhosAI -- */}
-      <section className="bg-[#020408] py-28 px-6">
+      {/* ============================================
+          SECTION 7: Why ArkhosAI
+          ============================================ */}
+      <section id="features" className="bg-[#020408] py-28 px-6">
         <div className="mx-auto max-w-5xl">
           <motion.h2
             className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
@@ -390,15 +534,21 @@ export default function Home() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#00D4EE]/10">
                   {card.icon}
                 </div>
-                <h3 className="mt-4 font-[Syne] text-xl font-semibold text-[#DCE9F5]">{card.title}</h3>
-                <p className="mt-2 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{card.desc}</p>
+                <h3 className="mt-4 font-[Syne] text-xl font-semibold text-[#DCE9F5]">
+                  {card.title}
+                </h3>
+                <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">
+                  {card.desc}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -- SECTION 7: Agents Section -- */}
+      {/* ============================================
+          SECTION 8: Agents Section
+          ============================================ */}
       <section className="bg-[#020408] py-28 px-6">
         <div className="mx-auto max-w-5xl">
           <motion.h2
@@ -428,16 +578,24 @@ export default function Home() {
                 >
                   {agent.initial}
                 </div>
-                <h3 className="mt-3 font-[Syne] text-base font-semibold text-[#DCE9F5]">{agent.name}</h3>
-                <p className="mt-1 text-sm text-[#DCE9F5]/60 font-[DM_Sans]">{agent.desc}</p>
-                <p className="mt-2 font-mono text-xs text-[#DCE9F5]/40">{agent.model}</p>
+                <h3 className="mt-3 font-[Syne] text-base font-semibold text-[#DCE9F5]">
+                  {agent.name}
+                </h3>
+                <p className="mt-1 text-sm text-[#7B8FA3] font-[DM_Sans]">
+                  {agent.desc}
+                </p>
+                <p className="mt-2 font-mono text-xs text-[#DCE9F5]/40">
+                  {agent.model}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -- SECTION 8: Comparison Table -- */}
+      {/* ============================================
+          SECTION 9: Comparison Table
+          ============================================ */}
       <section className="bg-[#020408] py-28 px-6">
         <div className="mx-auto max-w-4xl">
           <motion.h2
@@ -461,32 +619,50 @@ export default function Home() {
             <table className="w-full text-sm font-[DM_Sans]">
               <thead>
                 <tr className="bg-[#0D1B2A]">
-                  <th className="px-5 py-4 text-left font-medium text-[#DCE9F5]/60" />
-                  <th className="px-4 py-4 text-center font-bold text-[#FF6B35]">ArkhosAI</th>
-                  <th className="px-4 py-4 text-center font-medium text-[#DCE9F5]/60">Lovable</th>
-                  <th className="px-4 py-4 text-center font-medium text-[#DCE9F5]/60">Bolt</th>
-                  <th className="px-4 py-4 text-center font-medium text-[#DCE9F5]/60">v0</th>
+                  <th className="px-5 py-4 text-left font-medium text-[#7B8FA3]" />
+                  <th className="px-4 py-4 text-center font-bold text-[#FF6B35]">
+                    ArkhosAI
+                  </th>
+                  <th className="px-4 py-4 text-center font-medium text-[#7B8FA3]">
+                    Lovable
+                  </th>
+                  <th className="px-4 py-4 text-center font-medium text-[#7B8FA3]">
+                    Bolt
+                  </th>
+                  <th className="px-4 py-4 text-center font-medium text-[#7B8FA3]">
+                    v0
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {comparisonRows.map((row, i) => (
                   <tr
                     key={row.feature}
-                    className={i % 2 === 0 ? "bg-[#0D1B2A]/30" : "bg-transparent"}
-                    style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+                    className={
+                      i % 2 === 0 ? "bg-[#0D1B2A]/30" : "bg-transparent"
+                    }
+                    style={{
+                      borderTop: "1px solid rgba(255,255,255,0.05)",
+                    }}
                   >
-                    <td className="px-5 py-3.5 font-medium text-[#DCE9F5]">{row.feature}</td>
+                    <td className="px-5 py-3.5 font-medium text-[#DCE9F5]">
+                      {row.feature}
+                    </td>
                     <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35]">
-                      {row.arkhos.text} <StatusIcon status={row.arkhos.status} />
+                      {row.arkhos.text}{" "}
+                      <StatusIcon status={row.arkhos.status} />
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">
-                      {row.lovable.text} <StatusIcon status={row.lovable.status} />
+                    <td className="px-4 py-3.5 text-center text-[#7B8FA3]">
+                      {row.lovable.text}{" "}
+                      <StatusIcon status={row.lovable.status} />
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">
-                      {row.bolt.text} <StatusIcon status={row.bolt.status} />
+                    <td className="px-4 py-3.5 text-center text-[#7B8FA3]">
+                      {row.bolt.text}{" "}
+                      <StatusIcon status={row.bolt.status} />
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[#DCE9F5]/60">
-                      {row.v0.text} <StatusIcon status={row.v0.status} />
+                    <td className="px-4 py-3.5 text-center text-[#7B8FA3]">
+                      {row.v0.text}{" "}
+                      <StatusIcon status={row.v0.status} />
                     </td>
                   </tr>
                 ))}
@@ -496,7 +672,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* -- SECTION 9: Pricing -- */}
+      {/* ============================================
+          SECTION 10: Gallery Preview
+          ============================================ */}
+      <section id="gallery" className="bg-[#020408] py-28 px-6">
+        <div className="mx-auto max-w-5xl">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
+            <h2 className="font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl">
+              Built with ArkhosAI
+            </h2>
+            <p className="mt-3 text-[#7B8FA3] font-[DM_Sans]">
+              Real websites, generated by AI in under 2 minutes
+            </p>
+          </motion.div>
+          <ImageGallery />
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => navigate("/gallery")}
+              className="inline-flex items-center gap-2 text-sm font-[DM_Sans] text-[#00D4EE] hover:text-[#00D4EE]/80 transition-colors"
+            >
+              See all generations
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          SECTION 11: Pricing
+          ============================================ */}
       <section id="pricing" className="bg-[#020408] py-28 px-6">
         <PricingSection
           heading="Simple, transparent pricing"
@@ -505,7 +716,9 @@ export default function Home() {
         />
       </section>
 
-      {/* -- SECTION 10: FAQ -- */}
+      {/* ============================================
+          SECTION 12: FAQ
+          ============================================ */}
       <section className="bg-[#020408] py-28">
         <FAQ
           title="Frequently Asked Questions"
@@ -515,17 +728,20 @@ export default function Home() {
         />
       </section>
 
-      {/* -- SECTION 11: Live Feed -- */}
-      <section className="bg-[#020408] py-28 px-6">
+      {/* ============================================
+          SECTION 13: Social + Footer
+          ============================================ */}
+      <section className="bg-[#020408] py-16 px-6">
         <div className="mx-auto flex max-w-5xl justify-center">
-          <NotificationCenterFeed />
+          <SocialIcons />
         </div>
       </section>
 
-      {/* -- SECTION 12: Footer -- */}
       <AppFooter />
 
-      {/* -- Cookie Consent Banner -- */}
+      {/* ============================================
+          SECTION 14: Cookie Banner
+          ============================================ */}
       <AnimatePresence>
         {showCookieBanner && (
           <motion.div
@@ -536,9 +752,12 @@ export default function Home() {
             className="fixed bottom-0 left-0 right-0 z-50 p-4"
           >
             <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 rounded-xl border border-[#1C2E42] bg-[#0D1B2A]/90 px-6 py-4 backdrop-blur-xl">
-              <p className="text-sm text-[#DCE9F5]/70 font-[DM_Sans]">
+              <p className="text-sm text-[#7B8FA3] font-[DM_Sans]">
                 We use essential cookies only. No tracking.{" "}
-                <a href="/legal/cookies" className="text-[#DCE9F5] underline hover:text-white transition-colors">
+                <a
+                  href="/legal/cookies"
+                  className="text-[#DCE9F5] underline hover:text-white transition-colors"
+                >
                   Learn more
                 </a>
               </p>
