@@ -10,19 +10,14 @@ import {
   AlertTriangle,
   Globe,
   ArrowRight,
-  Zap,
-  Code,
-  Server,
 } from "lucide-react";
 
 import AnimatedShaderHero from "@/components/shaders/animated-shader-hero";
 import KineticLogStream from "@/components/ui/kinetic-log-stream";
 import { PricingSection } from "@/components/ui/pricing-section";
 import { FAQ } from "@/components/ui/faq-tabs";
-import { NotificationCenterFeed } from "@/components/ui/live-feed";
 import AppFooter from "@/components/AppFooter";
-import { ShiningText } from "@/components/ui/shining-text";
-import ImageGallery from "@/components/ui/image-gallery";
+import { OfferCarousel, type Offer } from "@/components/ui/offer-carousel";
 import { SocialIcons } from "@/components/ui/social-icons";
 import { ChatInput } from "@/components/ui/bolt-style-chat";
 
@@ -50,36 +45,62 @@ const navLinks = [
   { label: "Open Source", href: "https://github.com/Jesiel-dev-creator/Arkhos", external: true },
 ];
 
-/* ======= Stats data ======= */
-const stats = [
-  { value: "<\u20AC0.01", label: "per generation" },
-  { value: "5 agents", label: "working in sequence" },
-  { value: "~2 min", label: "build time" },
-  { value: "MIT", label: "open source license" },
-];
-
-/* ======= EU partners ======= */
-const euPartners = [
+/* ======= Showcase offers (What you can build) ======= */
+const showcaseOffers: Offer[] = [
   {
-    src: "/mistral-logo-color-white.png",
-    alt: "Mistral AI",
-    name: "Mistral AI",
-    desc: "French AI models",
-    extra: "brightness-90",
+    id: "bakery",
+    imageSrc: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
+    imageAlt: "French bakery website",
+    tag: "Restaurant",
+    title: "French Bakery",
+    description: "Warm, modern bakery with menu and contact.",
+    brandLogoSrc: "/mistral-logo-color-white.png",
+    brandName: "Mistral AI",
+    href: "/generate?prompt=A+landing+page+for+a+French+bakery+in+Paris",
   },
   {
-    src: "/Scaleway-Logo-Purple.png",
-    alt: "Scaleway",
-    name: "Scaleway",
-    desc: "Paris data centers",
-    extra: "",
+    id: "saas",
+    imageSrc: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
+    imageAlt: "SaaS dashboard",
+    tag: "SaaS",
+    title: "B2B SaaS Landing",
+    description: "Dark, conversion-focused with pricing and features.",
+    brandLogoSrc: "/mistral-logo-color-white.png",
+    brandName: "Mistral AI",
+    href: "/generate?prompt=A+SaaS+landing+page+for+a+project+management+tool",
   },
   {
-    src: "/tramontane logo no bg.png",
-    alt: "Tramontane",
-    name: "Tramontane",
-    desc: "Open source orchestration",
-    extra: "",
+    id: "portfolio",
+    imageSrc: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80",
+    imageAlt: "Developer portfolio",
+    tag: "Portfolio",
+    title: "Dev Portfolio",
+    description: "Minimal dark mode with projects grid.",
+    brandLogoSrc: "/mistral-logo-color-white.png",
+    brandName: "Mistral AI",
+    href: "/generate?prompt=A+developer+portfolio+for+a+full-stack+engineer",
+  },
+  {
+    id: "restaurant",
+    imageSrc: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+    imageAlt: "Italian restaurant",
+    tag: "Restaurant",
+    title: "Italian Restaurant",
+    description: "Warm elegance with menu and reservations.",
+    brandLogoSrc: "/mistral-logo-color-white.png",
+    brandName: "Mistral AI",
+    href: "/generate?prompt=An+Italian+restaurant+in+Bordeaux+with+reservations",
+  },
+  {
+    id: "agency",
+    imageSrc: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&q=80",
+    imageAlt: "Creative agency",
+    tag: "Agency",
+    title: "Creative Agency",
+    description: "Bold asymmetric design with case studies.",
+    brandLogoSrc: "/mistral-logo-color-white.png",
+    brandName: "Mistral AI",
+    href: "/generate?prompt=A+creative+agency+in+Marseille+with+case+studies",
   },
 ];
 
@@ -442,9 +463,8 @@ export default function Home() {
       </nav>
 
       {/* ============================================
-          SECTION 2: Hero (WebGL Shader)
+          SECTION 2: Hero (WebGL Shader) + ChatInput
           ============================================ */}
-      {/* Hero with ChatInput as the CTA — like Lovable/Bolt/v0 */}
       <div className="relative">
         <AnimatedShaderHero
           headline={{ line1: "Describe it.", line2: "We build it." }}
@@ -473,63 +493,22 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 4: Stats Strip
+          SECTION 3: Tech Credibility Strip
           ============================================ */}
-      <section className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(255,93,58,0.06) 0%, transparent 70%)" }}>
-        <div className="mx-auto max-w-5xl" style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)", backgroundSize: "32px 32px" }}>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="rounded-xl border bg-[var(--deep)] p-6 text-center hover:border-[var(--ember)]/30 transition-colors"
-              >
-                <p className="font-mono text-4xl font-bold text-[var(--ember)]">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-sm text-[var(--text-secondary)] font-[DM_Sans]">
-                  {stat.label}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* ============================================
-          SECTION 5: Powered by EU AI & Cloud
-          ============================================ */}
-      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
+      <section className="relative z-10 bg-[var(--void)] py-10 px-6">
         <div className="mx-auto max-w-4xl">
-          <motion.h2
-            className="mb-12 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            Powered by EU AI {"&"} Cloud
-          </motion.h2>
-          <div className="flex flex-wrap justify-center gap-4">
+          <p className="text-center text-xs uppercase tracking-widest mb-6" style={{ color: 'var(--text-muted)' }}>
+            Built with
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
             {[
-              { name: "Mistral AI", img: "/mistral-logo-color-white.png" },
-              { name: "Scaleway", img: "/Scaleway-Logo-Purple.png" },
-              { name: "Tramontane", img: "/tramontane logo no bg.png" },
-            ].map((brand) => (
-              <div
-                key={brand.name}
-                className="flex items-center gap-3 px-5 py-3 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-              >
-                <img src={brand.img} alt={brand.name} className="h-8 w-auto" />
-                <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>{brand.name}</span>
+              { name: 'Mistral AI', img: '/mistral-logo-color-white.png', desc: 'French AI models' },
+              { name: 'Scaleway', img: '/Scaleway-Logo-Purple.png', desc: 'Paris datacenter' },
+              { name: 'Tramontane', img: '/tramontane logo no bg.png', desc: 'Open source orchestration' },
+            ].map(brand => (
+              <div key={brand.name} className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
+                <img src={brand.img} alt={brand.name} className="h-6 w-auto" />
+                <span className="text-xs hidden md:inline" style={{ color: 'var(--text-muted)' }}>{brand.desc}</span>
               </div>
             ))}
           </div>
@@ -539,9 +518,62 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 6: Pipeline Visualization
+          SECTION 4: What You Can Build (OfferCarousel)
           ============================================ */}
-      <section className="py-20 md:py-28" style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
+        <div className="mx-auto max-w-6xl">
+          <motion.h2 className="text-center font-[Syne] text-3xl font-bold tracking-[-0.02em] md:text-4xl mb-4" style={{ color: 'var(--text-primary)' }}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
+            What you can build
+          </motion.h2>
+          <p className="text-center mb-12 max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+            Each site generated in under 2 minutes. Real React + shadcn/ui. Click any to try it.
+          </p>
+          <OfferCarousel offers={showcaseOffers} />
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ============================================
+          SECTION 5: How It Works (3 Steps + Terminal)
+          ============================================ */}
+      <section className="py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
+        <motion.h2
+          className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          How it works
+        </motion.h2>
+        <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
+          From description to deployed website in three steps.
+        </p>
+
+        {/* 3-step explainer */}
+        <div className="mx-auto max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {[
+            { step: "1", title: "Describe", desc: "Tell us what you want in plain language. Industry, style, sections." },
+            { step: "2", title: "Generate", desc: "5 AI agents build your site. Under \u20AC0.01. Takes about 2 minutes." },
+            { step: "3", title: "Ship", desc: "Download, deploy, or iterate. Real React code you own." },
+          ].map((s, i) => (
+            <motion.div key={s.step} variants={fadeUp} initial="hidden" whileInView="visible"
+              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="text-center">
+              <div className="w-10 h-10 rounded-full mx-auto mb-4 flex items-center justify-center text-sm font-bold"
+                style={{ background: 'var(--ember-glow)', color: 'var(--ember)' }}>
+                {s.step}
+              </div>
+              <h3 className="font-[Syne] text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{s.title}</h3>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{s.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Pipeline terminal */}
         <KineticLogStream
           logs={pipelineLogs}
           title="Watch 5 agents build your site in real time"
@@ -552,7 +584,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 7: Why ArkhosAI
+          SECTION 6: Why ArkhosAI
           ============================================ */}
       <section id="features" className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 80% 50%, rgba(129,140,248,0.05) 0%, transparent 60%)" }}>
         <div className="mx-auto max-w-5xl">
@@ -603,7 +635,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 8: Agents Section
+          SECTION 7: Agents
           ============================================ */}
       <section className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
         <div className="mx-auto max-w-5xl">
@@ -656,7 +688,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 9: Comparison Table
+          SECTION 8: Comparison Table
           ============================================ */}
       <section className="bg-[var(--void)] py-20 md:py-28 px-6">
         <div className="mx-auto max-w-4xl">
@@ -740,42 +772,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 10: Gallery Preview
-          ============================================ */}
-      <section id="gallery" className="bg-[var(--void)] py-20 md:py-28 px-6">
-        <div className="mx-auto max-w-5xl">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
-          >
-            <h2 className="font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl">
-              Built with ArkhosAI
-            </h2>
-            <p className="mt-3 text-[var(--text-secondary)] max-w-2xl mx-auto font-[DM_Sans]">
-              Real websites, generated by AI in under 2 minutes
-            </p>
-          </motion.div>
-          <ImageGallery />
-          <div className="mt-8 text-center">
-            <button
-              onClick={() => navigate("/gallery")}
-              className="inline-flex items-center gap-2 text-sm font-[DM_Sans] text-[#00D4EE] hover:text-[#00D4EE]/80 transition-colors"
-            >
-              See all generations
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* ============================================
-          SECTION 11: Pricing
+          SECTION 9: Pricing
           ============================================ */}
       <section id="pricing" className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,93,58,0.05) 0%, transparent 60%)" }}>
         <PricingSection
@@ -788,7 +785,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 12: FAQ
+          SECTION 10: FAQ
           ============================================ */}
       <section className="bg-[var(--void)] py-20 md:py-28">
         <FAQ
@@ -802,7 +799,27 @@ export default function Home() {
       <SectionDivider />
 
       {/* ============================================
-          SECTION 13: Social + Footer
+          SECTION 11: Final CTA (repeat ChatInput)
+          ============================================ */}
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="font-[Syne] text-3xl font-bold tracking-[-0.02em] md:text-4xl mb-4" style={{ color: 'var(--text-primary)' }}>
+            Ready to build?
+          </h2>
+          <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>
+            No signup. No credit card. Just describe what you want.
+          </p>
+          <ChatInput
+            onSend={(msg) => navigate(`/generate?prompt=${encodeURIComponent(msg)}`)}
+            placeholder="Describe your website..."
+          />
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ============================================
+          SECTION 12: Social + Footer
           ============================================ */}
       <section className="bg-[var(--void)] py-20 md:py-28 px-6">
         <div className="mx-auto flex max-w-5xl justify-center">
@@ -813,7 +830,7 @@ export default function Home() {
       <AppFooter />
 
       {/* ============================================
-          SECTION 14: Cookie Banner
+          Cookie Banner
           ============================================ */}
       <AnimatePresence>
         {showCookieBanner && (
