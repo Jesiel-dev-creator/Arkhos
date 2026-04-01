@@ -32,6 +32,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
+/* ======= Section divider ======= */
+function SectionDivider() {
+  return (
+    <div
+      className="h-px w-full"
+      style={{ background: "rgba(255,255,255,0.05)" }}
+    />
+  );
+}
+
 /* ======= Navbar links ======= */
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -92,29 +102,75 @@ const pipelineLogs = [
 /* ======= Why ArkhosAI cards ======= */
 const whyCards = [
   {
-    icon: <Shield className="w-8 h-8 text-[#00D4EE]" />,
+    icon: <Shield className="w-8 h-8 text-[#818CF8]" />,
     title: "EU Sovereign",
     desc: "Scaleway Paris. Mistral AI. Your data never leaves Europe. GDPR on all plans.",
+    hoverBorder: "hover:border-[#818CF8]/30",
+    iconBg: "bg-[#818CF8]/10",
   },
   {
-    icon: <Eye className="w-8 h-8 text-[#FF6B35]" />,
+    icon: <Eye className="w-8 h-8 text-[#22D3EE]" />,
     title: "Transparent Pricing",
     desc: "See exactly what each agent costs in real time. \u20AC0.004 avg. No hidden credits or tokens.",
+    hoverBorder: "hover:border-[#22D3EE]/30",
+    iconBg: "bg-[#22D3EE]/10",
   },
   {
-    icon: <Unlock className="w-8 h-8 text-[#DCE9F5]" />,
+    icon: <Unlock className="w-8 h-8 text-[#34D399]" />,
     title: "Open Source",
     desc: "MIT license. Self-host on your own servers. Fork it, customize it, own your stack forever.",
+    hoverBorder: "hover:border-[#34D399]/30",
+    iconBg: "bg-[#34D399]/10",
   },
 ];
 
 /* ======= Agents ======= */
 const agents = [
-  { name: "Planner", model: "ministral-3b", desc: "Understands your requirements", color: "#00D4EE", initial: "P" },
-  { name: "Designer", model: "mistral-small", desc: "Chooses colors, fonts, visual style", color: "#E040FB", initial: "D" },
-  { name: "Architect", model: "mistral-small", desc: "Plans React component structure", color: "#FFB020", initial: "A" },
-  { name: "Builder", model: "devstral-small", desc: "Writes production code", color: "#FF6B35", initial: "B" },
-  { name: "Reviewer", model: "mistral-small", desc: "Security scan & quality check", color: "#22D68A", initial: "R" },
+  {
+    name: "Planner",
+    model: "ministral-3b",
+    desc: "Understands your requirements",
+    gradient: "linear-gradient(135deg, #818CF8, #6366F1)",
+    initial: "P",
+    hoverShadow: "hover:shadow-[0_0_20px_rgba(129,140,248,0.1)]",
+    hoverBorder: "hover:border-[#818CF8]/20",
+  },
+  {
+    name: "Designer",
+    model: "mistral-small",
+    desc: "Chooses colors, fonts, visual style",
+    gradient: "linear-gradient(135deg, #F472B6, #EC4899)",
+    initial: "D",
+    hoverShadow: "hover:shadow-[0_0_20px_rgba(244,114,182,0.1)]",
+    hoverBorder: "hover:border-[#F472B6]/20",
+  },
+  {
+    name: "Architect",
+    model: "mistral-small",
+    desc: "Plans React component structure",
+    gradient: "linear-gradient(135deg, #22D3EE, #06B6D4)",
+    initial: "A",
+    hoverShadow: "hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]",
+    hoverBorder: "hover:border-[#22D3EE]/20",
+  },
+  {
+    name: "Builder",
+    model: "devstral-small",
+    desc: "Writes production code",
+    gradient: "linear-gradient(135deg, #FF5D3A, #FF8C5A)",
+    initial: "B",
+    hoverShadow: "hover:shadow-[0_0_20px_rgba(255,93,58,0.1)]",
+    hoverBorder: "hover:border-[#FF5D3A]/20",
+  },
+  {
+    name: "Reviewer",
+    model: "mistral-small",
+    desc: "Security scan & quality check",
+    gradient: "linear-gradient(135deg, #34D399, #10B981)",
+    initial: "R",
+    hoverShadow: "hover:shadow-[0_0_20px_rgba(52,211,153,0.1)]",
+    hoverBorder: "hover:border-[#34D399]/20",
+  },
 ];
 
 /* ======= Comparison table ======= */
@@ -131,11 +187,11 @@ interface ComparisonRow {
 function StatusIcon({ status }: { status: CellStatus }) {
   switch (status) {
     case "yes":
-      return <Check className="inline h-4 w-4 text-[var(--green)]" style={{ color: '#34D399' }} />;
+      return <Check className="inline h-4 w-4" style={{ color: "#34D399" }} />;
     case "no":
-      return <X className="inline h-4 w-4 text-[var(--text-muted)]" style={{ color: 'var(--text-muted)' }} />;
+      return <X className="inline h-4 w-4" style={{ color: "var(--text-muted)" }} />;
     case "warn":
-      return <AlertTriangle className="inline h-4 w-4 text-[var(--violet)]" style={{ color: 'var(--violet)' }} />;
+      return <AlertTriangle className="inline h-4 w-4" style={{ color: "var(--violet)" }} />;
   }
 }
 
@@ -336,17 +392,17 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020408]">
+    <div className="min-h-screen bg-[var(--void)]">
       {/* ============================================
           SECTION 1: Floating Navbar
           ============================================ */}
-      <nav className="sticky top-4 z-50 mx-auto max-w-5xl backdrop-blur-lg bg-[#020408]/80 border border-white/10 rounded-full px-6 py-3 flex items-center justify-between">
+      <nav className="sticky top-4 z-50 mx-auto max-w-5xl backdrop-blur-lg bg-[var(--void)]/80 border border-white/10 rounded-full px-6 py-3 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 shrink-0">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF6B35] font-[Syne] text-sm font-bold text-white">
             A
           </span>
-          <span className="font-[Syne] text-lg font-bold text-[#DCE9F5]">
+          <span className="font-[Syne] text-lg font-bold text-[var(--text-primary)]">
             ArkhosAI
           </span>
         </a>
@@ -360,7 +416,7 @@ export default function Home() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-[DM_Sans] text-[#7B8FA3] hover:text-[#DCE9F5] transition-colors"
+                className="text-sm font-[DM_Sans] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
               >
                 {link.label}
               </a>
@@ -368,7 +424,7 @@ export default function Home() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-[DM_Sans] text-[#7B8FA3] hover:text-[#DCE9F5] transition-colors"
+                className="text-sm font-[DM_Sans] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
               >
                 {link.label}
               </a>
@@ -388,13 +444,9 @@ export default function Home() {
       {/* ============================================
           SECTION 2: Hero (WebGL Shader)
           ============================================ */}
-      {/* Hero ambient glow */}
-      <div className="absolute inset-0 z-[5] pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(255,93,58,0.12) 0%, transparent 60%)' }} />
-
       <AnimatedShaderHero
         headline={{ line1: "The EU Answer", line2: "to Lovable." }}
-        subtitle="5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation."
+        subtitle={`5 Mistral agents build your website live. Real React + shadcn/ui. \u20AC0.004 per generation.`}
         buttons={{
           primary: {
             text: "Start building free \u2192",
@@ -415,14 +467,7 @@ export default function Home() {
       {/* ============================================
           SECTION 3: Try it now (ChatInput)
           ============================================ */}
-      <section className="relative bg-[var(--void)] py-16 px-6 -mt-20 z-20"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-          backgroundSize: '48px 48px'
-        }}>
-        <div className="max-w-3xl mx-auto text-center mb-2">
-          <p className="text-sm font-medium tracking-wider uppercase" style={{ color: 'var(--cyan)' }}>Try it now</p>
-        </div>
+      <section className="relative bg-[var(--void)] py-20 md:py-28 px-6 -mt-20 z-20">
         <div className="max-w-3xl mx-auto text-center mb-8">
           <ShiningText text="Try it now -- no signup required" />
         </div>
@@ -434,11 +479,13 @@ export default function Home() {
         />
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 4: Stats Strip
           ============================================ */}
-      <section className="bg-[#020408] py-24 px-6" style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(255,93,58,0.06) 0%, transparent 70%)' }}>
-        <div className="mx-auto max-w-5xl" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(255,93,58,0.06) 0%, transparent 70%)" }}>
+        <div className="mx-auto max-w-5xl" style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)", backgroundSize: "32px 32px" }}>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {stats.map((stat, i) => (
               <motion.div
@@ -462,13 +509,15 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 5: Powered by EU AI & Cloud
           ============================================ */}
-      <section className="bg-[#020408] py-24 px-6">
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
         <div className="mx-auto max-w-4xl">
           <motion.h2
-            className="mb-12 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-12 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -479,24 +528,29 @@ export default function Home() {
           </motion.h2>
           <div className="flex flex-wrap justify-center gap-4">
             {[
-              { name: 'Mistral AI', img: '/mistral-logo-color-white.png' },
-              { name: 'Scaleway', img: '/Scaleway-Logo-Purple.png' },
-              { name: 'Tramontane', img: '/tramontane logo no bg.png' },
-            ].map(brand => (
-              <div key={brand.name} className="flex items-center gap-3 px-5 py-3 rounded-xl"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              { name: "Mistral AI", img: "/mistral-logo-color-white.png" },
+              { name: "Scaleway", img: "/Scaleway-Logo-Purple.png" },
+              { name: "Tramontane", img: "/tramontane logo no bg.png" },
+            ].map((brand) => (
+              <div
+                key={brand.name}
+                className="flex items-center gap-3 px-5 py-3 rounded-xl"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+              >
                 <img src={brand.img} alt={brand.name} className="h-8 w-auto" />
-                <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{brand.name}</span>
+                <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>{brand.name}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 6: Pipeline Visualization
           ============================================ */}
-      <section className="py-28" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)' }}>
+      <section className="py-20 md:py-28" style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
         <KineticLogStream
           logs={pipelineLogs}
           title="Watch 5 agents build your site in real time"
@@ -504,13 +558,15 @@ export default function Home() {
         />
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 7: Why ArkhosAI
           ============================================ */}
-      <section id="features" className="bg-[#020408] py-28 px-6" style={{ background: 'radial-gradient(ellipse at 80% 50%, rgba(129,140,248,0.05) 0%, transparent 60%)' }}>
+      <section id="features" className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 80% 50%, rgba(129,140,248,0.05) 0%, transparent 60%)" }}>
         <div className="mx-auto max-w-5xl">
           <motion.h2
-            className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -519,6 +575,9 @@ export default function Home() {
           >
             Why ArkhosAI
           </motion.h2>
+          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
+            Built for teams that care about sovereignty, transparency, and ownership.
+          </p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {whyCards.map((card, i) => (
               <motion.div
@@ -526,17 +585,22 @@ export default function Home() {
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
+                whileHover={{ scale: 1.02 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
-                className="rounded-2xl border border-[#00D4EE]/10 bg-[#0D1B2A] p-8"
+                className={`rounded-2xl p-8 transition-colors ${card.hoverBorder}`}
+                style={{
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#00D4EE]/10">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg}`}>
                   {card.icon}
                 </div>
-                <h3 className="mt-4 font-[Syne] text-xl font-semibold text-[#DCE9F5]">
+                <h3 className="mt-4 font-[Syne] text-xl font-semibold text-[var(--text-primary)]">
                   {card.title}
                 </h3>
-                <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">
+                <p className="mt-2 text-sm text-[var(--text-secondary)] font-[DM_Sans]">
                   {card.desc}
                 </p>
               </motion.div>
@@ -545,13 +609,15 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 8: Agents Section
           ============================================ */}
-      <section className="bg-[#020408] py-28 px-6" style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)' }}>
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
         <div className="mx-auto max-w-5xl">
           <motion.h2
-            className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -560,6 +626,9 @@ export default function Home() {
           >
             Meet the agents
           </motion.h2>
+          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
+            Five specialized AI agents, each with a distinct role in building your website.
+          </p>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {agents.map((agent, i) => (
               <motion.div
@@ -569,21 +638,22 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-5 text-center"
+                className={`flex flex-col items-center rounded-xl bg-[var(--deep)] p-5 text-center transition-all ${agent.hoverShadow} ${agent.hoverBorder}`}
+                style={{ border: "1px solid rgba(255,255,255,0.06)" }}
               >
                 <div
                   className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold text-white"
-                  style={{ backgroundColor: agent.color }}
+                  style={{ background: agent.gradient }}
                 >
                   {agent.initial}
                 </div>
-                <h3 className="mt-3 font-[Syne] text-base font-semibold text-[#DCE9F5]">
+                <h3 className="mt-3 font-[Syne] text-base font-semibold text-[var(--text-primary)]">
                   {agent.name}
                 </h3>
-                <p className="mt-1 text-sm text-[#7B8FA3] font-[DM_Sans]">
+                <p className="mt-1 text-sm text-[var(--text-secondary)] font-[DM_Sans]">
                   {agent.desc}
                 </p>
-                <p className="mt-2 font-mono text-xs text-[#DCE9F5]/40">
+                <p className="mt-2 font-mono text-xs" style={{ color: "var(--text-muted)" }}>
                   {agent.model}
                 </p>
               </motion.div>
@@ -592,13 +662,15 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 9: Comparison Table
           ============================================ */}
-      <section className="bg-[#020408] py-28 px-6">
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
         <div className="mx-auto max-w-4xl">
           <motion.h2
-            className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
+            className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -607,6 +679,9 @@ export default function Home() {
           >
             How we compare
           </motion.h2>
+          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
+            See how ArkhosAI stacks up against US-hosted alternatives.
+          </p>
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -617,18 +692,18 @@ export default function Home() {
           >
             <table className="w-full text-sm font-[DM_Sans]">
               <thead>
-                <tr className="bg-[var(--surface)]" style={{ background: 'var(--surface, #0D1B2A)' }}>
-                  <th className="px-5 py-4 text-left font-medium text-[#7B8FA3]" />
+                <tr style={{ background: "var(--surface, var(--deep))" }}>
+                  <th className="px-5 py-4 text-left font-medium text-[var(--text-secondary)]" />
                   <th className="px-4 py-4 text-center font-bold text-[#FF6B35]">
                     ArkhosAI
                   </th>
-                  <th className="px-4 py-4 text-center font-medium text-[#7B8FA3]">
+                  <th className="px-4 py-4 text-center font-medium text-[var(--text-secondary)]">
                     Lovable
                   </th>
-                  <th className="px-4 py-4 text-center font-medium text-[#7B8FA3]">
+                  <th className="px-4 py-4 text-center font-medium text-[var(--text-secondary)]">
                     Bolt
                   </th>
-                  <th className="px-4 py-4 text-center font-medium text-[#7B8FA3]">
+                  <th className="px-4 py-4 text-center font-medium text-[var(--text-secondary)]">
                     v0
                   </th>
                 </tr>
@@ -638,28 +713,28 @@ export default function Home() {
                   <tr
                     key={row.feature}
                     className={
-                      i % 2 === 0 ? "bg-[#0D1B2A]/30" : "bg-transparent"
+                      i % 2 === 0 ? "bg-[var(--deep)]/30" : "bg-transparent"
                     }
                     style={{
                       borderTop: "1px solid rgba(255,255,255,0.05)",
                     }}
                   >
-                    <td className="px-5 py-3.5 font-medium text-[#DCE9F5]">
+                    <td className="px-5 py-3.5 font-medium text-[var(--text-primary)]">
                       {row.feature}
                     </td>
-                    <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35] bg-[rgba(255,93,58,0.06)] border-l-2 border-l-[var(--ember)]" style={{ borderLeftColor: 'var(--ember, #FF6B35)' }}>
+                    <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35]">
                       {row.arkhos.text}{" "}
                       <StatusIcon status={row.arkhos.status} />
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[#7B8FA3]">
+                    <td className="px-4 py-3.5 text-center text-[var(--text-secondary)]">
                       {row.lovable.text}{" "}
                       <StatusIcon status={row.lovable.status} />
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[#7B8FA3]">
+                    <td className="px-4 py-3.5 text-center text-[var(--text-secondary)]">
                       {row.bolt.text}{" "}
                       <StatusIcon status={row.bolt.status} />
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[#7B8FA3]">
+                    <td className="px-4 py-3.5 text-center text-[var(--text-secondary)]">
                       {row.v0.text}{" "}
                       <StatusIcon status={row.v0.status} />
                     </td>
@@ -671,10 +746,12 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 10: Gallery Preview
           ============================================ */}
-      <section id="gallery" className="bg-[#020408] py-28 px-6">
+      <section id="gallery" className="bg-[var(--void)] py-20 md:py-28 px-6">
         <div className="mx-auto max-w-5xl">
           <motion.div
             variants={fadeUp}
@@ -684,10 +761,10 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h2 className="font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl">
+            <h2 className="font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl">
               Built with ArkhosAI
             </h2>
-            <p className="mt-3 text-[#7B8FA3] font-[DM_Sans]">
+            <p className="mt-3 text-[var(--text-secondary)] max-w-2xl mx-auto font-[DM_Sans]">
               Real websites, generated by AI in under 2 minutes
             </p>
           </motion.div>
@@ -704,10 +781,12 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 11: Pricing
           ============================================ */}
-      <section id="pricing" className="bg-[#020408] py-28 px-6" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,93,58,0.05) 0%, transparent 60%)' }}>
+      <section id="pricing" className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,93,58,0.05) 0%, transparent 60%)" }}>
         <PricingSection
           heading="Simple, transparent pricing"
           description="Per-workspace pricing. Add unlimited team members."
@@ -715,10 +794,12 @@ export default function Home() {
         />
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 12: FAQ
           ============================================ */}
-      <section className="bg-[#020408] py-28">
+      <section className="bg-[var(--void)] py-20 md:py-28">
         <FAQ
           title="Frequently Asked Questions"
           subtitle="Everything you need to know"
@@ -727,10 +808,12 @@ export default function Home() {
         />
       </section>
 
+      <SectionDivider />
+
       {/* ============================================
           SECTION 13: Social + Footer
           ============================================ */}
-      <section className="bg-[#020408] py-16 px-6">
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
         <div className="mx-auto flex max-w-5xl justify-center">
           <SocialIcons />
         </div>
@@ -750,12 +833,12 @@ export default function Home() {
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="fixed bottom-0 left-0 right-0 z-50 p-4"
           >
-            <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 rounded-xl border border-[#1C2E42] bg-[#0D1B2A]/90 px-6 py-4 backdrop-blur-xl">
-              <p className="text-sm text-[#7B8FA3] font-[DM_Sans]">
+            <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 rounded-xl border border-[#1C2E42] bg-[var(--deep)]/90 px-6 py-4 backdrop-blur-xl">
+              <p className="text-sm text-[var(--text-secondary)] font-[DM_Sans]">
                 We use essential cookies only. No tracking.{" "}
                 <a
                   href="/legal/cookies"
-                  className="text-[#DCE9F5] underline hover:text-white transition-colors"
+                  className="text-[var(--text-primary)] underline hover:text-white transition-colors"
                 >
                   Learn more
                 </a>

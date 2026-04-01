@@ -276,3 +276,23 @@ select:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+/* ── Gradient Button Animation ── */
+@property --r {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.rotatingGradient {
+  background: conic-gradient(from var(--r), #FF5D3A, #FF8C5A, #22D3EE, #818CF8, #FF5D3A);
+  animation: rotateGradient 3s linear infinite;
+}
+
+.rotatingGradient:hover {
+  background: conic-gradient(from var(--r), #FF5D3A, #FFB347, #22D3EE, #818CF8, #34D399, #FF5D3A);
+}
+
+@keyframes rotateGradient {
+  to { --r: 360deg; }
+}

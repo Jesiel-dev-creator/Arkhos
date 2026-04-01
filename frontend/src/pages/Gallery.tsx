@@ -5,6 +5,7 @@ import AppFooter from "@/components/AppFooter";
 import { ShiningText } from "@/components/ui/shining-text";
 import ImageGallery from "@/components/ui/image-gallery";
 import { SocialIcons } from "@/components/ui/social-icons";
+import GradientButton from "@/components/ui/gradient-button";
 
 interface GalleryItem {
   id: string;
@@ -120,12 +121,9 @@ export default function Gallery() {
         </div>
 
         {/* CTA */}
-        <button
-          onClick={() => navigate("/generate")}
-          className="shrink-0 rounded-full bg-[#FF6B35] px-5 py-2 text-sm font-semibold font-[DM_Sans] text-white transition-all duration-200 hover:bg-[#FF6B35]/90 hover:scale-[1.02]"
-        >
+        <GradientButton onClick={() => navigate("/generate")} width="180px" height="40px">
           Start building free
-        </button>
+        </GradientButton>
       </nav>
 
       {/* ============================================
@@ -197,12 +195,11 @@ export default function Gallery() {
             <p className="text-[#7B8FA3] text-lg font-[DM_Sans]">
               No {activeFilter} sites yet
             </p>
-            <button
-              onClick={() => navigate("/generate")}
-              className="mt-4 px-6 py-2 bg-[#FF6B35] text-white rounded-lg text-sm font-[DM_Sans] hover:bg-[#FF6B35]/90 transition-colors"
-            >
-              Be the first to build one
-            </button>
+            <div className="mt-4">
+              <GradientButton onClick={() => navigate("/generate")} width="220px" height="42px">
+                Be the first to build one
+              </GradientButton>
+            </div>
           </div>
         ) : (
           <motion.div

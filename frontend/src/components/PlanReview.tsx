@@ -1,5 +1,6 @@
 import { Zap, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
+import GradientButton from "@/components/ui/gradient-button";
 
 interface PlanReviewProps {
   plan: string;
@@ -131,24 +132,11 @@ export default function PlanReview({ plan, onApprove, onEdit }: PlanReviewProps)
         )}
 
         {/* Action buttons */}
-        <div className="flex gap-3 pt-1">
-          <button
-            onClick={onApprove}
-            className={cn(
-              "flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-medium text-white",
-              "transition-all duration-200",
-              "hover:brightness-110 active:scale-[0.97]"
-            )}
-            style={{
-              fontFamily: "var(--font-body)",
-              background: "var(--ember)",
-              boxShadow: "0 0 20px rgba(255, 107, 53, 0.35)",
-            }}
-            type="button"
-          >
+        <div className="flex gap-3 pt-1 items-center">
+          <GradientButton onClick={onApprove} width="160px" height="42px">
             <Zap size={14} />
             Build this
-          </button>
+          </GradientButton>
 
           <button
             onClick={onEdit}
