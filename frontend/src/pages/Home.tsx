@@ -9,8 +9,17 @@ import {
   X,
   AlertTriangle,
   Globe,
-  ArrowRight,
 } from "lucide-react";
+import {
+  Stepper,
+  StepperItem,
+  StepperTrigger,
+  StepperIndicator,
+  StepperSeparator,
+  StepperTitle,
+  StepperDescription,
+  StepperNav,
+} from "@/components/ui/stepper";
 
 import AnimatedShaderHero from "@/components/shaders/animated-shader-hero";
 import { ShaderAnimation } from "@/components/shaders/shader-animation";
@@ -639,7 +648,7 @@ export default function Home() {
           SECTION 7: Agents
           ============================================ */}
       <section className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-3xl">
           <motion.h2
             className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
             variants={fadeUp}
@@ -651,52 +660,48 @@ export default function Home() {
             Your AI team
           </motion.h2>
           <p className="text-[var(--text-secondary)] max-w-xl mx-auto text-center mb-14">
-            Five agents work in sequence. Each one specializes.
+            Five agents work in sequence. Click any step to learn more.
           </p>
-          {/* Vertical flow — each agent as a row with connecting line */}
-          <div className="relative">
-            {/* Connecting line */}
-            <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px hidden md:block"
-              style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 10%, rgba(255,255,255,0.08) 90%, transparent)' }} />
 
-            <div className="space-y-4">
+          <Stepper
+            defaultValue={1}
+            orientation="vertical"
+            className="mx-auto max-w-2xl"
+            indicators={{
+              completed: <Check className="size-4" />,
+            }}
+          >
+            <StepperNav>
               {agents.map((agent, i) => (
-                <motion.div
-                  key={agent.name}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="group flex items-start gap-5 md:gap-6 rounded-xl p-4 md:p-5 transition-all duration-300 hover:bg-white/[0.02]"
-                >
-                  {/* Avatar */}
-                  <div className="relative flex-shrink-0">
-                    <div
-                      className="flex h-12 w-12 items-center justify-center rounded-xl text-base font-bold text-white shadow-lg transition-transform duration-300 group-hover:scale-110"
-                      style={{ background: agent.gradient, boxShadow: `0 4px 20px ${agent.color}25` }}
+                <StepperItem key={agent.name} step={i + 1}>
+                  <StepperTrigger className="py-3">
+                    <StepperIndicator
+                      className="size-10 text-base font-bold data-[state=completed]:text-white data-[state=active]:text-white"
+                      style={{
+                        background: agent.gradient,
+                      }}
                     >
                       {agent.initial}
+                    </StepperIndicator>
+                    <div className="ml-1">
+                      <StepperTitle className="text-base font-[Syne] font-bold text-[var(--text-primary)]">
+                        {agent.name}
+                      </StepperTitle>
+                      <StepperDescription className="text-sm text-[var(--text-secondary)] mt-0.5">
+                        {agent.desc}
+                      </StepperDescription>
                     </div>
-                    {/* Step number */}
-                    <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
-                      style={{ background: 'var(--void)', color: agent.color, border: `1.5px solid ${agent.color}40` }}>
-                      {i + 1}
-                    </div>
-                  </div>
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-[Syne] text-lg font-bold text-[var(--text-primary)]">
-                      {agent.name}
-                    </h3>
-                    <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">
-                      {agent.desc}
-                    </p>
-                  </div>
-                </motion.div>
+                  </StepperTrigger>
+                  {i < agents.length - 1 && (
+                    <StepperSeparator
+                      className="group-data-[state=completed]/step:bg-[var(--green)]"
+                      style={{ marginLeft: '19px' }}
+                    />
+                  )}
+                </StepperItem>
               ))}
-            </div>
-          </div>
+            </StepperNav>
+          </Stepper>
         </div>
       </section>
 
