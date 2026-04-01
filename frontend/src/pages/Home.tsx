@@ -115,79 +115,70 @@ const demoPipelineAgents: import("@/hooks/useSSE").AgentState[] = [
   { name: "reviewer", status: "complete", model: "mistral-small", cost_eur: 0.001, duration_s: 12.1 },
 ];
 
-/* ======= Why ArkhosAI cards ======= */
+/* ======= Why ArkhosAI cards (copywriting: benefit-led, specific) ======= */
 const whyCards = [
   {
-    icon: <Shield className="w-8 h-8 text-[#818CF8]" />,
-    title: "EU Sovereign",
-    desc: "Scaleway Paris. Mistral AI. Your data never leaves Europe. GDPR on all plans.",
-    hoverBorder: "hover:border-[#818CF8]/30",
-    iconBg: "bg-[#818CF8]/10",
+    icon: <Shield className="w-6 h-6" />,
+    title: "Your data stays in Europe",
+    desc: "Hosted on Scaleway Paris. Powered by Mistral, a French AI company. GDPR-compliant on every plan, including free.",
+    color: "#818CF8",
+    label: "EU Sovereign",
   },
   {
-    icon: <Eye className="w-8 h-8 text-[#22D3EE]" />,
-    title: "Transparent Pricing",
-    desc: "See exactly what each agent costs in real time. Under \u20AC0.01 per site. No hidden credits or tokens.",
-    hoverBorder: "hover:border-[#22D3EE]/30",
-    iconBg: "bg-[#22D3EE]/10",
+    icon: <Eye className="w-6 h-6" />,
+    title: "You see what you pay",
+    desc: "Every agent shows its cost in real time. No credits, no tokens, no surprise bills. Under \u20AC0.01 per site.",
+    color: "#22D3EE",
+    label: "Transparent",
   },
   {
-    icon: <Unlock className="w-8 h-8 text-[#34D399]" />,
-    title: "Open Source",
-    desc: "MIT license. Self-host on your own servers. Fork it, customize it, own your stack forever.",
-    hoverBorder: "hover:border-[#34D399]/30",
-    iconBg: "bg-[#34D399]/10",
+    icon: <Unlock className="w-6 h-6" />,
+    title: "You own the code",
+    desc: "MIT license. Download, self-host, fork, customize. No vendor lock-in. Your website, your servers, your rules.",
+    color: "#34D399",
+    label: "Open Source",
   },
 ];
 
-/* ======= Agents ======= */
+/* ======= Agents (copywriting: what they DO for the user, not technical specs) ======= */
 const agents = [
   {
     name: "Planner",
-    model: "ministral-3b",
-    desc: "Understands your requirements",
+    desc: "Reads your prompt and maps out every section, style choice, and content block your site needs.",
     gradient: "linear-gradient(135deg, #818CF8, #6366F1)",
     initial: "P",
-    hoverShadow: "hover:shadow-[0_0_20px_rgba(129,140,248,0.1)]",
-    hoverBorder: "hover:border-[#818CF8]/20",
+    color: "#818CF8",
   },
   {
     name: "Designer",
-    model: "mistral-small",
-    desc: "Chooses colors, fonts, visual style",
+    desc: "Picks your color palette, fonts, and spacing. Matches the aesthetic to your industry.",
     gradient: "linear-gradient(135deg, #F472B6, #EC4899)",
     initial: "D",
-    hoverShadow: "hover:shadow-[0_0_20px_rgba(244,114,182,0.1)]",
-    hoverBorder: "hover:border-[#F472B6]/20",
+    color: "#F472B6",
   },
   {
     name: "Architect",
-    model: "mistral-small",
-    desc: "Plans React component structure",
+    desc: "Decides which React components to use and how to organize the project files.",
     gradient: "linear-gradient(135deg, #22D3EE, #06B6D4)",
     initial: "A",
-    hoverShadow: "hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]",
-    hoverBorder: "hover:border-[#22D3EE]/20",
+    color: "#22D3EE",
   },
   {
     name: "Builder",
-    model: "devstral-small",
-    desc: "Writes production code",
+    desc: "Writes every line of React, TypeScript, and Tailwind CSS. The one that does the heavy lifting.",
     gradient: "linear-gradient(135deg, #FF5D3A, #FF8C5A)",
     initial: "B",
-    hoverShadow: "hover:shadow-[0_0_20px_rgba(255,93,58,0.1)]",
-    hoverBorder: "hover:border-[#FF5D3A]/20",
+    color: "#FF5D3A",
   },
   {
     name: "Reviewer",
-    model: "mistral-small",
-    desc: "Security scan & quality check",
+    desc: "Scans for security issues, missing imports, and accessibility problems. Fixes what it finds.",
     gradient: "linear-gradient(135deg, #34D399, #10B981)",
     initial: "R",
-    hoverShadow: "hover:shadow-[0_0_20px_rgba(52,211,153,0.1)]",
-    hoverBorder: "hover:border-[#34D399]/20",
+    color: "#34D399",
   },
 ];
+
 
 /* ======= Comparison table ======= */
 type CellStatus = "yes" | "no" | "warn";
@@ -585,8 +576,8 @@ export default function Home() {
       {/* ============================================
           SECTION 6: Why ArkhosAI
           ============================================ */}
-      <section id="features" className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 80% 50%, rgba(129,140,248,0.05) 0%, transparent 60%)" }}>
-        <div className="mx-auto max-w-5xl">
+      <section id="features" className="relative bg-[var(--void)] py-20 md:py-28 px-6 overflow-hidden" style={{ background: "radial-gradient(ellipse at 80% 50%, rgba(129,140,248,0.05) 0%, transparent 60%)" }}>
+        <div className="mx-auto max-w-5xl relative z-10">
           <motion.h2
             className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
             variants={fadeUp}
@@ -595,10 +586,10 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            Why ArkhosAI
+            Built different
           </motion.h2>
-          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
-            Built for teams that care about sovereignty, transparency, and ownership.
+          <p className="text-[var(--text-secondary)] max-w-xl mx-auto text-center mb-14">
+            Three things every competitor gets wrong. We fix all of them.
           </p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {whyCards.map((card, i) => (
@@ -607,24 +598,35 @@ export default function Home() {
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.02, y: -4 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
-                className={`rounded-2xl p-8 transition-colors ${card.hoverBorder}`}
+                className="group rounded-2xl p-8 transition-all duration-300"
                 style={{
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)",
+                  background: "var(--grad-card)",
                   border: "1px solid rgba(255,255,255,0.06)",
                 }}
               >
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg}`}>
-                  {card.icon}
+                {/* Label + icon */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-300"
+                    style={{ background: `${card.color}15`, color: card.color }}>
+                    {card.icon}
+                  </div>
+                  <span className="text-xs font-mono uppercase tracking-wider" style={{ color: card.color }}>
+                    {card.label}
+                  </span>
                 </div>
-                <h3 className="mt-4 font-[Syne] text-xl font-semibold text-[var(--text-primary)]">
+                {/* Benefit-led title */}
+                <h3 className="font-[Syne] text-xl font-bold text-[var(--text-primary)] mb-3">
                   {card.title}
                 </h3>
-                <p className="mt-2 text-sm text-[var(--text-secondary)] font-[DM_Sans]">
+                <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
                   {card.desc}
                 </p>
+                {/* Bottom accent line on hover */}
+                <div className="h-[2px] w-0 group-hover:w-full mt-6 rounded-full transition-all duration-500"
+                  style={{ background: card.color }} />
               </motion.div>
             ))}
           </div>
@@ -637,7 +639,7 @@ export default function Home() {
           SECTION 7: Agents
           ============================================ */}
       <section className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-4xl">
           <motion.h2
             className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
             variants={fadeUp}
@@ -646,40 +648,60 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            Meet the agents
+            Your AI team
           </motion.h2>
-          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
-            Five specialized AI agents, each with a distinct role in building your website.
+          <p className="text-[var(--text-secondary)] max-w-xl mx-auto text-center mb-14">
+            Five agents work in sequence. Each one specializes.
           </p>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-            {agents.map((agent, i) => (
-              <motion.div
-                key={agent.name}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className={`flex flex-col items-center rounded-xl bg-[var(--deep)] p-5 text-center transition-all ${agent.hoverShadow} ${agent.hoverBorder}`}
-                style={{ border: "1px solid rgba(255,255,255,0.06)" }}
-              >
-                <div
-                  className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold text-white"
-                  style={{ background: agent.gradient }}
+          {/* Vertical flow — each agent as a row with connecting line */}
+          <div className="relative">
+            {/* Connecting line */}
+            <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px hidden md:block"
+              style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 10%, rgba(255,255,255,0.08) 90%, transparent)' }} />
+
+            <div className="space-y-4">
+              {agents.map((agent, i) => (
+                <motion.div
+                  key={agent.name}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.4, delay: i * 0.08 }}
+                  className="group flex items-start gap-5 md:gap-6 rounded-xl p-4 md:p-5 transition-all duration-300 hover:bg-white/[0.02]"
                 >
-                  {agent.initial}
-                </div>
-                <h3 className="mt-3 font-[Syne] text-base font-semibold text-[var(--text-primary)]">
-                  {agent.name}
-                </h3>
-                <p className="mt-1 text-sm text-[var(--text-secondary)] font-[DM_Sans]">
-                  {agent.desc}
-                </p>
-                <p className="mt-2 font-mono text-xs" style={{ color: "var(--text-muted)" }}>
-                  {agent.model}
-                </p>
-              </motion.div>
-            ))}
+                  {/* Avatar */}
+                  <div className="relative flex-shrink-0">
+                    <div
+                      className="flex h-12 w-12 items-center justify-center rounded-xl text-base font-bold text-white shadow-lg transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: agent.gradient, boxShadow: `0 4px 20px ${agent.color}25` }}
+                    >
+                      {agent.initial}
+                    </div>
+                    {/* Step number */}
+                    <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
+                      style={{ background: 'var(--void)', color: agent.color, border: `1.5px solid ${agent.color}40` }}>
+                      {i + 1}
+                    </div>
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-[Syne] text-lg font-bold text-[var(--text-primary)]">
+                      {agent.name}
+                    </h3>
+                    <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">
+                      {agent.desc}
+                    </p>
+                  </div>
+                  {/* Arrow connector (visible on md+) */}
+                  {i < agents.length - 1 && (
+                    <div className="hidden md:flex items-center text-[var(--text-muted)] self-center">
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
