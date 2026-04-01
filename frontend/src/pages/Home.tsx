@@ -28,7 +28,6 @@ import { PricingSection } from "@/components/ui/pricing-section";
 import { FAQ } from "@/components/ui/faq-tabs";
 import AppFooter from "@/components/AppFooter";
 import { OfferCarousel, type Offer } from "@/components/ui/offer-carousel";
-import { SocialIcons } from "@/components/ui/social-icons";
 import { ChatInput } from "@/components/ui/bolt-style-chat";
 import GradientButton from "@/components/ui/gradient-button";
 
@@ -583,7 +582,7 @@ export default function Home() {
       {/* ============================================
           SECTION 6: Why ArkhosAI
           ============================================ */}
-      <section id="features" className="relative bg-[var(--void)] py-20 md:py-28 px-6 overflow-hidden" style={{ background: "radial-gradient(ellipse at 80% 50%, rgba(129,140,248,0.05) 0%, transparent 60%)" }}>
+      <section id="features" className="relative bg-[var(--void)] py-20 md:py-28 px-6 overflow-hidden">
         <div className="mx-auto max-w-5xl relative z-10">
           <motion.h2
             className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
@@ -645,7 +644,7 @@ export default function Home() {
       {/* ============================================
           SECTION 7: Agents
           ============================================ */}
-      <section className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)" }}>
+      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
         <div className="mx-auto max-w-3xl">
           <motion.h2
             className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
@@ -783,7 +782,7 @@ export default function Home() {
       {/* ============================================
           SECTION 9: Pricing
           ============================================ */}
-      <section id="pricing" className="bg-[var(--void)] py-20 md:py-28 px-6" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,93,58,0.05) 0%, transparent 60%)" }}>
+      <section id="pricing" className="bg-[var(--void)] py-20 md:py-28 px-6">
         <PricingSection
           heading="Simple, transparent pricing"
           description="Per-workspace pricing. Add unlimited team members."
@@ -811,9 +810,6 @@ export default function Home() {
           SECTION 11: Final CTA (repeat ChatInput)
           ============================================ */}
       <section className="relative bg-[var(--void)] py-24 md:py-32 px-6 overflow-hidden">
-        {/* Ambient ember glow */}
-        <div className="absolute inset-0 z-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(255,93,58,0.06) 0%, transparent 60%)' }} />
         <div className="max-w-xl mx-auto text-center relative z-10">
           <motion.h2
             className="font-[Syne] text-4xl font-bold tracking-[-0.03em] md:text-5xl mb-4"
@@ -846,17 +842,7 @@ export default function Home() {
         </div>
       </section>
 
-      <SectionDivider />
-
-      {/* ============================================
-          SECTION 12: Social + Footer
-          ============================================ */}
-      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
-        <div className="mx-auto flex max-w-5xl justify-center">
-          <SocialIcons />
-        </div>
-      </section>
-
+      {/* Footer (includes SocialIcons) */}
       <AppFooter />
 
       {/* ============================================

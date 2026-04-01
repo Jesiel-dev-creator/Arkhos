@@ -111,14 +111,7 @@ body {
   min-height: 100vh;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: var(--grad-hero);
-  pointer-events: none;
-  z-index: 0;
-}
+/* body::before ambient glow removed — cleaner dark bg */
 
 /* ── Typography ── */
 h1, h2, h3, h4, h5, h6 {
