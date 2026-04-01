@@ -113,8 +113,8 @@ const INITIAL_AGENTS: AgentState[] = [
 ];
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
-const TIMEOUT_WARNING_MS = 90_000;
-const TIMEOUT_ERROR_MS = 180_000;
+const TIMEOUT_WARNING_MS = 180_000;  // 3 min warning
+const TIMEOUT_ERROR_MS = 360_000;   // 6 min hard timeout
 
 export function useSSE(onFileChunk?: (path: string, content: string) => void) {
   const fileChunkRef = useRef(onFileChunk);
@@ -225,11 +225,15 @@ export function useSSE(onFileChunk?: (path: string, content: string) => void) {
               plan: event.plan,
             };
 
-          case "files_ready":
+          case "files_ready": {
+            const newFiles = (event as Record<string, unknown>).files as Record<string, string>;
             return {
               ...prev,
-              projectFiles: (event as Record<string, unknown>).files as Record<string, string>,
+              projectFiles: prev.projectFiles
+                ? { ...prev.projectFiles, ...newFiles }  // merge, don't overwrite
+                : newFiles,
             };
+          }
 
           case "generation_complete":
             if (eventSourceRef.current) {
@@ -281,6 +285,12 @@ export function useSSE(onFileChunk?: (path: string, content: string) => void) {
         }
       };
 
+      es.addEventListener("pipeline_start", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          console.log(`[SSE] pipeline_start: profile=${data.profile} est=${data.est_cost}`);
+        } catch { /* ignore */ }
+      });
       es.addEventListener("agent_start", handleEvent("agent_start"));
       es.addEventListener("agent_complete", handleEvent("agent_complete"));
       es.addEventListener("preview_ready", handleEvent("preview_ready"));
@@ -294,6 +304,7 @@ export function useSSE(onFileChunk?: (path: string, content: string) => void) {
         try {
           const data = JSON.parse(e.data);
           if (data.path && data.content && fileChunkRef.current) {
+            console.log(`[SSE] file_chunk: ${data.path} (${data.content.length} chars)`);
             fileChunkRef.current(data.path, data.content);
           }
         } catch { /* ignore */ }
@@ -347,7 +358,7 @@ export function useSSE(onFileChunk?: (path: string, content: string) => void) {
   );
 
   const generate = useCallback(
-    async (prompt: string, locale: string = "en") => {
+    async (prompt: string, locale: string = "en", profile: string = "balanced") => {
       reset();
       setState((prev) => ({
         ...prev,
@@ -359,7 +370,7 @@ export function useSSE(onFileChunk?: (path: string, content: string) => void) {
         const res = await fetch(`${API_BASE}/api/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt, locale }),
+          body: JSON.stringify({ prompt, locale, profile }),
         });
 
         if (!res.ok) {
@@ -392,6 +403,13 @@ export function useSSE(onFileChunk?: (path: string, content: string) => void) {
 
   const approvePlan = useCallback(
     async (generationId: string) => {
+      // Close the planner-phase EventSource before starting build phase
+      // — two readers on the same queue would steal each other's events
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+
       setState((prev) => ({
         ...prev,
         planReady: false,

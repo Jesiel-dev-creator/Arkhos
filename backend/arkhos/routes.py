@@ -14,6 +14,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from arkhos.config import get_settings
+from arkhos.pipeline import FleetProfile
 from arkhos.rate_limit import rate_limiter
 from arkhos.sanitize import sanitize_prompt
 from arkhos.sse import SSEEventType, format_sse
@@ -30,6 +31,7 @@ class GenerateRequest(BaseModel):
     prompt: str = Field(..., min_length=1, max_length=1000)
     locale: str = Field(default="en", max_length=5)
     template: str | None = None
+    profile: FleetProfile = FleetProfile.BALANCED
 
 
 class GenerateResponse(BaseModel):
@@ -74,7 +76,7 @@ async def generate(request: Request, body: GenerateRequest) -> GenerateResponse:
     generation = store.create(prompt=sanitized, locale=body.locale)
 
     asyncio.create_task(
-        _run_planner(generation.id, sanitized, body.locale, client_ip)
+        _run_planner(generation.id, sanitized, body.locale, client_ip, body.profile)
     )
 
     record = rate_limiter._records.get(client_ip)
@@ -88,7 +90,8 @@ async def generate(request: Request, body: GenerateRequest) -> GenerateResponse:
 
 
 async def _run_planner(
-    gen_id: str, prompt: str, locale: str, client_ip: str
+    gen_id: str, prompt: str, locale: str, client_ip: str,
+    profile: FleetProfile = FleetProfile.BALANCED,
 ) -> None:
     """Background task: run Planner only, then pause for approval."""
     from arkhos.pipeline import run_planner_streaming
@@ -101,7 +104,7 @@ async def _run_planner(
     planner_cost = 0.0
 
     try:
-        async for sse_event in run_planner_streaming(prompt, locale):
+        async for sse_event in run_planner_streaming(prompt, locale, profile):
             await generation.event_queue.put(sse_event)
 
             for line in sse_event.split("\n"):
@@ -124,6 +127,7 @@ async def _run_planner(
             generation.status = GenerationStatus.PENDING
             generation.metadata["planner_cost"] = planner_cost
             generation.metadata["locale"] = locale
+            generation.metadata["profile"] = profile.value
 
     except Exception as exc:
         logger.exception("Planner %s failed: %s", gen_id, exc)
@@ -158,6 +162,9 @@ async def approve_plan(
     # Reset the event queue for the build phase stream
     generation.event_queue = asyncio.Queue()
 
+    profile_str = generation.metadata.get("profile", "balanced")
+    build_profile = FleetProfile(profile_str)
+
     asyncio.create_task(
         _run_build(
             gen_id=generation.id,
@@ -165,6 +172,7 @@ async def approve_plan(
             locale=generation.metadata.get("locale", "en"),
             prior_cost=generation.metadata.get("planner_cost", 0.0),
             client_ip=client_ip,
+            profile=build_profile,
         )
     )
 
@@ -177,6 +185,7 @@ async def _run_build(
     locale: str,
     prior_cost: float,
     client_ip: str,
+    profile: FleetProfile = FleetProfile.BALANCED,
 ) -> None:
     """Background task: run Designer + Builder + Reviewer."""
     from arkhos.pipeline import run_build_streaming
@@ -189,9 +198,13 @@ async def _run_build(
     total_cost = prior_cost
 
     try:
+        event_count = 0
         async for sse_event in run_build_streaming(
-            planner_output, locale, prior_cost
+            planner_output, locale, prior_cost, profile
         ):
+            event_count += 1
+            event_type = sse_event.split("\n")[0] if sse_event else "?"
+            logger.warning("QUEUE PUT #%d: %s (%d bytes)", event_count, event_type, len(sse_event))
             await generation.event_queue.put(sse_event)
 
             for line in sse_event.split("\n"):

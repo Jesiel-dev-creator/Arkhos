@@ -2,13 +2,15 @@
 
 Manual agent orchestration for per-agent SSE events.
 v0.2: Planner → Designer → Architect → Builder → Reviewer
+v0.3: Fleet profiles (Budget/Balanced/Quality) + adaptive budget reallocation
 
-Uses Agent.run(input_text) directly (not Pipeline.run()) so we can
-emit SSE events between each agent step.
-
-Tramontane API (v0.1.4):
-- Agent.run(input_text) — system prompt auto-built from role/goal/backstory
-- AgentResult: .output, .model_used, .cost_eur, .duration_seconds
+Tramontane v0.2.0:
+- Agent.run_stream() with on_pattern callbacks
+- validate_output for auto-retry on short Builder output
+- RunContext for shared cost tracking
+- routing_hint to guide auto-router
+- temperature control
+- Per-model max_tokens defaults
 """
 
 from __future__ import annotations
@@ -19,12 +21,13 @@ import logging
 import re
 import time
 from dataclasses import dataclass, field
+from enum import StrEnum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
-from tramontane import Agent
+from tramontane import Agent, MistralRouter, RunContext
 
 from arkhos.data.design_intelligence import get_design_for_industry
 from arkhos.prompts.architect import SYSTEM_PROMPT as ARCHITECT_PROMPT
@@ -47,6 +50,127 @@ from arkhos.sse import SSEEventType, format_sse
 from arkhos.templates import get_builder_context
 
 logger = logging.getLogger(__name__)
+
+
+# ── Fleet Profiles ────────────────────────────────────────────────
+
+
+class FleetProfile(StrEnum):
+    """User-selectable generation quality tier."""
+
+    BUDGET = "budget"
+    BALANCED = "balanced"
+    QUALITY = "quality"
+
+
+@dataclass
+class ProfileConfig:
+    """Model and budget configuration for a fleet profile."""
+
+    total_budget_eur: float
+    planner_model: str
+    designer_model: str
+    architect_model: str
+    builder_model: str
+    reviewer_model: str
+    builder_temp: float
+    label: str
+    est_cost: str
+    est_time: str
+
+
+PROFILES: dict[FleetProfile, ProfileConfig] = {
+    FleetProfile.BUDGET: ProfileConfig(
+        total_budget_eur=0.008,
+        planner_model="ministral-3b",
+        designer_model="ministral-3b",
+        architect_model="ministral-3b",
+        builder_model="devstral-small",
+        reviewer_model="ministral-3b",
+        builder_temp=0.2,
+        label="Budget",
+        est_cost="~€0.004",
+        est_time="~12s",
+    ),
+    FleetProfile.BALANCED: ProfileConfig(
+        total_budget_eur=0.25,
+        planner_model="ministral-3b",
+        designer_model="mistral-small-latest",
+        architect_model="mistral-small-latest",
+        builder_model="devstral-small",
+        reviewer_model="mistral-small-latest",
+        builder_temp=0.2,
+        label="Balanced",
+        est_cost="~€0.02",
+        est_time="~20s",
+    ),
+    FleetProfile.QUALITY: ProfileConfig(
+        total_budget_eur=1.00,
+        planner_model="mistral-small-latest",
+        designer_model="mistral-small-latest",
+        architect_model="mistral-small-latest",
+        builder_model="devstral-small",
+        reviewer_model="mistral-small-latest",
+        builder_temp=0.15,
+        label="Quality",
+        est_cost="~€0.08",
+        est_time="~35s",
+    ),
+}
+
+
+# ── Adaptive Budget Manager ──────────────────────────────────────
+
+
+class AdaptiveBudgetManager:
+    """Tracks per-agent spend and redistributes unspent budget to Builder.
+
+    Builder always gets leftover budget from Planner, Designer, Architect.
+    Reviewer gets a fixed floor — never starved.
+    """
+
+    def __init__(self, total: float, fixed: bool = False) -> None:
+        self.total = total
+        self.fixed = fixed
+        self.spent: dict[str, float] = {}
+        self._allocations: dict[str, float] = {}
+
+    def allocate(self, agent: str, amount: float) -> float:
+        """Reserve budget for an agent. Returns actual allocation."""
+        self._allocations[agent] = amount
+        return amount
+
+    def record_spend(self, agent: str, actual_spend: float) -> None:
+        """Record what an agent actually spent."""
+        self.spent[agent] = actual_spend
+
+    def builder_budget(self, base: float) -> float:
+        """Return how much Builder can spend (base + unspent from prior agents)."""
+        if self.fixed:
+            return base
+        pre_builder = ["planner", "designer", "architect"]
+        unspent = sum(
+            max(0.0, self._allocations.get(a, 0) - self.spent.get(a, 0))
+            for a in pre_builder
+        )
+        return min(base + unspent, self.total * 0.65)
+
+    @property
+    def total_spent(self) -> float:
+        """Total EUR spent across all agents."""
+        return sum(self.spent.values())
+
+    @property
+    def remaining(self) -> float:
+        """Budget remaining."""
+        return self.total - self.total_spent
+
+
+# Pre-compiled regex for streaming file extraction (used in run_stream loop)
+_FILE_TAG_RE = re.compile(
+    r'<file\s+path=["\']([^"\']+)["\']\s*>(.*?)</file>',
+    re.DOTALL,
+)
 
 
 @dataclass
@@ -73,52 +197,81 @@ class PipelineResult:
     error: str | None = None
 
 
-def _create_agents() -> dict[str, Agent]:
-    """Create the 5 pipeline agents (v0.2).
+def _create_agents(
+    cfg: ProfileConfig | None = None,
+    budget_mgr: AdaptiveBudgetManager | None = None,
+) -> dict[str, Agent]:
+    """Create the 5 pipeline agents with profile-aware models and budgets.
 
-    The backstory field carries the full system prompt instructions
-    because Tramontane auto-builds the system message from
-    role + goal + backstory.
+    Args:
+        cfg: Fleet profile config. Falls back to BALANCED if None.
+        budget_mgr: Adaptive budget manager for allocation tracking.
     """
+    if cfg is None:
+        cfg = PROFILES[FleetProfile.BALANCED]
+
+    total = cfg.total_budget_eur
+
+    # Allocate budget percentages per spec
+    planner_budget = total * 0.08
+    designer_budget = total * 0.20
+    architect_budget = total * 0.20
+    builder_budget = total * 0.40
+    reviewer_budget = total * 0.12
+
+    if budget_mgr:
+        budget_mgr.allocate("planner", planner_budget)
+        budget_mgr.allocate("designer", designer_budget)
+        budget_mgr.allocate("architect", architect_budget)
+        # Builder allocation deferred — uses builder_budget() at runtime
+        budget_mgr.allocate("reviewer", reviewer_budget)
+
     return {
         "planner": Agent(
             role="Landing Page Planner",
             goal="Convert natural language descriptions into structured page specs",
             backstory=PLANNER_PROMPT,
-            model="ministral-3b-latest",
-            budget_eur=0.005,
+            model=cfg.planner_model,
+            budget_eur=planner_budget,
+            temperature=0.1,
         ),
         "designer": Agent(
             role="Visual Designer",
             goal="Create cohesive design systems for landing pages",
-            backstory=DESIGNER_PROMPT,
-            model="mistral-small",
-            reasoning=True,
-            budget_eur=0.01,
+            backstory=DESIGNER_PROMPT + "\n\n## DESIGN SKILLS\n" + get_designer_skills(),
+            model=cfg.designer_model,
+            budget_eur=designer_budget,
         ),
         "architect": Agent(
             role="React Project Architect",
             goal="Design optimal React component structure for landing pages",
             backstory=ARCHITECT_PROMPT,
-            model="mistral-small",
-            reasoning=True,
-            budget_eur=0.005,
+            model=cfg.architect_model,
+            budget_eur=architect_budget,
+            temperature=0.1,
         ),
         "builder": Agent(
             role="Frontend Builder",
             goal="Generate complete multi-file React projects with shadcn/ui",
-            backstory=BUILDER_PROMPT,
-            model="devstral-small",
-            budget_eur=0.03,
+            backstory=BUILDER_PROMPT + "\n\n## BUILDER SKILLS\n" + get_builder_skills(),
+            model=cfg.builder_model,
+            budget_eur=builder_budget,
+            temperature=cfg.builder_temp,
+            validate_output=lambda result: len(re.findall(r"</file>", result.output)) >= 5,
         ),
         "reviewer": Agent(
             role="Code Reviewer",
             goal="Validate React project quality, shadcn/ui usage, and spec compliance",
-            backstory=REVIEWER_PROMPT,
-            model="mistral-small",
-            budget_eur=0.01,
+            backstory=REVIEWER_PROMPT + "\n\n## REVIEWER SKILLS\n" + get_reviewer_skills(),
+            model=cfg.reviewer_model,
+            budget_eur=reviewer_budget,
+            temperature=0.0,
         ),
     }
+
+
+# Shared router instance for all agents
+_router = MistralRouter()
 
 
 def _parse_file_tags(text: str) -> dict[str, str]:
@@ -166,6 +319,130 @@ def _emission_order(path: str) -> int:
     if path == "src/App.tsx":
         return 8
     return 9
+
+
+# Invalid lucide-react icons the Builder frequently hallucinates
+_ICON_REPLACEMENTS = {
+    "Baguette": "Utensils",
+    "Croissant": "Coffee",
+    "Cheese": "Utensils",
+    "Herb": "Leaf",
+    "ForkKnife": "Utensils",
+    "WineGlass": "Wine",
+    "Stove": "Flame",
+    "Bowl": "Soup",
+    "CloudSync": "Cloud",
+    "Bread": "Utensils",
+    "Pastry": "Cake",
+    "Oven": "Flame",
+    "Wheat": "Leaf",
+    "Mixer": "Settings",
+    "Donut": "Cake",
+    "Muffin": "Cake",
+    "Pie": "Cake",
+    "Spoon": "Utensils",
+    "Fork": "Utensils",
+    "Knife": "Utensils",
+    "Pan": "Flame",
+    "Pot": "CookingPot",
+    "Grill": "Flame",
+}
+
+
+def _sanitize_icons(content: str) -> str:
+    """Replace hallucinated lucide-react icon names with valid alternatives."""
+    for bad, good in _ICON_REPLACEMENTS.items():
+        if bad in content:
+            content = content.replace(bad, good)
+            logger.info("Icon fix: %s → %s", bad, good)
+    return content
+
+
+def _sanitize_iframes(content: str) -> str:
+    """Remove iframe tags (Google Maps, etc.) that are blocked by COEP."""
+    if "<iframe" not in content:
+        return content
+    # Replace iframe with a styled placeholder
+    content = re.sub(
+        r'<iframe[^>]*>.*?</iframe>',
+        '<div className="rounded-xl bg-muted/30 border p-8 text-center">'
+        '<MapPin className="h-8 w-8 text-primary mx-auto mb-2" />'
+        '<p className="text-sm text-muted-foreground">Visit us at our location</p>'
+        '</div>',
+        content,
+        flags=re.DOTALL,
+    )
+    # Also catch self-closing iframes
+    content = re.sub(
+        r'<iframe[^>]*/?>',
+        '<div className="rounded-xl bg-muted/30 border p-8 text-center">'
+        '<p className="text-sm text-muted-foreground">Visit us at our location</p>'
+        '</div>',
+        content,
+    )
+    logger.info("Removed iframe(s) from generated code")
+    return content
+
+
+# All valid lucide-react icons we allow
+_VALID_ICONS = {
+    "Menu", "X", "ArrowRight", "ArrowLeft", "Star", "Check", "ChevronDown",
+    "ChevronRight", "ChevronUp", "ChevronLeft", "Phone", "Mail", "MapPin",
+    "Clock", "Heart", "Share2", "Search", "Home", "User", "Users", "Settings",
+    "Shield", "Zap", "Eye", "Download", "Upload", "ExternalLink", "Github",
+    "Twitter", "Linkedin", "Instagram", "Facebook", "Send", "MessageSquare",
+    "Calendar", "CreditCard", "ShoppingCart", "Package", "Globe", "Lock",
+    "Unlock", "Award", "TrendingUp", "BarChart3", "PieChart", "Code",
+    "Terminal", "Database", "Cloud", "Server", "Wifi", "Play", "Pause",
+    "Plus", "Minus", "Edit", "Trash2", "Copy", "Clipboard", "Bookmark",
+    "Flag", "Bell", "AlertTriangle", "Info", "HelpCircle", "CheckCircle",
+    "XCircle", "Coffee", "Utensils", "Pizza", "Cake", "Wine", "Music",
+    "Camera", "Image", "Sun", "Moon", "Sparkles", "Target", "Layers",
+    "Grid", "Layout", "Palette", "Leaf", "Flame", "Droplets", "Mountain",
+    "TreePine", "Flower2", "HandPlatter", "CookingPot", "Salad", "Sandwich",
+    "IceCream", "Soup", "Building", "Store", "Briefcase", "GraduationCap",
+    "Stethoscope", "Hammer", "Truck", "Car", "Plane", "Ship", "Bike",
+    "MapPinned", "Navigation", "Route",
+}
+
+
+def _fix_missing_imports(content: str) -> str:
+    """Scan JSX for icon/component usage and add missing lucide imports."""
+    # Find existing lucide import line
+    import_match = re.search(
+        r'import\s*\{([^}]+)\}\s*from\s*["\']lucide-react["\']',
+        content,
+    )
+    existing_icons: set[str] = set()
+    if import_match:
+        existing_icons = {i.strip() for i in import_match.group(1).split(",")}
+
+    # Scan JSX for <IconName usage (capitalized, in JSX context)
+    used_in_jsx = set(re.findall(r'<(\w+)\s', content))
+
+    # Find icons used but not imported
+    missing = set()
+    for name in used_in_jsx:
+        if name in _VALID_ICONS and name not in existing_icons:
+            missing.add(name)
+
+    if not missing:
+        return content
+
+    if import_match:
+        # Add missing icons to existing import
+        all_icons = sorted(existing_icons | missing)
+        new_import = f'import {{ {", ".join(all_icons)} }} from "lucide-react"'
+        content = content[:import_match.start()] + new_import + content[import_match.end():]
+    else:
+        # No lucide import exists — add one after the first import line
+        first_import_end = content.find("\n", content.find("import "))
+        if first_import_end > 0:
+            new_import = f'\nimport {{ {", ".join(sorted(missing))} }} from "lucide-react"'
+            content = content[:first_import_end] + new_import + content[first_import_end:]
+
+    logger.info("Auto-imported missing icons: %s", missing)
+    return content
 
 
 def _build_app_tsx(
@@ -310,6 +587,7 @@ def _extract_files(builder_output: str) -> dict[str, str]:
 async def run_pipeline_streaming(
     prompt: str,
     locale: str = "en",
+    profile: FleetProfile = FleetProfile.BALANCED,
 ) -> AsyncGenerator[str, None]:
     """Run the 4-agent pipeline, yielding SSE events as each agent completes.
 
@@ -319,12 +597,14 @@ async def run_pipeline_streaming(
     Args:
         prompt: User's natural language website description.
         locale: Default locale for the generated site.
+        profile: Fleet quality profile.
 
     Yields:
         SSE-formatted strings (ready to send via StreamingResponse).
     """
+    cfg = PROFILES[profile]
     start_time = time.monotonic()
-    agents = _create_agents()
+    agents = _create_agents(cfg)
     agent_results: list[AgentStepResult] = []
     cumulative_cost = 0.0
 
@@ -370,7 +650,7 @@ async def run_pipeline_streaming(
         # ── Agent 2: Designer ─────────────────────────────────
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "designer",
-            "model": "mistral-small",
+            "model": agents["designer"].model,
             "step": 2,
             "total_steps": 5,
         })
@@ -408,7 +688,7 @@ async def run_pipeline_streaming(
         # ── Agent 3: Builder ──────────────────────────────────
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "builder",
-            "model": "devstral-small",
+            "model": "devstral-2",
             "step": 3,
             "total_steps": 5,
         })
@@ -454,7 +734,7 @@ async def run_pipeline_streaming(
         # ── Agent 4: Reviewer ─────────────────────────────────
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "reviewer",
-            "model": "mistral-small",
+            "model": agents["reviewer"].model,
             "step": 4,
             "total_steps": 5,
         })
@@ -536,12 +816,14 @@ def _classify_error(exc: Exception) -> tuple[str, str]:
 async def run_planner_streaming(
     prompt: str,
     locale: str = "en",
+    profile: FleetProfile = FleetProfile.BALANCED,
 ) -> AsyncGenerator[str, None]:
     """Run ONLY the Planner agent, yield plan_ready, then stop.
 
     The pipeline pauses here until the user approves the plan.
     """
-    agents = _create_agents()
+    cfg = PROFILES[profile]
+    agents = _create_agents(cfg)
 
     try:
         yield format_sse(SSEEventType.AGENT_START, {
@@ -599,19 +881,31 @@ async def run_build_streaming(
     planner_output: str,
     locale: str = "en",
     prior_cost: float = 0.0,
+    profile: FleetProfile = FleetProfile.BALANCED,
 ) -> AsyncGenerator[str, None]:
     """Run Designer → Architect → Builder → Reviewer (v0.2 pipeline).
 
     Called after user approves the planner output.
     Outputs multi-file React project via files_ready SSE event.
     """
+    cfg = PROFILES[profile]
+    budget_mgr = AdaptiveBudgetManager(total=cfg.total_budget_eur)
     start_time = time.monotonic()
-    agents = _create_agents()
+    agents = _create_agents(cfg, budget_mgr)
     agent_results: list[AgentStepResult] = []
     cumulative_cost = prior_cost
     total_steps = 5  # designer, architect, builder, reviewer
 
     try:
+        # Emit pipeline_start with profile info
+        yield format_sse("pipeline_start", {
+            "profile": profile.value,
+            "label": cfg.label,
+            "est_cost": cfg.est_cost,
+            "est_time": cfg.est_time,
+            "total_budget": cfg.total_budget_eur,
+        })
+
         # ── Designer (with UX Pro Max design intelligence) ──
         # Extract industry from planner output for design guidance
         design_intel = ""
@@ -623,37 +917,19 @@ async def run_build_streaming(
         except (json.JSONDecodeError, KeyError):
             pass
 
-        # ── Inject pipeline skills into agent prompts ──
-        agents["designer"] = Agent(
-            role="Visual Designer",
-            goal="Create cohesive design systems for landing pages",
-            backstory=DESIGNER_PROMPT + "\n\n## DESIGN SKILLS\n" + get_designer_skills(),
-            model="mistral-small",
-            reasoning=True,
-            budget_eur=0.01,
-        )
-        agents["builder"] = Agent(
-            role="Frontend Builder",
-            goal="Generate complete multi-file React projects with shadcn/ui",
-            backstory=BUILDER_PROMPT + "\n\n## BUILDER SKILLS\n" + get_builder_skills(),
-            model="devstral-small",
-            budget_eur=0.03,
-        )
-        agents["reviewer"] = Agent(
-            role="Code Reviewer",
-            goal="Validate React project quality, shadcn/ui usage, and spec compliance",
-            backstory=REVIEWER_PROMPT + "\n\n## REVIEWER SKILLS\n" + get_reviewer_skills(),
-            model="mistral-small",
-            budget_eur=0.01,
-        )
+        # v0.2.0: agents already have skills in backstory from _create_agents()
+        # RunContext tracks cost across the chain automatically
+        run_ctx = RunContext(budget_eur=cfg.total_budget_eur)
 
         yield format_sse(SSEEventType.AGENT_START, {
-            "agent": "designer", "model": "mistral-small",
+            "agent": "designer", "model": agents["designer"].model,
             "step": 2, "total_steps": total_steps,
         })
         t0 = time.monotonic()
         designer_response = await agents["designer"].run(
             format_designer_msg(planner_output, design_intel),
+            router=_router,
+            run_context=run_ctx,
         )
         designer_step = AgentStepResult(
             agent_name="designer",
@@ -670,6 +946,7 @@ async def run_build_streaming(
             "duration_s": designer_step.duration_s,
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
+        budget_mgr.record_spend("designer", designer_step.cost_eur)
         logger.info(
             "Designer complete: cost=EUR%.4f duration=%.1fs",
             designer_step.cost_eur, designer_step.duration_s,
@@ -677,12 +954,14 @@ async def run_build_streaming(
 
         # ── Architect (NEW in v0.2) ──
         yield format_sse(SSEEventType.AGENT_START, {
-            "agent": "architect", "model": "mistral-small",
+            "agent": "architect", "model": agents["architect"].model,
             "step": 3, "total_steps": total_steps,
         })
         t0 = time.monotonic()
         architect_response = await agents["architect"].run(
             format_architect_msg(planner_output, designer_step.output),
+            router=_router,
+            run_context=run_ctx,
         )
         architect_step = AgentStepResult(
             agent_name="architect",
@@ -699,6 +978,7 @@ async def run_build_streaming(
             "duration_s": architect_step.duration_s,
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
+        budget_mgr.record_spend("architect", architect_step.cost_eur)
         logger.info(
             "Architect complete: cost=EUR%.4f duration=%.1fs",
             architect_step.cost_eur, architect_step.duration_s,
@@ -706,10 +986,12 @@ async def run_build_streaming(
 
         # ── Inject template references for Builder ──
         template_refs = ""
+        section_order: list[str] | None = None
         try:
             arch_data = json.loads(architect_step.output)
             section_names = [s["name"] for s in arch_data.get("sections", [])]
-            template_refs = get_builder_context(section_names, max_templates=3)
+            section_order = section_names
+            template_refs = get_builder_context(section_names, max_templates=5)
             if template_refs:
                 logger.info(
                     "Injected %d template references for Builder",
@@ -718,25 +1000,114 @@ async def run_build_streaming(
         except (json.JSONDecodeError, KeyError, TypeError):
             pass
 
-        # ── Builder (v0.2: multi-file JSON output) ──
+        # ── Builder (v0.2: streaming multi-file output) ──
+        # Uses run_stream() to emit files to WebContainer in real-time
+        # as the LLM generates them, instead of waiting for full response.
+        # Adaptive: Builder gets base allocation + unspent from prior agents
+        builder_base = cfg.total_budget_eur * 0.40
+        effective_builder_budget = budget_mgr.builder_budget(builder_base)
+        agents["builder"].budget_eur = effective_builder_budget
+        logger.info(
+            "Builder budget: base=€%.4f effective=€%.4f (adaptive surplus=€%.4f)",
+            builder_base, effective_builder_budget,
+            effective_builder_budget - builder_base,
+        )
+
         yield format_sse(SSEEventType.AGENT_START, {
-            "agent": "builder", "model": "devstral-small",
+            "agent": "builder", "model": agents["builder"].model,
             "step": 4, "total_steps": total_steps,
         })
         t0 = time.monotonic()
-        builder_response = await agents["builder"].run(
-            format_builder_msg(
-                planner_output,
-                designer_step.output,
-                architect_step.output,
-                template_refs,
-            ),
+
+        builder_input = format_builder_msg(
+            planner_output,
+            designer_step.output,
+            architect_step.output,
+            template_refs,
         )
+
+        # Stream tokens, extract files as </file> tags close
+        full_output = ""
+        streamed_files: dict[str, str] = {}
+        last_emit_pos = 0  # track where we last extracted files
+        builder_result = None
+
+        async for event in agents["builder"].run_stream(
+            builder_input, router=_router, run_context=run_ctx,
+        ):
+            if event.type == "token":
+                full_output += event.token
+                # Check for newly completed file tags in the accumulated output
+                new_region = full_output[last_emit_pos:]
+                for match in _FILE_TAG_RE.finditer(new_region):
+                    path = match.group(1).strip()
+                    content = match.group(2)
+                    if content.startswith("\n"):
+                        content = content[1:]
+                    if content.endswith("\n"):
+                        content = content[:-1]
+                    if path not in streamed_files:
+                        # Sanitize before emitting to WebContainer
+                        if path.endswith(".tsx"):
+                            content = _sanitize_icons(content)
+                            content = _sanitize_iframes(content)
+                            content = _fix_missing_imports(content)
+                        streamed_files[path] = content
+                        # Emit file immediately to frontend → WebContainer
+                        sse_event = format_sse("file_chunk", {
+                            "path": path,
+                            "content": content,
+                        })
+                        logger.warning(
+                            "STREAMING EMIT: %s (%d chars, sse=%d bytes)",
+                            path, len(content), len(sse_event),
+                        )
+                        yield sse_event
+                        # Brief pause after CSS for recompile
+                        if path == "src/index.css":
+                            await asyncio.sleep(0.05)
+                # Move pointer past fully matched region
+                if new_region:
+                    last_closed = new_region.rfind("</file>")
+                    if last_closed >= 0:
+                        last_emit_pos += last_closed + len("</file>")
+
+            elif event.type == "complete" and event.result:
+                builder_result = event.result
+            elif event.type == "error":
+                raise RuntimeError(f"Builder streaming error: {event.error}")
+
+        # Re-parse the final clean output (from Tramontane's complete event)
+        final_output = builder_result.output if builder_result else full_output
+        all_files = _parse_file_tags(final_output)
+        logger.warning(
+            "BUILDER OUTPUT: %d chars total, streaming=%d files, final_parse=%d files",
+            len(final_output), len(streamed_files), len(all_files),
+        )
+
+        # v0.2.0: validate_output on Builder auto-retries truncated output
+        # No manual retry needed here
+        for path, content in all_files.items():
+            if path not in streamed_files:
+                if path.endswith(".tsx"):
+                    content = _sanitize_icons(content)
+                streamed_files[path] = content
+                yield format_sse("file_chunk", {
+                    "path": path,
+                    "content": content,
+                })
+                logger.info("Late-streamed file: %s (%d chars)", path, len(content))
+
+        # Merge all discovered files
+        files = {**all_files, **streamed_files}  # streamed takes priority
+
+        builder_cost = builder_result.cost_eur if builder_result else 0.0
+        builder_model = builder_result.model_used if builder_result else "devstral-small"
         builder_step = AgentStepResult(
             agent_name="builder",
-            model_used=builder_response.model_used,
-            output=builder_response.output,
-            cost_eur=builder_response.cost_eur,
+            model_used=builder_model,
+            output=full_output,
+            cost_eur=builder_cost,
             duration_s=round(time.monotonic() - t0, 2),
         )
         agent_results.append(builder_step)
@@ -747,27 +1118,21 @@ async def run_build_streaming(
             "duration_s": builder_step.duration_s,
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
+        budget_mgr.record_spend("builder", builder_step.cost_eur)
         logger.info(
-            "Builder complete: cost=EUR%.4f duration=%.1fs",
-            builder_step.cost_eur, builder_step.duration_s,
+            "Builder complete: cost=EUR%.4f duration=%.1fs files=%d",
+            builder_step.cost_eur, builder_step.duration_s, len(files),
         )
 
-        # Parse files from Builder output (file-tag or JSON format)
-        files = _extract_files(builder_step.output)
-
-        # Extract section order from Architect blueprint
-        section_order: list[str] | None = None
-        try:
-            arch_json = json.loads(architect_step.output)
-            section_order = [
-                s["name"] for s in arch_json.get("sections", [])
-            ]
-        except (json.JSONDecodeError, KeyError, TypeError):
-            pass
-
         if files:
-            # Generate App.tsx with correct section order
-            files["src/App.tsx"] = _build_app_tsx(files, section_order)
+            # ALWAYS generate App.tsx with correct Architect section order
+            # (Builder may output its own App.tsx with wrong order)
+            app_tsx = _build_app_tsx(files, section_order)
+            files["src/App.tsx"] = app_tsx
+            yield format_sse("file_chunk", {
+                "path": "src/App.tsx",
+                "content": app_tsx,
+            })
 
             # Add ARKHOS.md project memory
             files["ARKHOS.md"] = _build_arkhos_md(
@@ -777,28 +1142,36 @@ async def run_build_streaming(
                 architect_output=architect_step.output,
             )
 
-            # Stream files one-by-one: config → UI → sections → App.tsx
-            ordered = sorted(files.keys(), key=_emission_order)
-            prev_path = ""
-            for path in ordered:
-                yield format_sse("file_chunk", {
-                    "path": path,
-                    "content": files[path],
-                })
-                # index.css triggers full CSS recompile — wait longer
-                if prev_path in ("src/index.css", "src/main.tsx"):
-                    await asyncio.sleep(0.15)
-                # Small delay for sections so HMR fires visibly
-                elif path.startswith("src/sections/") or path == "src/App.tsx":
-                    await asyncio.sleep(0.08)
-                prev_path = path
-
             # Emit files_ready for zip download
             yield format_sse("files_ready", {
                 "files": files,
                 "file_count": len(files),
             })
-            logger.info("Streamed %d files via file_chunk", len(files))
+
+            # Emit preview_ready HTML fallback for when WC isn't ready yet.
+            # Build a minimal HTML page from index.css + sections so the
+            # iframe preview has something to show immediately.
+            index_css = files.get("src/index.css", "")
+            index_html = files.get("index.html", "")
+            if index_css or index_html:
+                fallback_html = (
+                    "<!DOCTYPE html><html><head>"
+                    "<meta charset='UTF-8'>"
+                    "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+                    f"<style>{index_css}</style>"
+                    "</head><body style='background:#020408;color:#fff;font-family:sans-serif;'>"
+                    "<div style='text-align:center;padding:20vh 2rem'>"
+                    "<p style='font-size:1.25rem;opacity:0.8'>Loading live preview...</p>"
+                    "<p style='font-size:0.875rem;opacity:0.5;margin-top:0.5rem'>"
+                    "WebContainer is starting. Your site will appear shortly.</p>"
+                    "</div></body></html>"
+                )
+                yield format_sse(SSEEventType.PREVIEW_READY, {
+                    "html": fallback_html,
+                    "stage": "pre_review",
+                })
+
+            logger.info("Total files: %d (streamed in real-time)", len(files))
         else:
             # Fallback: treat entire output as single HTML (v0.1 compat)
             logger.warning("No files parsed, falling back to HTML mode")
@@ -808,12 +1181,14 @@ async def run_build_streaming(
 
         # ── Reviewer ──
         yield format_sse(SSEEventType.AGENT_START, {
-            "agent": "reviewer", "model": "mistral-small",
+            "agent": "reviewer", "model": agents["reviewer"].model,
             "step": 5, "total_steps": total_steps,
         })
         t0 = time.monotonic()
         reviewer_response = await agents["reviewer"].run(
             format_reviewer_msg(builder_step.output, planner_output),
+            router=_router,
+            run_context=run_ctx,
         )
         reviewer_step = AgentStepResult(
             agent_name="reviewer",
@@ -830,19 +1205,26 @@ async def run_build_streaming(
             "duration_s": reviewer_step.duration_s,
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
+        budget_mgr.record_spend("reviewer", reviewer_step.cost_eur)
         logger.info(
             "Reviewer complete: cost=EUR%.4f duration=%.1fs",
             reviewer_step.cost_eur, reviewer_step.duration_s,
         )
 
-        # If reviewer fixed files, emit updated files_ready
-        reviewer_files = _extract_files(reviewer_step.output)
+        # If reviewer fixed files, emit only the fixed ones as file_chunks
+        # Use regex only — _extract_files JSON fallback misparses reviewer JSON
+        reviewer_files = _parse_file_tags(reviewer_step.output)
         if reviewer_files:
-            yield format_sse("files_ready", {
-                "files": reviewer_files,
-                "file_count": len(reviewer_files),
-                "stage": "final",
-            })
+            for path, content in reviewer_files.items():
+                files[path] = content  # update our files dict
+                yield format_sse("file_chunk", {
+                    "path": path,
+                    "content": content,
+                })
+            logger.info(
+                "Reviewer fixed %d files: %s",
+                len(reviewer_files), list(reviewer_files.keys()),
+            )
         elif not files:
             # v0.1 compat: treat reviewer output as HTML
             yield format_sse(SSEEventType.PREVIEW_READY, {
@@ -871,7 +1253,11 @@ async def run_build_streaming(
         })
 
 
-async def run_pipeline(prompt: str, locale: str = "en") -> PipelineResult:
+async def run_pipeline(
+    prompt: str,
+    locale: str = "en",
+    profile: FleetProfile = FleetProfile.BALANCED,
+) -> PipelineResult:
     """Run the pipeline and collect results (non-streaming version).
 
     Useful for testing and the /api/result endpoint.
@@ -880,7 +1266,7 @@ async def run_pipeline(prompt: str, locale: str = "en") -> PipelineResult:
     result = PipelineResult(html="")
     start_time = time.monotonic()
 
-    async for _sse_event in run_pipeline_streaming(prompt, locale):
+    async for _sse_event in run_pipeline_streaming(prompt, locale, profile):
         pass
 
     result.total_duration_s = round(time.monotonic() - start_time, 2)
