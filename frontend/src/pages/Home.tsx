@@ -810,18 +810,39 @@ export default function Home() {
       {/* ============================================
           SECTION 11: Final CTA (repeat ChatInput)
           ============================================ */}
-      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-[Syne] text-3xl font-bold tracking-[-0.02em] md:text-4xl mb-4" style={{ color: 'var(--text-primary)' }}>
+      <section className="relative bg-[var(--void)] py-24 md:py-32 px-6 overflow-hidden">
+        {/* Ambient ember glow */}
+        <div className="absolute inset-0 z-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(255,93,58,0.06) 0%, transparent 60%)' }} />
+        <div className="max-w-xl mx-auto text-center relative z-10">
+          <motion.h2
+            className="font-[Syne] text-4xl font-bold tracking-[-0.03em] md:text-5xl mb-4"
+            style={{ color: 'var(--text-primary)' }}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}
+          >
             Ready to build?
-          </h2>
-          <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>
+          </motion.h2>
+          <motion.p
+            className="mb-10 text-lg"
+            style={{ color: 'var(--text-secondary)' }}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
+          >
             No signup. No credit card. Just describe what you want.
-          </p>
-          <ChatInput
-            onSend={(msg) => navigate(`/generate?prompt=${encodeURIComponent(msg)}`)}
-            placeholder="Describe your website..."
-          />
+          </motion.p>
+          <motion.div
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <GradientButton onClick={() => navigate("/generate")} width="240px" height="52px">
+              <span className="text-base">Start building free</span>
+            </GradientButton>
+          </motion.div>
+          <motion.p
+            className="mt-6 text-xs"
+            style={{ color: 'var(--text-muted)' }}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            3 free generations per day · EU-hosted · MIT open source
+          </motion.p>
         </div>
       </section>
 
