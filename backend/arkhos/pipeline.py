@@ -37,6 +37,12 @@ from arkhos.prompts.planner import SYSTEM_PROMPT as PLANNER_PROMPT
 from arkhos.prompts.planner import format_user_message as format_planner_msg
 from arkhos.prompts.reviewer import SYSTEM_PROMPT as REVIEWER_PROMPT
 from arkhos.prompts.reviewer import format_user_message as format_reviewer_msg
+from arkhos.skills import (
+    get_builder_skills,
+    get_designer_skills,
+    get_planner_skills,
+    get_reviewer_skills,
+)
 from arkhos.sse import SSEEventType, format_sse
 from arkhos.templates import get_builder_context
 
@@ -546,7 +552,12 @@ async def run_planner_streaming(
         })
 
         t0 = time.monotonic()
-        planner_input = format_planner_msg(prompt, locale)
+        planner_skills = get_planner_skills("default")
+        planner_input = (
+            format_planner_msg(prompt, locale)
+            + "\n\n## PLANNING SKILLS\n"
+            + planner_skills
+        )
         planner_response = await agents["planner"].run(planner_input)
 
         planner_step = AgentStepResult(
@@ -611,6 +622,30 @@ async def run_build_streaming(
             design_intel = json.dumps(intel_data, indent=2)
         except (json.JSONDecodeError, KeyError):
             pass
+
+        # ── Inject pipeline skills into agent prompts ──
+        agents["designer"] = Agent(
+            role="Visual Designer",
+            goal="Create cohesive design systems for landing pages",
+            backstory=DESIGNER_PROMPT + "\n\n## DESIGN SKILLS\n" + get_designer_skills(),
+            model="mistral-small",
+            reasoning=True,
+            budget_eur=0.01,
+        )
+        agents["builder"] = Agent(
+            role="Frontend Builder",
+            goal="Generate complete multi-file React projects with shadcn/ui",
+            backstory=BUILDER_PROMPT + "\n\n## BUILDER SKILLS\n" + get_builder_skills(),
+            model="devstral-small",
+            budget_eur=0.03,
+        )
+        agents["reviewer"] = Agent(
+            role="Code Reviewer",
+            goal="Validate React project quality, shadcn/ui usage, and spec compliance",
+            backstory=REVIEWER_PROMPT + "\n\n## REVIEWER SKILLS\n" + get_reviewer_skills(),
+            model="mistral-small",
+            budget_eur=0.01,
+        )
 
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "designer", "model": "mistral-small",
