@@ -7,6 +7,7 @@ import { ChatInput } from "@/components/ui/bolt-style-chat";
 import { ShiningText } from "@/components/ui/shining-text";
 import { Banner } from "@/components/ui/banner";
 import BasicModal from "@/components/ui/modal";
+import { SessionNavBar } from "@/components/ui/app-sidebar";
 import PipelineStrip from "@/components/PipelineStrip";
 import PreviewPane from "@/components/PreviewPane";
 import CodeDrawer from "@/components/CodeDrawer";
@@ -14,130 +15,6 @@ import StatusBar from "@/components/StatusBar";
 import IterationChat from "@/components/IterationChat";
 import PlanReview from "@/components/PlanReview";
 import ErrorBanner from "@/components/ErrorBanner";
-
-/* ── Template data ── */
-
-type Category = "all" | "food" | "saas" | "portfolio" | "agency" | "professional" | "events";
-
-const TEMPLATES: {
-  name: string;
-  description: string;
-  accent: string;
-  category: Category;
-  prompt: string;
-}[] = [
-  // ── Food & Drink ──
-  {
-    name: "French Bakery",
-    description: "Warm modern bakery with menu, story & contact",
-    accent: "#FFB020",
-    category: "food",
-    prompt: "A landing page for an artisanal bakery in Paris called 'Le Petit Four'. Warm earth tones, elegant serif headings, generous whitespace. Sections: full-width hero with bread photography, our story (founded in 2026, family tradition), menu highlights with 3 signature pastries (croissant, macaron, tarte aux pommes with prices in EUR), testimonials from local customers, and contact section with address in Paris, opening hours, phone number. The overall feeling should be warm, inviting, and premium.",
-  },
-  {
-    name: "Italian Restaurant",
-    description: "Warm rustic elegance with menu & reservations",
-    accent: "#FF6B35",
-    category: "food",
-    prompt: "A landing page for an Italian restaurant in Bordeaux called 'Trattoria Bella'. Warm earth tones with rustic elegance, elegant serif headings. Sections: full-width hero with restaurant interior photography, our story section (family recipes since generations), menu highlights organized by category (antipasti, primi, secondi, dolci) with prices in EUR, photo gallery of dishes, and reservations section with a booking form, address in Bordeaux, opening hours, phone. Atmospheric and appetizing.",
-  },
-  {
-    name: "Coffee Shop",
-    description: "Cozy modern cafe with menu & community",
-    accent: "#8B6914",
-    category: "food",
-    prompt: "A cozy artisan coffee shop called 'Cafe Lumiere' in Lyon, France. Warm, intimate atmosphere. Sections: hero with coffee photo and warm amber lighting, our story (independent roasters since 2024), menu highlights (3 specialty drinks with prices in EUR: Espresso Noisette \u20AC3.50, Latte Caramel \u20AC5.00, Cold Brew Maison \u20AC4.50), community events section, and contact with address in Lyon and opening hours. Warm amber and cream tones. Mobile responsive.",
-  },
-  // ── SaaS & Tech ──
-  {
-    name: "SaaS Landing",
-    description: "Dark conversion-focused with pricing & features",
-    accent: "#00D4EE",
-    category: "saas",
-    prompt: "A SaaS landing page for 'CloudSync Pro', a file synchronization tool for teams. Dark mode with indigo/cyan accent colors, modern geometric sans-serif fonts. Sections: cinematic dark hero with product dashboard screenshot and two CTA buttons, 3 key features in a bento grid with icons (real-time sync, encryption, team collaboration), pricing table with 3 tiers (Free/Pro/Enterprise), testimonials carousel with avatars and star ratings, FAQ accordion, and a full-width CTA section. Professional and conversion-focused.",
-  },
-  {
-    name: "B2B SaaS",
-    description: "Enterprise-focused with social proof & demo CTA",
-    accent: "#6366F1",
-    category: "saas",
-    prompt: "B2B SaaS platform called 'FlowDesk' for enterprise workflow automation. Dark professional design. Sections: hero with dashboard screenshot and 'Book a Demo' CTA, 3 key features in bento grid (automation, analytics, integrations), social proof section with partner logos and testimonials, pricing with 3 tiers (Starter \u20AC29/mo, Pro \u20AC99/mo, Enterprise custom), FAQ accordion, and full-width CTA. Dark navy/indigo palette.",
-  },
-  {
-    name: "Startup Landing",
-    description: "YC-style with waitlist signup & traction",
-    accent: "#F97316",
-    category: "saas",
-    prompt: "A startup landing page for 'Beacon', an AI-powered analytics tool. YC-style clean design. Sections: bold hero with large headline and waitlist email signup, traction stats row (10k+ users, 99.9% uptime, 50+ integrations), 3 features with icons, testimonials from early adopters, and minimal footer. Black and orange accent. Fast, confident, no-BS tone.",
-  },
-  // ── Portfolio ──
-  {
-    name: "Dev Portfolio",
-    description: "Minimal dark mode projects grid & about",
-    accent: "#DCE9F5",
-    category: "portfolio",
-    prompt: "A developer portfolio for 'Alex Chen', a full-stack engineer based in Lyon. Minimal dark mode with high contrast, one bold accent color. Sections: dramatic hero with large name typography and animated intro, featured projects grid (4 projects with Unsplash thumbnails, tech badges, and links), skills section with categorized tech stack (Frontend, Backend, DevOps), about me split layout with photo, and contact form with email and social links. Clean, confident, editorial feel.",
-  },
-  {
-    name: "Photography",
-    description: "Full-bleed gallery with elegant typography",
-    accent: "#A78BFA",
-    category: "portfolio",
-    prompt: "A photography portfolio for 'Marie Laurent', a portrait photographer in Toulouse. Elegant minimal design with full-bleed images. Sections: cinematic hero with signature photo, portfolio gallery grid (6 photos with hover overlay showing project name), about section with split layout (photo left, bio right), services & pricing (portrait session \u20AC250, event \u20AC500, corporate \u20AC800), and contact form. Monochrome palette with one accent color.",
-  },
-  // ── Agency ──
-  {
-    name: "Creative Agency",
-    description: "Bold asymmetric design with case studies",
-    accent: "#E040FB",
-    category: "agency",
-    prompt: "A landing page for a creative agency in Marseille called 'Studio Noir'. Bold dark design with orange accent, strong typographic hierarchy, asymmetric layouts. Sections: statement hero with large animated headline and two CTAs, selected work showcase (3 case studies with large images and project descriptions), services offered (branding, web design, strategy) in card grid, team members (4 people with avatars and roles), and contact section with form and office address in Marseille. Edgy, confident, premium.",
-  },
-  {
-    name: "Consultant",
-    description: "Authority-building with case studies & CTA",
-    accent: "#0EA5E9",
-    category: "agency",
-    prompt: "A consulting website for 'Pierre Moreau', a digital transformation consultant based in Nantes. Professional, trust-building design. Sections: hero with professional photo and tagline 'Transform Your Business', expertise areas (3 cards: Strategy, Operations, Technology), case studies (3 success stories with metrics), client testimonials, about section with credentials, and contact form with call booking CTA. Navy and teal palette.",
-  },
-  // ── Professional ──
-  {
-    name: "Law Firm",
-    description: "Professional trust-building with services",
-    accent: "#1E3A5F",
-    category: "professional",
-    prompt: "A professional website for a law firm in Paris called 'Cabinet Dupont & Associes'. Dark navy, gold accents, trust-building design. Sections: authoritative hero with firm name and tagline, practice areas (4 cards: Corporate, Real Estate, IP, Employment), about the firm (founded 1998, 25+ lawyers), team grid (4 senior partners with photos), client testimonials, and contact section with office address in Paris 8eme, phone, email. Serious, prestigious, French legal aesthetic.",
-  },
-  {
-    name: "Fitness Studio",
-    description: "High energy with classes, trainers & pricing",
-    accent: "#EF4444",
-    category: "professional",
-    prompt: "A high-energy fitness studio called 'Pulse Fitness' in Montpellier. Bold, dynamic design with dark background and red accent. Sections: hero with gym photo and 'Start Your Journey' CTA, class schedule (yoga, HIIT, boxing, pilates), trainer profiles (3 trainers with photos), membership pricing (3 tiers: Basic \u20AC29/mo, Premium \u20AC49/mo, VIP \u20AC79/mo), testimonials from members, and contact with address and opening hours. Motivating and modern.",
-  },
-  // ── Events ──
-  {
-    name: "Wedding Venue",
-    description: "Elegant romantic with gallery & booking",
-    accent: "#D4A574",
-    category: "events",
-    prompt: "An elegant wedding venue called 'Chateau de Lumieres' in Provence, France. Romantic, luxurious design with soft gold and ivory tones, serif headings. Sections: full-width hero with chateau photography, our story (18th century estate), venue spaces gallery (ceremony, reception, gardens), services & packages (3 tiers: Intimate \u20AC8,000, Classic \u20AC15,000, Grand \u20AC25,000), testimonials from couples, and contact/booking form with address in Provence. Dreamy, premium, sophisticated.",
-  },
-  {
-    name: "Boutique Hotel",
-    description: "Luxury hospitality with rooms & amenities",
-    accent: "#B8860B",
-    category: "events",
-    prompt: "A boutique hotel called 'Hotel Saint-Germain' in Paris 6eme. Luxury hospitality design with cream, gold, and deep green. Sections: cinematic hero with hotel facade, room types (3 cards: Classique \u20AC180/nuit, Superieure \u20AC260/nuit, Suite \u20AC420/nuit), amenities (spa, restaurant, bar, concierge), guest testimonials, gallery of interiors, and booking section with address and contact. Parisian elegance, refined luxury.",
-  },
-  {
-    name: "Online Store",
-    description: "Product showcase with features & hero",
-    accent: "#10B981",
-    category: "events",
-    prompt: "An e-commerce landing page for 'Maison Verte', a sustainable home goods brand in Strasbourg. Clean modern design with green accent. Sections: hero with product lifestyle photo and shop CTA, featured products grid (4 products with photos, names, prices in EUR), brand values (3 icons: sustainable, handmade, local), customer reviews, about section (founded by artisans in Alsace), and newsletter signup with footer. Fresh, eco-conscious, premium.",
-  },
-];
 
 export default function Generate() {
   const wc = useWebContainer();
@@ -358,50 +235,15 @@ export default function Generate() {
           )}
         </AnimatePresence>
 
-        {/* Template grid */}
-        <div className="space-y-3">
-          <p
-            className="text-[10px] uppercase tracking-wider text-[var(--muted)]"
-            style={{ fontFamily: "var(--font-code)" }}
-          >
-            Or start from a template
-          </p>
-          <div className="grid grid-cols-2 gap-2 max-h-[320px] overflow-y-auto pr-1">
-            {TEMPLATES.map((t) => (
-              <button
-                key={t.name}
-                onClick={() => handleGenerate(t.prompt, "en")}
-                disabled={isRunning}
-                className="text-left px-3 py-3 rounded-xl transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] group/tpl"
-                style={{
-                  background: "rgba(13, 27, 42, 0.5)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div className="flex items-start gap-2.5">
-                  <div
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1 transition-shadow duration-300 group-hover/tpl:shadow-[0_0_8px]"
-                    style={{ backgroundColor: t.accent, boxShadow: `0 0 0px ${t.accent}` }}
-                  />
-                  <div className="min-w-0">
-                    <span className="text-[13px] text-[var(--frost)] font-medium block leading-tight">
-                      {t.name}
-                    </span>
-                    <span className="text-[10px] text-[var(--muted)] block leading-snug mt-0.5 line-clamp-1">
-                      {t.description}
-                    </span>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* Templates now live in the sidebar */}
       </motion.div>
     );
   };
 
   return (
-    <div className="relative flex flex-col h-screen bg-[#020408] overflow-hidden">
+    <div className="flex h-screen bg-[#020408] overflow-hidden">
+      <SessionNavBar />
+      <div className="relative flex flex-col flex-1 overflow-hidden ml-[3.05rem]">
       {/* Success Banner */}
       <Banner
         variant="success"
@@ -534,6 +376,7 @@ export default function Generate() {
           Got it
         </button>
       </BasicModal>
+      </div>
     </div>
   );
 }
