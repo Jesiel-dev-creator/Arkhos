@@ -5,15 +5,17 @@ import type { ChatMessage } from "@/hooks/useSSE";
 import { useWebContainer } from "@/hooks/useWebContainer";
 import { ChatInput } from "@/components/ui/bolt-style-chat";
 import { ShiningText } from "@/components/ui/shining-text";
+import { Banner } from "@/components/ui/banner";
+import BasicModal from "@/components/ui/modal";
 import PipelineStrip from "@/components/PipelineStrip";
 import PreviewPane from "@/components/PreviewPane";
-import CodeView from "@/components/CodeView";
+import CodeDrawer from "@/components/CodeDrawer";
+import StatusBar from "@/components/StatusBar";
 import IterationChat from "@/components/IterationChat";
 import PlanReview from "@/components/PlanReview";
 import ErrorBanner from "@/components/ErrorBanner";
-import { Banner } from "@/components/ui/banner";
 
-/* ── Template data (extracted from PromptInput) ── */
+/* ── Template data ── */
 
 type Category = "all" | "food" | "saas" | "portfolio" | "agency" | "professional" | "events";
 
@@ -158,6 +160,10 @@ export default function Generate() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatMode, setChatMode] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showPlanModal, setShowPlanModal] = useState(
+    !localStorage.getItem("arkhos_plan_shown")
+  );
+  const [remainingToday] = useState(3);
 
   useEffect(() => {
     if (state.status === "complete") setShowSuccessBanner(true);
@@ -184,7 +190,7 @@ export default function Generate() {
             {
               id: "gen-system",
               role: "system",
-              content: `Generated · 5 agents · ${state.totalDurationS}s`,
+              content: `Generated \u00b7 5 agents \u00b7 ${state.totalDurationS}s`,
               costEur: state.totalCostEur,
               durationS: state.totalDurationS,
             },
@@ -245,6 +251,12 @@ export default function Generate() {
 
     // Plan review mode
     if (state.planReady && state.plan) {
+      // Trigger plan modal on first plan view
+      if (!localStorage.getItem("arkhos_plan_shown")) {
+        // Use setTimeout to avoid setState during render
+        setTimeout(() => setShowPlanModal(true), 0);
+      }
+
       return (
         <motion.div
           key="plan"
@@ -292,7 +304,7 @@ export default function Generate() {
       );
     }
 
-    // Prompt mode (default) — Bolt-style ChatInput + template quick picks
+    // Prompt mode (default)
     return (
       <motion.div
         key="prompt"
@@ -323,7 +335,9 @@ export default function Generate() {
 
         <ChatInput
           onSend={(msg) => handleGenerate(msg, "en")}
-          onPlan={(msg) => { if (msg.trim()) handleGenerate(msg.trim(), "en"); }}
+          onPlan={(msg) => {
+            if (msg.trim()) handleGenerate(msg.trim(), "en");
+          }}
           placeholder="A landing page for a French bakery in Paris..."
           disabled={isRunning}
         />
@@ -391,98 +405,139 @@ export default function Generate() {
   };
 
   return (
-    <div className="relative flex flex-col h-[calc(100vh-5rem)] overflow-hidden">
+    <div className="relative flex flex-col h-screen bg-[#020408] overflow-hidden">
+      {/* Success Banner */}
       <Banner
         variant="success"
         title="Your site is ready"
-        description={`5 agents · ${state.totalCostEur ? `\u20AC${state.totalCostEur.toFixed(4)}` : ''}`}
+        description={`5 agents \u00b7 ${state.totalCostEur ? `\u20AC${state.totalCostEur.toFixed(4)}` : ""}`}
         show={showSuccessBanner}
         onHide={() => setShowSuccessBanner(false)}
         closable
         autoHide={8000}
       />
 
-      <div className="relative flex flex-1 min-h-0 overflow-hidden">
-      {/* Subtle top gradient */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[200px] pointer-events-none z-0"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(255,107,53,0.03) 0%, transparent 100%)",
-        }}
+      {/* Pipeline Strip */}
+      <PipelineStrip
+        agents={state.agents}
+        status={state.status}
+        totalCostEur={state.totalCostEur}
+        totalDurationS={state.totalDurationS}
+        timeoutWarning={state.timeoutWarning}
+        remainingToday={remainingToday}
       />
 
-      {state.status === "complete" && (
+      <div className="relative flex flex-1 min-h-0 overflow-hidden">
+        {/* Subtle top gradient */}
         <div
-          className="absolute bottom-0 right-0 w-[60%] h-[120px] pointer-events-none z-0"
+          className="absolute top-0 left-0 right-0 h-[200px] pointer-events-none z-0"
           style={{
             background:
-              "linear-gradient(0deg, rgba(34,214,138,0.04) 0%, transparent 100%)",
+              "linear-gradient(180deg, rgba(255,107,53,0.03) 0%, transparent 100%)",
           }}
         />
-      )}
 
-      {/* ── Left Panel (35%) ── */}
-      <div className="relative z-10 w-full md:w-[35%] flex flex-col p-5 md:p-6 overflow-hidden">
-        <AnimatePresence mode="popLayout">{renderLeftPanel()}</AnimatePresence>
-      </div>
+        {state.status === "complete" && (
+          <div
+            className="absolute bottom-0 right-0 w-[60%] h-[120px] pointer-events-none z-0"
+            style={{
+              background:
+                "linear-gradient(0deg, rgba(34,214,138,0.04) 0%, transparent 100%)",
+            }}
+          />
+        )}
 
-      {/* Gradient Divider */}
-      <div
-        className="hidden md:block w-px flex-shrink-0"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent 0%, var(--border) 20%, var(--border) 80%, transparent 100%)",
-        }}
-      />
+        {/* ── Left Panel (35%) ── */}
+        <div className="relative z-10 w-full md:w-[35%] flex flex-col p-5 md:p-6 overflow-hidden">
+          <AnimatePresence mode="popLayout">{renderLeftPanel()}</AnimatePresence>
+        </div>
 
-      {/* ── Right Panel (65%) ── */}
-      <div className="hidden md:flex relative z-10 md:flex-1 flex-col p-5 md:p-6 overflow-hidden">
-        {/* Pipeline Strip */}
-        <PipelineStrip
-          agents={state.agents}
-          status={state.status}
-          totalCostEur={state.totalCostEur}
-          totalDurationS={state.totalDurationS}
-          timeoutWarning={state.timeoutWarning}
+        {/* Gradient Divider */}
+        <div
+          className="hidden md:block w-px flex-shrink-0"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 0%, var(--border) 20%, var(--border) 80%, transparent 100%)",
+          }}
         />
 
-        <div className="h-3 flex-shrink-0" />
-
-        {/* Error Banner — replaces preview when error */}
-        {state.status === "error" ? (
-          <ErrorBanner
-            error={state.error || "Unknown error"}
-            errorType={state.errorType}
-            onRetry={handleNewSite}
-            onDismiss={handleDismissError}
-          />
-        ) : (
-          <>
-            {/* Preview Pane — DOMINANT */}
-            <PreviewPane
-              status={state.status}
-              previewHtml={state.previewHtml}
-              finalHtml={state.finalHtml}
-              projectFiles={state.projectFiles}
-              generationId={state.generationId}
-              wcStatus={wc.status}
-              wcPreviewUrl={wc.previewUrl}
-              wcBuildError={wc.buildError}
-              onToggleCode={() => setShowCode((v) => !v)}
-              showCode={showCode}
+        {/* ── Right Panel (65%) ── */}
+        <div className="hidden md:flex relative z-10 md:flex-1 flex-col p-5 md:p-6 overflow-hidden">
+          {/* Error Banner — replaces preview when error */}
+          {state.status === "error" ? (
+            <ErrorBanner
+              error={state.error || "Unknown error"}
+              errorType={state.errorType}
+              onRetry={handleNewSite}
+              onDismiss={handleDismissError}
             />
+          ) : (
+            <>
+              {/* Preview Pane — flex-1 */}
+              <PreviewPane
+                status={state.status}
+                previewHtml={state.previewHtml}
+                finalHtml={state.finalHtml}
+                projectFiles={state.projectFiles}
+                generationId={state.generationId}
+                wcStatus={wc.status}
+                wcPreviewUrl={wc.previewUrl}
+                wcBuildError={wc.buildError}
+                onToggleCode={() => setShowCode((v) => !v)}
+                showCode={showCode}
+              />
 
-            {/* Code View */}
-            <AnimatePresence>
-              {showCode && state.finalHtml && (
-                <CodeView html={state.finalHtml} />
-              )}
-            </AnimatePresence>
-          </>
-        )}
+              {/* Code Drawer below preview */}
+              <CodeDrawer
+                files={state.projectFiles}
+                show={showCode}
+                onClose={() => setShowCode(false)}
+              />
+            </>
+          )}
+        </div>
       </div>
-      </div>
+
+      {/* StatusBar at bottom */}
+      <StatusBar
+        remainingToday={remainingToday}
+        fileCount={state.projectFiles ? Object.keys(state.projectFiles).length : null}
+        lineCount={
+          state.projectFiles
+            ? Object.values(state.projectFiles).reduce(
+                (sum, c) => sum + c.split("\n").length,
+                0
+              )
+            : null
+        }
+        totalCostEur={state.totalCostEur}
+        totalDurationS={state.totalDurationS}
+        isComplete={state.status === "complete"}
+      />
+
+      {/* BasicModal for plan explanation (shows once) */}
+      <BasicModal
+        isOpen={showPlanModal}
+        onClose={() => {
+          setShowPlanModal(false);
+          localStorage.setItem("arkhos_plan_shown", "true");
+        }}
+        title="Your AI Planner has reviewed your request"
+      >
+        <p className="text-sm text-[#7B8FA3] mb-4">
+          Check the plan below. If it looks right, click &quot;Build this&quot; to start
+          generating.
+        </p>
+        <button
+          onClick={() => {
+            setShowPlanModal(false);
+            localStorage.setItem("arkhos_plan_shown", "true");
+          }}
+          className="px-4 py-2 bg-[#FF6B35] text-white rounded-lg text-sm hover:bg-[#FF6B35]/90"
+        >
+          Got it
+        </button>
+      </BasicModal>
     </div>
   );
 }
