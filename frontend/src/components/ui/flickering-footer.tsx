@@ -360,10 +360,26 @@ export const Component = () => {
           <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
             {siteConfig.hero.description}
           </p>
-          <div className="flex items-center gap-2">
-            <Icons.soc2Dark className="size-11" />
-            <Icons.gdprDark className="size-11" />
-            <Icons.mitDark className="size-11" />
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { label: "MIT License", color: "var(--green)" },
+              { label: "GDPR", color: "var(--violet)" },
+              { label: "EU Hosted", color: "var(--cyan)" },
+              { label: "Open Source", color: "var(--ember)" },
+            ].map((badge) => (
+              <span
+                key={badge.label}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-wide"
+                style={{
+                  color: badge.color,
+                  background: `color-mix(in srgb, ${badge.color} 10%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${badge.color} 20%, transparent)`,
+                }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: badge.color }} />
+                {badge.label}
+              </span>
+            ))}
           </div>
           <SocialIcons />
         </div>
