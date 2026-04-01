@@ -132,44 +132,12 @@ export function ChatInput({ onSend, onPlan, placeholder = "What do you want to b
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             disabled={disabled}
-            className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-3 focus:outline-none min-h-[80px] max-h-[200px] disabled:opacity-40"
+            className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-3 focus:outline-none focus-visible:outline-none focus:ring-0 min-h-[80px] max-h-[200px] disabled:opacity-40"
             style={{ height: '80px' }}
           />
         </div>
 
-        <div className="flex items-center justify-between px-3 pb-3 pt-1">
-          <div className="flex items-center gap-1">
-            <div className="relative">
-              <button
-                onClick={() => setShowAttachMenu(!showAttachMenu)}
-                className="flex items-center justify-center size-8 rounded-full bg-white/[0.08] hover:bg-white/[0.12] text-[#8a8a8f] hover:text-white transition-all duration-200 active:scale-95"
-              >
-                <Plus className={`size-4 transition-transform duration-200 ${showAttachMenu ? 'rotate-45' : ''}`} />
-              </button>
-
-              {showAttachMenu && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowAttachMenu(false)} />
-                  <div className="absolute bottom-full left-0 mb-2 z-50 bg-[#1a1a1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden">
-                    <div className="p-1.5 min-w-[180px]">
-                      {[
-                        { icon: <Paperclip className="size-4" />, label: 'Upload file' },
-                        { icon: <Image className="size-4" />, label: 'Add image' },
-                        { icon: <FileCode className="size-4" />, label: 'Import code' }
-                      ].map((item, i) => (
-                        <button key={i} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#a0a0a5] hover:bg-white/5 hover:text-white transition-all duration-150">
-                          {item.icon}
-                          <span className="text-sm">{item.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-            {/* Model selector removed — using default Mistral pipeline */}
-          </div>
-
+        <div className="flex items-center justify-end px-3 pb-3 pt-1">
           <div className="flex items-center gap-2">
             {onPlan && (
               <button
