@@ -131,11 +131,11 @@ interface ComparisonRow {
 function StatusIcon({ status }: { status: CellStatus }) {
   switch (status) {
     case "yes":
-      return <Check className="inline h-4 w-4 text-[#22D68A]" />;
+      return <Check className="inline h-4 w-4 text-[var(--green)]" style={{ color: '#34D399' }} />;
     case "no":
-      return <X className="inline h-4 w-4 text-[#FF4560]" />;
+      return <X className="inline h-4 w-4 text-[var(--text-muted)]" style={{ color: 'var(--text-muted)' }} />;
     case "warn":
-      return <AlertTriangle className="inline h-4 w-4 text-[#FFB020]" />;
+      return <AlertTriangle className="inline h-4 w-4 text-[var(--violet)]" style={{ color: 'var(--violet)' }} />;
   }
 }
 
@@ -426,8 +426,8 @@ export default function Home() {
       {/* ============================================
           SECTION 4: Stats Strip
           ============================================ */}
-      <section className="bg-[#020408] py-24 px-6">
-        <div className="mx-auto max-w-5xl">
+      <section className="bg-[#020408] py-24 px-6" style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(255,93,58,0.06) 0%, transparent 70%)' }}>
+        <div className="mx-auto max-w-5xl" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {stats.map((stat, i) => (
               <motion.div
@@ -437,12 +437,12 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="rounded-xl border border-white/5 bg-[#0D1B2A] p-6 text-center"
+                className="rounded-xl border bg-[var(--deep)] p-6 text-center hover:border-[var(--ember)]/30 transition-colors"
               >
-                <p className="font-mono text-4xl font-bold text-[#FF6B35]">
+                <p className="font-mono text-4xl font-bold text-[var(--ember)]">
                   {stat.value}
                 </p>
-                <p className="mt-1 text-sm text-[#7B8FA3] font-[DM_Sans]">
+                <p className="mt-1 text-sm text-[var(--text-secondary)] font-[DM_Sans]">
                   {stat.label}
                 </p>
               </motion.div>
@@ -466,29 +466,17 @@ export default function Home() {
           >
             Powered by EU AI {"&"} Cloud
           </motion.h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {euPartners.map((item, i) => (
-              <motion.div
-                key={item.name}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
-                className="flex flex-col items-center rounded-xl border border-white/5 bg-[#0D1B2A] p-8 text-center"
-              >
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  className={`h-10 w-auto mb-4 ${item.extra}`}
-                />
-                <p className="text-lg font-semibold text-[#DCE9F5] font-[DM_Sans]">
-                  {item.name}
-                </p>
-                <p className="mt-2 text-sm text-[#7B8FA3] font-[DM_Sans]">
-                  {item.desc}
-                </p>
-              </motion.div>
+          <div className="flex flex-wrap justify-center gap-4">
+            {[
+              { name: 'Mistral AI', img: '/mistral-logo-color-white.png' },
+              { name: 'Scaleway', img: '/Scaleway-Logo-Purple.png' },
+              { name: 'Tramontane', img: '/tramontane logo no bg.png' },
+            ].map(brand => (
+              <div key={brand.name} className="flex items-center gap-3 px-5 py-3 rounded-xl"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <img src={brand.img} alt={brand.name} className="h-8 w-auto" />
+                <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{brand.name}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -497,7 +485,7 @@ export default function Home() {
       {/* ============================================
           SECTION 6: Pipeline Visualization
           ============================================ */}
-      <section className="py-28">
+      <section className="py-28" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)' }}>
         <KineticLogStream
           logs={pipelineLogs}
           title="Watch 5 agents build your site in real time"
@@ -508,7 +496,7 @@ export default function Home() {
       {/* ============================================
           SECTION 7: Why ArkhosAI
           ============================================ */}
-      <section id="features" className="bg-[#020408] py-28 px-6">
+      <section id="features" className="bg-[#020408] py-28 px-6" style={{ background: 'radial-gradient(ellipse at 80% 50%, rgba(129,140,248,0.05) 0%, transparent 60%)' }}>
         <div className="mx-auto max-w-5xl">
           <motion.h2
             className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
@@ -549,7 +537,7 @@ export default function Home() {
       {/* ============================================
           SECTION 8: Agents Section
           ============================================ */}
-      <section className="bg-[#020408] py-28 px-6">
+      <section className="bg-[#020408] py-28 px-6" style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 60%)' }}>
         <div className="mx-auto max-w-5xl">
           <motion.h2
             className="mb-14 text-center font-[Syne] text-3xl font-bold text-[#DCE9F5] md:text-4xl"
@@ -618,7 +606,7 @@ export default function Home() {
           >
             <table className="w-full text-sm font-[DM_Sans]">
               <thead>
-                <tr className="bg-[#0D1B2A]">
+                <tr className="bg-[var(--surface)]" style={{ background: 'var(--surface, #0D1B2A)' }}>
                   <th className="px-5 py-4 text-left font-medium text-[#7B8FA3]" />
                   <th className="px-4 py-4 text-center font-bold text-[#FF6B35]">
                     ArkhosAI
@@ -648,7 +636,7 @@ export default function Home() {
                     <td className="px-5 py-3.5 font-medium text-[#DCE9F5]">
                       {row.feature}
                     </td>
-                    <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35]">
+                    <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35] bg-[rgba(255,93,58,0.06)] border-l-2 border-l-[var(--ember)]" style={{ borderLeftColor: 'var(--ember, #FF6B35)' }}>
                       {row.arkhos.text}{" "}
                       <StatusIcon status={row.arkhos.status} />
                     </td>
@@ -708,7 +696,7 @@ export default function Home() {
       {/* ============================================
           SECTION 11: Pricing
           ============================================ */}
-      <section id="pricing" className="bg-[#020408] py-28 px-6">
+      <section id="pricing" className="bg-[#020408] py-28 px-6" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,93,58,0.05) 0%, transparent 60%)' }}>
         <PricingSection
           heading="Simple, transparent pricing"
           description="Per-workspace pricing. Add unlimited team members."
