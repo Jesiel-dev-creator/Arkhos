@@ -171,6 +171,10 @@ export function ChatInput({ onSend, onPlan, placeholder = "What do you want to b
 
   return (
     <div className="relative w-full max-w-[680px] mx-auto group/chat">
+      <style>{`
+        .chat-textarea::-webkit-scrollbar { display: none; }
+        .chat-textarea { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
       <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-white/[0.08] to-transparent pointer-events-none group-focus-within/chat:from-[#FF6B35]/20 group-focus-within/chat:to-[#FF6B35]/5 transition-all duration-500" />
       <div className="relative rounded-2xl bg-[#1e1e22] ring-1 ring-white/[0.08] group-focus-within/chat:ring-[#FF6B35]/30 shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_20px_rgba(0,0,0,0.4)] group-focus-within/chat:shadow-[0_0_20px_rgba(255,107,53,0.12),0_0_4px_rgba(255,107,53,0.08)] transition-all duration-500">
         <div className="relative">
@@ -192,8 +196,8 @@ export function ChatInput({ onSend, onPlan, placeholder = "What do you want to b
             onBlur={() => setIsFocused(false)}
             placeholder={isFocused && !message ? placeholder : ""}
             disabled={disabled}
-            className="relative z-10 w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-3 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 min-h-[80px] max-h-[200px] disabled:opacity-40 scrollbar-hide"
-            style={{ height: '80px', overflow: 'hidden', outline: 'none' }}
+            className="chat-textarea relative z-10 w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-4 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 disabled:opacity-40"
+            style={{ height: '80px', minHeight: '80px', maxHeight: '200px', overflow: 'hidden', outline: 'none', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           />
         </div>
 
