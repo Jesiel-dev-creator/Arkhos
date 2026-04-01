@@ -181,7 +181,7 @@ export default function Layout() {
                     style={{ color: "var(--frost)", fontFamily: "var(--font-body)" }}>
                 Connect
               </span>
-              <a href="https://github.com/bleucommerce/arkhos" target="_blank" rel="noopener noreferrer"
+              <a href="https://github.com/Jesiel-dev-creator/Arkhos" target="_blank" rel="noopener noreferrer"
                  className="text-xs no-underline transition-colors duration-200 hover:text-[var(--frost)]"
                  style={{ color: "var(--muted)" }}>
                 GitHub

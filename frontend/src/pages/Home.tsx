@@ -36,8 +36,8 @@ const fadeUp = {
 const navLinks = [
   { label: "Features", href: "#features" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Open Source", href: "https://github.com/ArkhosAI/arkhos", external: true },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Open Source", href: "https://github.com/Jesiel-dev-creator/Arkhos", external: true },
 ];
 
 /* ======= Stats data ======= */
