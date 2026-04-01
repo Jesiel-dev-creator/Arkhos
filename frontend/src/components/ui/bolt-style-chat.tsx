@@ -132,8 +132,8 @@ export function ChatInput({ onSend, onPlan, placeholder = "What do you want to b
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             disabled={disabled}
-            className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-3 focus:outline-none focus-visible:outline-none focus:ring-0 min-h-[80px] max-h-[200px] disabled:opacity-40"
-            style={{ height: '80px' }}
+            className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-3 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 min-h-[80px] max-h-[200px] disabled:opacity-40 scrollbar-hide"
+            style={{ height: '80px', overflow: 'hidden', outline: 'none' }}
           />
         </div>
 
