@@ -8,7 +8,7 @@ import { Banner } from "@/components/ui/banner";
 import BasicModal from "@/components/ui/modal";
 import { SessionNavBar } from "@/components/ui/app-sidebar";
 import PipelinePlan from "@/components/PipelinePlan";
-import PipelineStrip from "@/components/PipelineStrip";
+// PipelineStrip removed — replaced by PipelinePlan in left panel
 import PreviewPane from "@/components/PreviewPane";
 import CodeDrawer from "@/components/CodeDrawer";
 import StatusBar from "@/components/StatusBar";
@@ -287,16 +287,7 @@ export default function Generate() {
 
         {/* ── Right Panel (65%) ── */}
         <div className="hidden md:flex relative z-10 md:flex-1 flex-col p-5 md:p-6 overflow-hidden">
-          {/* Pipeline Strip — above preview */}
-          <PipelineStrip
-            agents={state.agents}
-            status={state.status}
-            totalCostEur={state.totalCostEur}
-            totalDurationS={state.totalDurationS}
-            timeoutWarning={state.timeoutWarning}
-            remainingToday={remainingToday}
-          />
-          <div className="h-3 flex-shrink-0" />
+          {/* Pipeline progress now in left panel via PipelinePlan */}
           {/* Error Banner — replaces preview when error */}
           {state.status === "error" ? (
             <ErrorBanner
