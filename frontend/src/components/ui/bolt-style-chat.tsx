@@ -86,6 +86,54 @@ function ModelSelector({ selectedModel = 'mistral-small', onModelChange }: {
   )
 }
 
+// Typing placeholder prompts
+const TYPING_PROMPTS = [
+  "A landing page for a French bakery in Paris...",
+  "A dark SaaS dashboard for project management...",
+  "A portfolio site for a creative photographer...",
+  "An Italian restaurant with online reservations...",
+  "A fitness studio with class schedule and pricing...",
+  "A B2B SaaS with enterprise pricing and social proof...",
+]
+
+function useTypingPlaceholder(prompts: string[], typingSpeed = 40, pauseTime = 2000, deleteSpeed = 20) {
+  const [displayText, setDisplayText] = useState('')
+  const [promptIndex, setPromptIndex] = useState(0)
+  const [isTyping, setIsTyping] = useState(true)
+
+  useEffect(() => {
+    const currentPrompt = prompts[promptIndex]
+    let timeout: ReturnType<typeof setTimeout>
+
+    if (isTyping) {
+      if (displayText.length < currentPrompt.length) {
+        // Type next character
+        timeout = setTimeout(() => {
+          setDisplayText(currentPrompt.slice(0, displayText.length + 1))
+        }, typingSpeed + Math.random() * 30) // slight randomness for natural feel
+      } else {
+        // Done typing — pause then start deleting
+        timeout = setTimeout(() => setIsTyping(false), pauseTime)
+      }
+    } else {
+      if (displayText.length > 0) {
+        // Delete characters (faster)
+        timeout = setTimeout(() => {
+          setDisplayText(displayText.slice(0, -1))
+        }, deleteSpeed)
+      } else {
+        // Done deleting — move to next prompt
+        setPromptIndex((i) => (i + 1) % prompts.length)
+        setIsTyping(true)
+      }
+    }
+
+    return () => clearTimeout(timeout)
+  }, [displayText, isTyping, promptIndex, prompts, typingSpeed, pauseTime, deleteSpeed])
+
+  return displayText
+}
+
 // CHAT INPUT — the reusable piece for landing page + generate page
 export function ChatInput({ onSend, onPlan, placeholder = "What do you want to build?", disabled = false }: {
   onSend?: (message: string, model: string) => void
@@ -95,8 +143,9 @@ export function ChatInput({ onSend, onPlan, placeholder = "What do you want to b
 }) {
   const [message, setMessage] = useState('')
   const [selectedModel, setSelectedModel] = useState('mistral-small')
-  const [showAttachMenu, setShowAttachMenu] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const typingText = useTypingPlaceholder(TYPING_PROMPTS)
 
   useEffect(() => {
     const textarea = textareaRef.current
@@ -125,14 +174,25 @@ export function ChatInput({ onSend, onPlan, placeholder = "What do you want to b
       <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-white/[0.08] to-transparent pointer-events-none group-focus-within/chat:from-[#FF6B35]/20 group-focus-within/chat:to-[#FF6B35]/5 transition-all duration-500" />
       <div className="relative rounded-2xl bg-[#1e1e22] ring-1 ring-white/[0.08] group-focus-within/chat:ring-[#FF6B35]/30 shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_20px_rgba(0,0,0,0.4)] group-focus-within/chat:shadow-[0_0_20px_rgba(255,107,53,0.12),0_0_4px_rgba(255,107,53,0.08)] transition-all duration-500">
         <div className="relative">
+          {/* Typing placeholder overlay — only visible when textarea is empty and not focused */}
+          {!message && !isFocused && (
+            <div className="absolute inset-0 px-5 pt-5 pointer-events-none z-0">
+              <span className="text-[15px] text-[#5a5a5f]">
+                {typingText}
+              </span>
+              <span className="inline-block w-[2px] h-[18px] bg-[#5a5a5f]/60 ml-[1px] animate-pulse align-text-bottom" />
+            </div>
+          )}
           <textarea
             ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={placeholder}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder={isFocused && !message ? placeholder : ""}
             disabled={disabled}
-            className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-3 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 min-h-[80px] max-h-[200px] disabled:opacity-40 scrollbar-hide"
+            className="relative z-10 w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-5 pb-3 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 min-h-[80px] max-h-[200px] disabled:opacity-40 scrollbar-hide"
             style={{ height: '80px', overflow: 'hidden', outline: 'none' }}
           />
         </div>
