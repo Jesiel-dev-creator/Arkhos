@@ -710,78 +710,69 @@ export default function Home() {
       {/* ============================================
           SECTION 8: Comparison Table
           ============================================ */}
-      <section className="bg-[var(--void)] py-20 md:py-28 px-6">
-        <div className="mx-auto max-w-4xl">
+      <section className="relative bg-[var(--void)] py-20 md:py-28 px-6 overflow-hidden">
+        <div className="absolute inset-0 z-0" style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+        }} />
+        <div className="mx-auto max-w-4xl relative z-10">
           <motion.h2
             className="mb-4 text-center font-[Syne] tracking-[-0.02em] text-3xl font-bold text-[var(--text-primary)] md:text-4xl"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}
           >
-            How we compare
+            Not all AI builders are equal
           </motion.h2>
-          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-center mb-14">
-            See how ArkhosAI stacks up against US-hosted alternatives.
+          <p className="text-[var(--text-secondary)] max-w-xl mx-auto text-center mb-14">
+            We checked. Here are the facts.
           </p>
           <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="overflow-x-auto rounded-xl border border-white/5"
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
+            className="overflow-x-auto rounded-2xl"
+            style={{ background: 'var(--grad-card)', border: '1px solid rgba(255,255,255,0.06)' }}
           >
-            <table className="w-full text-sm font-[DM_Sans]">
+            <table className="w-full text-sm">
               <thead>
-                <tr style={{ background: "var(--surface, var(--deep))" }}>
-                  <th className="px-5 py-4 text-left font-medium text-[var(--text-secondary)]" />
-                  <th className="px-4 py-4 text-center font-bold text-[#FF6B35]">
-                    ArkhosAI
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                  <th className="px-6 py-5 text-left text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }} />
+                  <th className="px-5 py-5 text-center">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
+                      style={{ background: 'var(--ember-glow)', border: '1px solid rgba(255,93,58,0.2)' }}>
+                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--ember)' }} />
+                      <span className="text-sm font-bold" style={{ color: 'var(--ember)' }}>ArkhosAI</span>
+                    </span>
                   </th>
-                  <th className="px-4 py-4 text-center font-medium text-[var(--text-secondary)]">
-                    Lovable
-                  </th>
-                  <th className="px-4 py-4 text-center font-medium text-[var(--text-secondary)]">
-                    Bolt
-                  </th>
-                  <th className="px-4 py-4 text-center font-medium text-[var(--text-secondary)]">
-                    v0
-                  </th>
+                  <th className="px-5 py-5 text-center text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Lovable</th>
+                  <th className="px-5 py-5 text-center text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Bolt</th>
+                  <th className="px-5 py-5 text-center text-sm font-medium" style={{ color: 'var(--text-muted)' }}>v0</th>
                 </tr>
               </thead>
               <tbody>
                 {comparisonRows.map((row, i) => (
-                  <tr
+                  <motion.tr
                     key={row.feature}
-                    className={
-                      i % 2 === 0 ? "bg-[var(--deep)]/30" : "bg-transparent"
-                    }
-                    style={{
-                      borderTop: "1px solid rgba(255,255,255,0.05)",
-                    }}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className="group transition-colors hover:bg-white/[0.02]"
+                    style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
                   >
-                    <td className="px-5 py-3.5 font-medium text-[var(--text-primary)]">
-                      {row.feature}
+                    <td className="px-6 py-4 font-medium text-[var(--text-primary)]">{row.feature}</td>
+                    <td className="px-5 py-4 text-center" style={{ background: 'rgba(255,93,58,0.04)' }}>
+                      <span className="inline-flex items-center gap-1.5 font-semibold" style={{ color: 'var(--ember)' }}>
+                        {row.arkhos.text} <StatusIcon status={row.arkhos.status} />
+                      </span>
                     </td>
-                    <td className="px-4 py-3.5 text-center font-semibold text-[#FF6B35]">
-                      {row.arkhos.text}{" "}
-                      <StatusIcon status={row.arkhos.status} />
+                    <td className="px-5 py-4 text-center text-[var(--text-secondary)]">
+                      <span className="inline-flex items-center gap-1.5">{row.lovable.text} <StatusIcon status={row.lovable.status} /></span>
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[var(--text-secondary)]">
-                      {row.lovable.text}{" "}
-                      <StatusIcon status={row.lovable.status} />
+                    <td className="px-5 py-4 text-center text-[var(--text-secondary)]">
+                      <span className="inline-flex items-center gap-1.5">{row.bolt.text} <StatusIcon status={row.bolt.status} /></span>
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[var(--text-secondary)]">
-                      {row.bolt.text}{" "}
-                      <StatusIcon status={row.bolt.status} />
+                    <td className="px-5 py-4 text-center text-[var(--text-secondary)]">
+                      <span className="inline-flex items-center gap-1.5">{row.v0.text} <StatusIcon status={row.v0.status} /></span>
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[var(--text-secondary)]">
-                      {row.v0.text}{" "}
-                      <StatusIcon status={row.v0.status} />
-                    </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
