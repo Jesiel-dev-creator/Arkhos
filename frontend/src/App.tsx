@@ -29,12 +29,14 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* Home has its own navbar + footer */}
+          {/* Pages with their own navbar + footer (no Layout wrapper) */}
           <Route path="/" element={<Home />} />
+          <Route path="generate" element={<Generate />} />
+          <Route path="gallery" element={<Gallery />} />
+
+          {/* Pages using shared Layout (old navbar + footer) */}
           <Route element={<Layout />}>
             <Route path="landing" element={<Landing />} />
-            <Route path="generate" element={<Generate />} />
-            <Route path="gallery" element={<Gallery />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="changelog" element={<Changelog />} />
             <Route path="roadmap" element={<Roadmap />} />

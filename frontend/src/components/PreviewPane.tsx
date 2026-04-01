@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, Code, Copy, X, Check, Zap, Globe, ExternalLink, Smartphone } from "lucide-react";
+import { Download, Code, Copy, X, Check, Globe, ExternalLink, Smartphone } from "lucide-react";
 import gsap from "gsap";
 import type { GenerationStatus } from "@/hooks/useSSE";
 import { FallingPattern } from "@/components/shaders/falling-pattern";
@@ -146,19 +146,13 @@ export default function PreviewPane({
               duration={150}
             />
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
-              <div className="relative mb-5">
-                <div className="absolute inset-0 bg-[var(--ember)]/20 blur-2xl rounded-full" />
-                <div className="relative w-14 h-14 rounded-2xl border border-[var(--ember)]/20 bg-gradient-to-br from-[var(--ember)]/10 to-transparent flex items-center justify-center">
-                  <Zap size={24} className="text-[var(--ember)]" />
-                </div>
-              </div>
               <p className="text-sm font-medium mb-1"
                  style={{ color: "var(--frost)", fontFamily: "var(--font-body)" }}>
                 {isLoading ? "Building your website" : "Your website will appear here"}
               </p>
               {isLoading ? (
                 <p className="text-[11px] animate-pulse"
-                   style={{ color: "var(--ember)", fontFamily: "var(--font-code)" }}>
+                   style={{ color: "var(--cyan)", fontFamily: "var(--font-code)" }}>
                   agents working...
                 </p>
               ) : (
