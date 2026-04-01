@@ -291,7 +291,7 @@ const Hero: React.FC<HeroProps> = ({ trustBadge, headline, subtitle, buttons, cl
         style={{ background: 'black' }}
       />
 
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white">
+      <div className="absolute inset-0 z-10 flex flex-col items-center text-white pt-[18vh] md:pt-[20vh]">
         {trustBadge && (
           <div className="mb-8 animate-fade-in-down">
             <div className="flex items-center gap-2 px-6 py-3 bg-orange-500/10 backdrop-blur-md border border-orange-300/30 rounded-full text-sm">

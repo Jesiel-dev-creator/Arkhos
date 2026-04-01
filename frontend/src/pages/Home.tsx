@@ -475,15 +475,15 @@ export default function Home() {
           }}
         />
         {/* ChatInput overlaid on hero — THIS is the CTA */}
-        <div className="absolute bottom-[25%] left-0 right-0 z-20 px-4">
-          <div className="max-w-2xl mx-auto">
+        <div className="absolute bottom-[15%] md:bottom-[18%] left-0 right-0 z-20 px-4">
+          <div className="max-w-2xl mx-auto space-y-4">
             <ChatInput
               onSend={(msg) =>
                 navigate(`/generate?prompt=${encodeURIComponent(msg)}`)
               }
               placeholder="Describe your website — a bakery, a SaaS product, a portfolio..."
             />
-            <p className="text-center mt-3 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-center text-xs tracking-wide" style={{ color: 'var(--text-muted)' }}>
               No signup required · Free · 3 generations per day
             </p>
           </div>
