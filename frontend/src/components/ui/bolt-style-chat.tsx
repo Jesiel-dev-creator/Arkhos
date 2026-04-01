@@ -167,7 +167,7 @@ export function ChatInput({ onSend, onPlan, placeholder = "What do you want to b
                 </>
               )}
             </div>
-            <ModelSelector selectedModel={selectedModel} onModelChange={(m) => setSelectedModel(m.id)} />
+            {/* Model selector removed — using default Mistral pipeline */}
           </div>
 
           <div className="flex items-center gap-2">

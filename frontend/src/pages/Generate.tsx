@@ -314,7 +314,7 @@ export default function Generate() {
         transition={{ duration: 0.15 }}
         className="flex flex-col gap-5 overflow-y-auto"
       >
-        <div>
+        <div className="text-center">
           <h1
             className="text-2xl md:text-3xl font-bold mb-1.5"
             style={{ color: "var(--frost)", fontFamily: "var(--font-display)" }}
@@ -335,9 +335,6 @@ export default function Generate() {
 
         <ChatInput
           onSend={(msg) => handleGenerate(msg, "en")}
-          onPlan={(msg) => {
-            if (msg.trim()) handleGenerate(msg.trim(), "en");
-          }}
           placeholder="A landing page for a French bakery in Paris..."
           disabled={isRunning}
         />
@@ -350,7 +347,7 @@ export default function Generate() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2"
             >
               <div
                 className="w-1.5 h-1.5 rounded-full animate-pulse"
@@ -361,37 +358,36 @@ export default function Generate() {
           )}
         </AnimatePresence>
 
-        {/* Template quick picks */}
-        <div className="space-y-2">
+        {/* Template grid */}
+        <div className="space-y-3">
           <p
             className="text-[10px] uppercase tracking-wider text-[var(--muted)]"
             style={{ fontFamily: "var(--font-code)" }}
           >
-            Templates
+            Or start from a template
           </p>
-          <div className="flex flex-col gap-1.5 max-h-[280px] overflow-y-auto pr-1">
+          <div className="grid grid-cols-2 gap-2 max-h-[320px] overflow-y-auto pr-1">
             {TEMPLATES.map((t) => (
               <button
                 key={t.name}
                 onClick={() => handleGenerate(t.prompt, "en")}
                 disabled={isRunning}
-                className="text-left px-3.5 py-2.5 rounded-[10px] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:-translate-y-0.5 group/tpl"
+                className="text-left px-3 py-3 rounded-xl transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] group/tpl"
                 style={{
-                  background: "rgba(13, 27, 42, 0.4)",
-                  backdropFilter: "blur(8px)",
+                  background: "rgba(13, 27, 42, 0.5)",
                   border: "1px solid var(--border)",
                 }}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-2.5">
                   <div
-                    className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: t.accent }}
+                    className="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1 transition-shadow duration-300 group-hover/tpl:shadow-[0_0_8px]"
+                    style={{ backgroundColor: t.accent, boxShadow: `0 0 0px ${t.accent}` }}
                   />
                   <div className="min-w-0">
-                    <span className="text-sm text-[var(--frost)] font-medium block">
+                    <span className="text-[13px] text-[var(--frost)] font-medium block leading-tight">
                       {t.name}
                     </span>
-                    <span className="text-[11px] text-[var(--muted)] block leading-snug truncate">
+                    <span className="text-[10px] text-[var(--muted)] block leading-snug mt-0.5 line-clamp-1">
                       {t.description}
                     </span>
                   </div>
@@ -415,16 +411,6 @@ export default function Generate() {
         onHide={() => setShowSuccessBanner(false)}
         closable
         autoHide={8000}
-      />
-
-      {/* Pipeline Strip */}
-      <PipelineStrip
-        agents={state.agents}
-        status={state.status}
-        totalCostEur={state.totalCostEur}
-        totalDurationS={state.totalDurationS}
-        timeoutWarning={state.timeoutWarning}
-        remainingToday={remainingToday}
       />
 
       <div className="relative flex flex-1 min-h-0 overflow-hidden">
@@ -463,6 +449,16 @@ export default function Generate() {
 
         {/* ── Right Panel (65%) ── */}
         <div className="hidden md:flex relative z-10 md:flex-1 flex-col p-5 md:p-6 overflow-hidden">
+          {/* Pipeline Strip — above preview */}
+          <PipelineStrip
+            agents={state.agents}
+            status={state.status}
+            totalCostEur={state.totalCostEur}
+            totalDurationS={state.totalDurationS}
+            timeoutWarning={state.timeoutWarning}
+            remainingToday={remainingToday}
+          />
+          <div className="h-3 flex-shrink-0" />
           {/* Error Banner — replaces preview when error */}
           {state.status === "error" ? (
             <ErrorBanner
