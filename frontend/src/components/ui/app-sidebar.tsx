@@ -6,7 +6,7 @@ import {
   Zap,
   Image,
   CreditCard,
-  Github,
+  ExternalLink,
   Settings,
   ChevronDown,
   PanelLeft,
@@ -172,7 +172,7 @@ export function SessionNavBar() {
           {/* Bottom nav */}
           <NavItem
             href="https://github.com/Jesiel-dev-creator/Arkhos"
-            icon={Github}
+            icon={ExternalLink}
             label="GitHub"
             isActive={false}
             isCollapsed={isCollapsed}
