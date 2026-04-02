@@ -298,6 +298,11 @@
       }
     }
   },
+  "cookies": {
+    "message": "This site uses essential cookies for theme and locale preferences.",
+    "learnMore": "Learn more",
+    "accept": "Accept"
+  },
   "legal": {
     "privacy": {
       "kicker": "Legal",

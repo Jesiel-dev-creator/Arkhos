@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { CookieConsent } from "@/components/shared/cookie-consent";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -60,6 +61,7 @@ export default async function LocaleLayout({
             <Navbar />
             <main className="pt-20">{children}</main>
             <Footer />
+            <CookieConsent />
           </NextIntlClientProvider>
         </Providers>
       </body>
