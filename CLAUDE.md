@@ -8,13 +8,13 @@
 ## What This Is
 
 ArkhosAI is the EU answer to Lovable. AI-powered website generator.
-User describes what they want → 4 Mistral agents build it live via SSE streaming → user downloads production HTML.
+User describes what they want → multi-agent pipeline builds it live via SSE streaming → user downloads production React project.
 
-Powered by Tramontane (`pip install tramontane`), our open-source Mistral-native agent orchestration framework.
+Powered by Tramontane v0.2.3 (`pip install tramontane`), our open-source Mistral-native agent orchestration framework.
 
-**Owner:** Jesiel · Bleucommerce SAS · Orléans, France 🇫🇷
+**Owner:** Jesiel · Bleucommerce SAS · Orléans, France
 **License:** MIT (open-core: free self-host, paid hosted service)
-**Status:** v0.1 in development
+**Status:** v0.3 in development (frontend redesign)
 
 ---
 
@@ -26,289 +26,248 @@ Powered by Tramontane (`pip install tramontane`), our open-source Mistral-native
 
 Our advantages:
 1. Intelligent model routing (Tramontane router picks model per agent)
-2. Real-time EUR cost per agent (visible during generation)
-3. EU sovereign (Scaleway Paris + Mistral French company)
-4. Built-in security review (Reviewer agent catches vulns)
-5. Open source + self-hostable (MIT, Docker)
+2. Self-learning router (FleetTelemetry — improves after 50+ generations)
+3. Real-time EUR cost per agent (visible during generation)
+4. EU sovereign (Scaleway Paris + Mistral French company)
+5. Cross-generation memory (learns what works over time)
+6. Smart skill injection (relevance-matched, not dumped)
+7. Adaptive budget reallocation (unspent flows to Builder)
+8. Open source + self-hostable (MIT, Docker)
+9. NVIDIA NIM local GPU mode planned (free, offline, private)
+10. Fleet profiles: Budget / Balanced / Quality user toggle
 
 ---
 
-## The 4-Agent Pipeline
+## The Agent Pipeline
+
+Pipeline is DYNAMIC — agents are discovered at runtime from SSE events.
+Current default pipeline (Balanced profile):
 
 ```
 User prompt
-  → Planner (ministral-3b)      ~€0.0001  classify + structure
-  → Designer (magistral-small)   ~€0.0005  colors + fonts + layout
-  → Builder (devstral-small)     ~€0.002   generate HTML/CSS/JS
-  → Reviewer (auto)              ~€0.001   validate + fix
-  → Final HTML delivered
+  → Planner (ministral-3b)        ~EUR 0.0001
+  → Designer + Architect PARALLEL  ~EUR 0.001 (runs concurrently via ParallelGroup)
+  → Builder (devstral-small)       ~EUR 0.005 (gets adaptive budget surplus)
+  → Reviewer (mistral-small)       ~EUR 0.001
 
-Total: ~€0.004/generation · ~17 seconds
+Total: ~EUR 0.005/generation
 ```
 
-### Agent 1: PLANNER
-- Model: ministral-3b-latest (tier 0, near-zero cost)
-- Input: User's natural language description
-- Output: Structured JSON spec (site_type, sections, style, locale, responsive)
-
-### Agent 2: DESIGNER
-- Model: auto (router decides, likely magistral-small for reasoning)
-- Input: Planner's JSON spec
-- Output: Design system JSON (colors, fonts, layout, spacing, animations)
-- Uses UI/UX Pro Max product-type data for smarter recommendations
-
-### Agent 3: BUILDER
-- Model: auto (router decides, likely devstral-small for code)
-- Input: Planner spec + Designer system
-- Output: Complete HTML + CSS + JS as a single file
-- Constraints: valid HTML5, responsive, meta tags, Google Fonts CDN, placeholder images from picsum.photos, no external deps beyond CDN fonts and GSAP CDN
-
-### Agent 4: REVIEWER
-- Model: auto (router decides)
-- Input: Generated HTML
-- Output: Quality report + fixed HTML if issues found
-- Checks: HTML validity, responsive breakpoints, accessibility, SEO meta tags, matches original spec
+The pipeline is extensible. Do NOT hardcode agent count in frontend.
+New agents can be added in backend without frontend changes.
 
 ---
 
 ## Tech Stack
 
-### Frontend
-- React 18 + TypeScript
-- Vite (build tool)
+### Frontend (REBUILT — Next.js 16.2)
+- **Next.js 16.2** + React 19 + TypeScript
 - **pnpm** (package manager — NEVER npm or yarn)
-- Tailwind CSS
-- Shadcn/ui (accessible component primitives)
-- Framer Motion (React state transitions: mount/unmount, layout animations)
-- GSAP (cinematic/timeline animations: hero entrance, preview reveal, cost counter, ember glow)
+- **Tailwind CSS 4.2** (no inline styles, CSS variable tokens)
+- **shadcn/ui CLI v4** (fresh install, clean slate)
+- Custom ThemeProvider in providers.tsx (dark/light/GPU — no next-themes dep)
+- **next-intl** (FR/EN i18n with URL prefix strategy)
+- **Framer Motion** (React state transitions)
+- **GSAP** (cinematic timelines)
+- **Lucide React** (icons — NO emoji icons ever)
 - EventSource API (SSE consumption)
-- Prism.js or Shiki (code syntax highlighting)
+- App Router with `[locale]` segment
 
-### Backend
+### Backend (FastAPI + Tramontane v0.2.3)
 - FastAPI + Uvicorn
-- Tramontane (`pip install tramontane`) — the pipeline engine
-- SQLite (generations, rate limits, gallery)
+- Tramontane v0.2.3 (`pip install tramontane>=0.2.3`)
+- SQLite (generations, rate limits, gallery, telemetry, memory)
 - SSE via StreamingResponse
 - Python 3.12+
 
+### Tramontane Exports Used (10 of 30+)
+```python
+from tramontane import (
+    Agent,              # Core agent
+    MistralRouter,      # Smart model routing + telemetry
+    RunContext,          # Adaptive budget reallocation
+    ParallelGroup,      # Designer + Architect concurrent
+    FleetTelemetry,     # Self-learning router (57+ outcomes)
+    TramontaneMemory,   # Cross-generation learning
+    MarkdownSkill,      # Smart skill injection
+    simulate_pipeline,  # Cost estimation endpoint
+)
+# Also: Agent fields gdpr_level, audit_actions
+```
+
 ### Infrastructure
-- Scaleway fr-par (production)
+- Development: WSL2 Ubuntu, project at ~/Arkhos (native Linux filesystem)
+- Production: Scaleway fr-par
 - Docker + docker-compose
 - Nginx reverse proxy + Let's Encrypt SSL
 
 ---
 
-## Animation Split
+## Electric Indigo Design System (v0.3)
 
-Two animation libraries, clear responsibilities:
-- **Framer Motion** → React lifecycle: component mount/unmount, layout transitions,
-  agent card expand/collapse, panel slides
-- **GSAP** → Cinematic/timeline: hero section entrance sequence, preview iframe reveal
-  (skeleton → real page), cost counter tick-up, ember glow pulse on Generate button,
-  completion celebration sequence
-
-Rule: if it's tied to React state, use Framer Motion. If it's a sequenced timeline or DOM animation, use GSAP.
-
----
-
-## EU Premium Design System
-
-This is NOT a generic SaaS. It should feel like European luxury tech.
-Reference: Linear meets Stripe but darker and more European.
+**REPLACES the old Ember palette.** Three themes:
 
 ```
-Palette:
-  --void:    #020408   (deep space background)
-  --deep:    #0D1B2A   (card/panel backgrounds)
-  --border:  #1C2E42   (subtle dividers)
-  --cyan:    #00D4EE   (intelligence, Mistral)
-  --ember:   #FF6B35   (CTA, action — DOMINANT for ArkhosAI)
-  --frost:   #DCE9F5   (primary text)
-  --muted:   #7B8FA3   (secondary text)
-  --success: #22D68A   (confirmations)
-  --warning: #FFB020   (caution)
-  --error:   #FF4560   (errors)
+DARK THEME (default — Cloud mode, Indigo)
+  --void:      #030712    (deep space)
+  --deep:      #0F172A    (panels)
+  --surface:   #1E293B    (cards)
+  --elevated:  #334155    (hover/active)
+  --brand:     #6366F1    (Electric Indigo — primary)
+  --brand-light: #818CF8  (hover)
+  --brand-dark:  #4F46E5  (pressed)
+
+LIGHT THEME (Cloud mode, Indigo)
+  --void:      #FFFFFF
+  --deep:      #F8FAFC
+  --surface:   #F1F5F9
+  --elevated:  #E2E8F0
+  --brand:     #6366F1    (same indigo)
+
+GPU THEME (NVIDIA Local Mode — auto-activates when NIM detected)
+  --void:      #0A0A0A    (deeper black)
+  --deep:      #141414
+  --surface:   #1E1E1E
+  --elevated:  #2A2A2A
+  --brand:     #76B900    (NVIDIA Green)
+  --brand-light: #93D500
 
 Typography:
-  Display:  Syne 800       (hero text, page titles)
+  Display:  Syne 700-800       (hero text, page titles — max 2 per page)
   Body:     DM Sans 400/500/700 (all body text, UI labels)
-  Code:     Space Mono 400  (generated code, technical)
+  Code:     JetBrains Mono 400  (generated code, technical)
 
 NEVER: Inter, Roboto, system fonts, purple gradients,
-       rounded-everything, generic SaaS aesthetic
+       rounded-everything, emoji icons, inline style={{}},
+       generic SaaS aesthetic
 ```
-
-This design system applies ONLY to ArkhosAI's own UI.
-Generated websites use their own design systems created by the Designer agent.
 
 ---
 
-## SSE Event Stream
-
-This is what makes it feel like Lovable. Each agent sends events:
+## Frontend Architecture (Next.js 16.2)
 
 ```
-event: agent_start
-data: {"agent": "planner", "model": "ministral-3b"}
-
-event: agent_output
-data: {"agent": "planner", "chunk": "Analyzing requirements..."}
-
-event: agent_complete
-data: {"agent": "planner", "cost_eur": 0.0001, "duration_s": 1.2}
-
-event: agent_start
-data: {"agent": "designer", "model": "magistral-small"}
-
-... (streaming chunks from each agent)
-
-event: preview_ready
-data: {"html": "<full generated HTML>"}
-
-event: generation_complete
-data: {"total_cost_eur": 0.004, "total_time_s": 17}
+frontend/
+├── app/
+│   ├── globals.css                    (3-theme design tokens)
+│   ├── [locale]/
+│   │   ├── layout.tsx                 (root: fonts, theme, i18n, navbar, footer)
+│   │   ├── page.tsx                   (Home — SSR)
+│   │   ├── generate/
+│   │   │   ├── page.tsx               ("use client" — prompt entry)
+│   │   │   └── [id]/
+│   │   │       └── page.tsx           ("use client" — workspace: SSE + preview)
+│   │   ├── gallery/page.tsx           (SSR — TODO)
+│   │   ├── pricing/page.tsx           (SSG — TODO)
+│   │   ├── about/page.tsx             (SSG — TODO)
+│   │   └── ... (blog, docs, contact, legal — TODO)
+├── components/
+│   ├── ui/                            (shadcn/ui — fresh install via CLI)
+│   ├── generate/                      (FleetToggle, PipelinePanel, StatusBar)
+│   ├── layout/                        (Navbar, Footer, ThemeToggle, LocaleSwitcher)
+│   └── marketing/                     (TODO: Hero, Comparison, AgentViz, PricingTable)
+├── hooks/
+│   ├── use-sse.ts                     (SSE engine — dynamic agent discovery)
+│   └── use-web-container.ts           (TODO: port from old frontend)
+├── i18n/
+│   ├── routing.ts                     (locale config)
+│   ├── request.ts                     (server-side locale)
+│   └── navigation.ts                  (Link, usePathname, useRouter)
+├── lib/
+│   ├── utils.ts                       (cn() helper)
+│   └── api.ts                         (FastAPI fetch wrappers)
+├── messages/
+│   ├── en.json                        (English translations)
+│   └── fr.json                        (French translations with proper diacritics)
+├── proxy.ts                           (Next.js 16 proxy — replaces middleware.ts)
+└── next.config.ts                     (next-intl plugin, turbopack root)
 ```
+
+### Key Frontend Decisions
+- Agents are dynamic — discovered from SSE `agent_start` events, NOT hardcoded
+- All links use `next-intl/navigation` Link (locale-aware)
+- proxy.ts (NOT middleware.ts — deprecated in Next.js 16)
+- No pnpm-workspace.yaml (not a monorepo)
+- turbopack.root set in next.config.ts
+- All interactive elements have focus-visible styles
+- iframe sandbox="allow-scripts" only (no allow-same-origin)
+- Split routes: /generate (entry) → /generate/[id] (workspace)
+
+---
+
+## Backend Architecture
+
+```
+backend/
+├── arkhos/
+│   ├── app.py                 (FastAPI + singletons: telemetry, router, memory, skills)
+│   ├── pipeline.py            (5-agent pipeline with SSE, fleet profiles, adaptive budget)
+│   ├── intelligence.py        (smart skill injection + cross-generation memory)
+│   ├── routes.py              (API endpoints including /simulate, /telemetry)
+│   ├── config.py, sse.py, store.py, rate_limit.py, sanitize.py, iterate.py
+│   ├── prompts/               (per-agent system prompts)
+│   ├── skills/                (24 markdown skill files — loaded via MarkdownSkill)
+│   ├── data/                  (design intelligence per industry)
+│   └── templates/             (Aceternity-style component references)
+├── scripts/
+│   └── generate_training_data.py  (50-gen batch for telemetry + memory bootstrap)
+├── tests/
+│   ├── test_smoke.py          (8 tests — API endpoints)
+│   ├── test_adaptive_budget.py (5 tests — budget allocation)
+│   └── test_intelligence.py   (15 tests — skills + memory)
+└── pyproject.toml             (tramontane>=0.2.3)
+```
+
+### App-Level Singletons (in app.py)
+```python
+telemetry = FleetTelemetry(db_path="arkhos_telemetry.db")   # 57+ outcomes
+mistral_router = MistralRouter(telemetry=telemetry)          # Self-learning
+memory = TramontaneMemory(db_path="arkhos_memory.db")        # 37+ facts
+skill_registry = load_skills()                                # 23 MarkdownSkills
+```
+
+### Fleet Profiles
+```python
+BUDGET:   EUR 0.008 total, ministral-3b all except Builder (devstral-small)
+BALANCED: EUR 0.25 total, ministral-3b Planner, mistral-small others, devstral-small Builder
+QUALITY:  EUR 1.00 total, mistral-small all except Builder (devstral-small)
+```
+
+Budget allocation: Planner 8% / Designer 20% / Architect 20% / Builder 40% / Reviewer 12%
+Adaptive: unspent from early agents flows to Builder (capped 65%)
 
 ---
 
 ## API Endpoints
 
 ```
-POST /api/generate
-  Body: {"prompt": str, "locale": str, "template": str | null}
-  Returns: {"generation_id": str}
-  Rate limit: 3 generations/IP/day
-
-GET /api/stream/{generation_id}
-  Returns: SSE stream of agent events
-
-GET /api/result/{generation_id}
-  Returns: {"html": str, "metadata": {...}}
-
-GET /api/gallery
-  Returns: [{id, prompt, preview_url, cost_eur}]
-
-GET /health
+POST /api/generate       Body: {prompt, locale, profile}  → {generation_id}
+POST /api/approve/{id}   Resume build after plan approval
+GET  /api/stream/{id}    SSE stream of agent events
+GET  /api/result/{id}    Final result
+GET  /api/gallery         Recent generations
+GET  /api/download/{id}  Zip download
+POST /api/iterate        Modify existing generation
+POST /api/simulate       Cost estimation without API calls
+GET  /api/telemetry      Fleet telemetry stats
+GET  /health             Health check
 ```
 
 ---
 
-## Tramontane Integration
+## SSE Event Types
 
-```python
-from tramontane import Agent, Pipeline
-
-# Agents are created with role/goal/backstory (identity fields)
-# The backstory field carries the detailed system prompt instructions
-# Agent.run(input_text) uses these to build the system message automatically
-
-planner = Agent(
-    role="Landing Page Planner",
-    goal="Convert descriptions into structured page specs",
-    backstory="Expert UX strategist...",  # + detailed prompt
-    model="ministral-3b-latest",
-    budget_eur=0.001,
-)
-
-# Pipeline uses handoff graph: Planner → Designer → Builder → Reviewer
-pipeline = Pipeline(
-    name="arkhos-website-generator",
-    agents=[planner, designer, builder, reviewer],
-    handoffs=[
-        ("Landing Page Planner", "Visual Designer"),
-        ("Visual Designer", "Frontend Builder"),
-        ("Frontend Builder", "Code Reviewer"),
-    ],
-    budget_eur=0.02,
-)
-
-result = await pipeline.run(input_text=user_prompt)
 ```
-
----
-
-## Rate Limiting + Cost Control
-
-| Limit | Value |
-|-------|-------|
-| Generations per IP per day | 3 |
-| Budget per generation | EUR 0.02 (hard ceiling) |
-| Global daily spend | EUR 5.00 |
-| Max prompt length | 1000 chars |
-
----
-
-## Templates (ship with v0.1)
-
-1. French bakery in Paris — warm, modern, menu + about + contact
-2. SaaS landing page — dark, conversion-focused, pricing + features + CTA
-3. Developer portfolio — minimal, dark mode, projects grid + about + contact
-4. Italian restaurant — warm earth tones, menu + reservation + gallery
-5. Creative agency — bold, asymmetric, case studies + team + contact
-
----
-
-## UI/UX Pro Max (for generated websites ONLY)
-
-UI/UX Pro Max is installed at `.claude/skills/ui-ux-pro-max/`.
-It provides searchable design databases via:
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain <domain>
+pipeline_start    {profile, label, est_cost, est_time, total_budget}
+agent_start       {agent, model, step, total_steps}
+agent_complete    {agent, model, cost_eur, duration_s, cumulative_cost_eur}
+plan_ready        {plan}
+file_chunk        {path, content}     ← streamed to WebContainer in real-time
+files_ready       {files, file_count}
+preview_ready     {html, stage}
+generation_complete {total_cost_eur, total_duration_s, models_used, success}
+error             {error, error_type, agent}
 ```
-
-**SCOPE:** Used ONLY for improving GENERATED website output.
-The Designer and Builder agent system prompts can reference Pro Max
-product-type data (bakery → warm palettes, SaaS → dark conversion, etc.)
-for smarter design system generation.
-
-**NOT** used for ArkhosAI's own UI. ArkhosAI UI = EU Premium design system, period.
-
----
-
-## Tools & Skills on Claude Code
-
-- **UI/UX Pro Max** — design intelligence for generated websites (see section above)
-- Firecrawl MCP (crawl + scrape)
-- Supabase MCP (for v0.3 backend generation)
-- 21st.dev Magic MCP (React component generation)
-- Shadcn UI MCP (component library reference)
-
----
-
-## Build Order (4 weeks)
-
-### Week 1: Pipeline + SSE (the engine)
-1. Create repo, CLAUDE.md, pyproject.toml
-2. backend/arkhos/pipeline.py — 4 agents, Tramontane pipeline
-3. backend/arkhos/sse.py — SSE event formatting
-4. backend/arkhos/app.py — FastAPI with /generate + /stream
-5. Test: prompt → pipeline → SSE events → HTML output
-
-### Week 2: React UI (the experience)
-1. Frontend scaffold (pnpm create vite + React + TypeScript + Tailwind + GSAP)
-2. PromptInput component + template buttons
-3. AgentStream component (real-time agent progress)
-4. PreviewPane component (iframe rendering)
-5. CostBadge component (live EUR tracking)
-6. Wire up useSSE hook to backend
-
-### Week 3: Polish (the product)
-1. Gallery page + SQLite storage
-2. CodeView component (syntax highlighted source)
-3. DownloadButton
-4. Rate limiting (IP-based)
-5. 5 templates
-6. Mobile responsive
-7. Error handling
-
-### Week 4: Deploy (the launch)
-1. Docker build (frontend + backend)
-2. Nginx + SSL config
-3. Scaleway deployment
-4. Domain setup
-5. README + About page
-6. Launch
 
 ---
 
@@ -316,25 +275,72 @@ for smarter design system generation.
 
 1. Import tramontane as a dependency, never copy its code
 2. All FastAPI endpoints are async
-3. SSE for all streaming (no WebSocket for v0.1)
+3. SSE for all streaming (no WebSocket)
 4. EUR for all costs, never USD
 5. Type hints everywhere
-6. Docstrings on every public method
-7. ruff + mypy strict on backend
-8. No print() — use logging
-9. Standard import order: future → stdlib → third-party → internal
-10. EU Premium design for ArkhosAI UI: void/cyan/ember, Syne/DM Sans/Space Mono
-11. NEVER Inter, Roboto, purple gradients, or American startup aesthetics
-12. **pnpm** for all frontend packages — NEVER npm or yarn
+6. ruff + mypy strict on backend
+7. No print() — use logging
+8. **pnpm** for frontend — NEVER npm or yarn
+9. **Tailwind only** — no inline style={{}} EVER
+10. Electric Indigo design system — indigo/void/deep, Syne/DM Sans/JetBrains Mono
+11. NEVER Inter, Roboto, purple gradients, emoji icons, or American startup aesthetics
+12. All links use next-intl navigation (locale-aware)
+13. Focus-visible styles on all interactive elements
+14. Dynamic agent count — never hardcode "5 agents" in frontend
+15. French translations must have proper diacritics (accents)
+16. proxy.ts not middleware.ts (Next.js 16)
 
 ---
 
-## Key UI Moments
+## Current Status (April 2026)
 
-1. Prompt submission — ember glow on Generate button
-2. Agent streaming — each agent card expands, showing model name + live cost
-3. Preview render — iframe fades from skeleton to real page (THE MONEY SHOT)
-4. Completion — success badge, total cost, download button glows ember
+### Done
+- Backend: 28 tests passing, ruff clean, mypy clean
+- Tramontane integration: 10 exports used (was 3)
+- Fleet profiles + adaptive budget (Budget/Balanced/Quality)
+- ParallelGroup for Designer + Architect (saves ~5-8s)
+- FleetTelemetry: 57+ outcomes, self-learning router active
+- TramontaneMemory: 37+ facts, cross-generation learning active
+- Smart skill injection via MarkdownSkill.matches()
+- GDPR standard on Planner, audit_actions on all agents
+- /api/simulate + /api/telemetry endpoints
+- Frontend rebuilt on Next.js 16.2 with Electric Indigo
+- Three themes: Dark (indigo) / Light (indigo) / GPU (NVIDIA green)
+- FR/EN i18n with next-intl
+- Generate page: /generate (entry) + /generate/[id] (workspace)
+- Floating glass navbar + minimal footer
+
+### TODO (next session)
+- Home page hero (prompt input as the product, live demo section)
+- Port useWebContainer hook for live preview
+- Remaining pages: Pricing, About, Gallery, Blog, Docs, etc.
+- Loading/error boundaries (loading.tsx, error.tsx)
+- NVIDIA NIM backend (Tramontane v0.2.4)
+- Docker deployment config
+
+---
+
+## NVIDIA NIM Strategy (Planned)
+
+NIM containers = local GPU inference. Same Mistral API, different URL.
+When NIM is detected, GPU theme activates automatically (NVIDIA green).
+
+```
+Cloud Mode:  User prompt → Mistral API (Paris) → EUR 0.005/gen
+GPU Mode:    User prompt → Local NIM (user's RTX) → EUR 0.000/gen
+```
+
+Tramontane already has local_mode in MistralRouter.
+NIMBackend = change base_url + dummy API key. Nearly zero code change.
+
+---
+
+## Design Specs
+
+Full redesign spec: `docs/superpowers/specs/2026-04-02-nextjs-migration-design.md`
+Redesign visual spec: `docs/superpowers/specs/2026-04-02-arkhos-redesign.md`
+Skills + memory spec: `docs/superpowers/specs/2026-04-02-skills-memory-design.md`
+Scaffold plan: `docs/superpowers/plans/2026-04-02-nextjs-scaffold.md`
 
 ---
 
