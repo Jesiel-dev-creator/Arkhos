@@ -134,7 +134,27 @@
         "description": "Une erreur inattendue s'est produite pendant la génération."
       },
       "retry": "Réessayer"
+    },
+    "iterate": {
+      "title": "Itérer",
+      "placeholder": "Génération terminée — décrivez les modifications à appliquer.",
+      "inputPlaceholder": "Agrandir le hero, changer les couleurs en bleu...",
+      "hint": "Cmd+Entrée pour envoyer",
+      "working": "Application des modifications..."
     }
+  },
+  "waitlist": {
+    "title": "Accès anticipé",
+    "description": "Soyez informé en premier du lancement de la version hébergée.",
+    "placeholder": "vous@entreprise.com",
+    "cta": "Rejoindre la liste",
+    "success": "Vous êtes inscrit."
+  },
+  "trust": {
+    "sovereign": "Souveraineté UE",
+    "mistral": "Propulsé par Mistral",
+    "openSource": "Open Source",
+    "mit": "Licence MIT"
   },
   "footer": {
     "company": "Bleucommerce SAS",

@@ -134,7 +134,27 @@
         "description": "An unexpected error occurred during generation."
       },
       "retry": "Try again"
+    },
+    "iterate": {
+      "title": "Iterate",
+      "placeholder": "Generation complete — describe changes to apply.",
+      "inputPlaceholder": "Make the hero bigger, change colors to blue...",
+      "hint": "Cmd+Enter to send",
+      "working": "Applying changes..."
     }
+  },
+  "waitlist": {
+    "title": "Get early access",
+    "description": "Be the first to know when the hosted version launches.",
+    "placeholder": "you@company.com",
+    "cta": "Join waitlist",
+    "success": "You're on the list."
+  },
+  "trust": {
+    "sovereign": "EU Sovereign",
+    "mistral": "Mistral-powered",
+    "openSource": "Open Source",
+    "mit": "MIT License"
   },
   "footer": {
     "company": "Bleucommerce SAS",
