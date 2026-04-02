@@ -15,6 +15,38 @@
     "placeholder": "Describe your website...",
     "badge": "AI Website Generator"
   },
+  "demo": {
+    "kicker": "See it in action",
+    "title": "From prompt to production in seconds",
+    "description": "Watch the multi-agent pipeline plan, design, and build — with full cost transparency at every step.",
+    "prompt": "A SaaS landing page for a project management tool with pricing, features, and testimonials",
+    "step1": "Planner analyzes prompt",
+    "step2": "Designer + Architect run in parallel",
+    "step3": "Builder generates React code",
+    "step4": "Reviewer checks quality",
+    "cost": "Total cost",
+    "time": "Generation time"
+  },
+  "comparison": {
+    "kicker": "How we compare",
+    "title": "Built different",
+    "feature": "Feature",
+    "arkhos": "ArkhosAI",
+    "lovable": "Lovable",
+    "bolt": "Bolt.new",
+    "v0": "v0",
+    "hosting": "EU sovereign hosting",
+    "costTransparency": "Real-time cost per agent",
+    "modelRouting": "Intelligent model routing",
+    "selfHost": "Self-hostable (MIT)",
+    "localGpu": "Local GPU mode",
+    "openSource": "Open source",
+    "multiAgent": "Multi-agent pipeline",
+    "yes": "Yes",
+    "no": "No",
+    "planned": "Planned",
+    "partial": "Partial"
+  },
   "generate": {
     "title": "Generate",
     "fleet": {
@@ -45,7 +77,8 @@
     },
     "actions": {
       "download": "Download",
-      "approve": "Approve & Build"
+      "approve": "Approve & Build",
+      "regenerate": "Regenerate"
     },
     "sections": {
       "plan": "Plan",
@@ -75,7 +108,32 @@
       "filesGenerated": "{count} files generated",
       "previewPlaceholder": "Preview will appear here",
       "selectFile": "Select a file to view",
-      "files": "Files ({count})"
+      "files": "Files ({count})",
+      "booting": "Starting preview environment...",
+      "installing": "Installing dependencies..."
+    },
+    "errors": {
+      "rate_limit": {
+        "title": "Rate limit reached",
+        "description": "You've hit the generation limit for today. Try again tomorrow or self-host for unlimited access."
+      },
+      "timeout": {
+        "title": "Generation timed out",
+        "description": "The pipeline took too long. Try a simpler prompt or switch to Budget profile."
+      },
+      "budget": {
+        "title": "Budget exceeded",
+        "description": "This generation would exceed the per-request budget. Try a simpler prompt."
+      },
+      "api_error": {
+        "title": "API error",
+        "description": "The Mistral API returned an error. This is usually temporary."
+      },
+      "unknown": {
+        "title": "Something went wrong",
+        "description": "An unexpected error occurred during generation."
+      },
+      "retry": "Try again"
     }
   },
   "footer": {

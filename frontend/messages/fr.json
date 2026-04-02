@@ -15,6 +15,38 @@
     "placeholder": "Décrivez votre site web...",
     "badge": "Générateur de sites IA"
   },
+  "demo": {
+    "kicker": "Voyez par vous-même",
+    "title": "Du prompt à la production en quelques secondes",
+    "description": "Suivez le pipeline multi-agents qui planifie, conçoit et construit — avec une transparence totale des coûts à chaque étape.",
+    "prompt": "Une landing page SaaS pour un outil de gestion de projet avec tarifs, fonctionnalités et témoignages",
+    "step1": "Le Planificateur analyse le prompt",
+    "step2": "Designer + Architecte en parallèle",
+    "step3": "Le Développeur génère le code React",
+    "step4": "Le Vérificateur contrôle la qualité",
+    "cost": "Coût total",
+    "time": "Temps de génération"
+  },
+  "comparison": {
+    "kicker": "Comment nous nous distinguons",
+    "title": "Conçu différemment",
+    "feature": "Fonctionnalité",
+    "arkhos": "ArkhosAI",
+    "lovable": "Lovable",
+    "bolt": "Bolt.new",
+    "v0": "v0",
+    "hosting": "Hébergement souverain UE",
+    "costTransparency": "Coût en temps réel par agent",
+    "modelRouting": "Routage intelligent de modèles",
+    "selfHost": "Auto-hébergeable (MIT)",
+    "localGpu": "Mode GPU local",
+    "openSource": "Open source",
+    "multiAgent": "Pipeline multi-agents",
+    "yes": "Oui",
+    "no": "Non",
+    "planned": "Prévu",
+    "partial": "Partiel"
+  },
   "generate": {
     "title": "Générer",
     "fleet": {
@@ -45,7 +77,8 @@
     },
     "actions": {
       "download": "Télécharger",
-      "approve": "Approuver et construire"
+      "approve": "Approuver et construire",
+      "regenerate": "Regénérer"
     },
     "sections": {
       "plan": "Plan",
@@ -75,7 +108,32 @@
       "filesGenerated": "{count} fichiers générés",
       "previewPlaceholder": "L'aperçu apparaîtra ici",
       "selectFile": "Sélectionner un fichier",
-      "files": "Fichiers ({count})"
+      "files": "Fichiers ({count})",
+      "booting": "Démarrage de l'environnement de prévisualisation...",
+      "installing": "Installation des dépendances..."
+    },
+    "errors": {
+      "rate_limit": {
+        "title": "Limite atteinte",
+        "description": "Vous avez atteint la limite de générations pour aujourd'hui. Réessayez demain ou auto-hébergez pour un accès illimité."
+      },
+      "timeout": {
+        "title": "Délai dépassé",
+        "description": "Le pipeline a pris trop de temps. Essayez un prompt plus simple ou passez en profil Économique."
+      },
+      "budget": {
+        "title": "Budget dépassé",
+        "description": "Cette génération dépasserait le budget par requête. Essayez un prompt plus simple."
+      },
+      "api_error": {
+        "title": "Erreur API",
+        "description": "L'API Mistral a renvoyé une erreur. C'est généralement temporaire."
+      },
+      "unknown": {
+        "title": "Une erreur est survenue",
+        "description": "Une erreur inattendue s'est produite pendant la génération."
+      },
+      "retry": "Réessayer"
     }
   },
   "footer": {
