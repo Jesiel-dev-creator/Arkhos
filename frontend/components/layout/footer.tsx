@@ -15,10 +15,10 @@ const COMPANY_LINKS = [
 ] as const;
 
 const LEGAL_LINKS = [
-  { label: "Privacy", href: "/legal/privacy" },
-  { label: "Terms", href: "/legal/terms" },
-  { label: "Cookies", href: "/legal/cookies" },
-  { label: "Imprint", href: "/legal/imprint" },
+  { key: "privacy", href: "/legal/privacy" },
+  { key: "terms", href: "/legal/terms" },
+  { key: "cookies", href: "/legal/cookies" },
+  { key: "imprint", href: "/legal/imprint" },
 ] as const;
 
 export function Footer() {
@@ -28,7 +28,6 @@ export function Footer() {
     <footer className="border-t border-[var(--border)] bg-[var(--deep)]">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <span className="font-[var(--font-display)] text-base font-bold text-[var(--text-primary)]">
               Arkhos
@@ -41,6 +40,7 @@ export function Footer() {
                 href="https://github.com/bleucommerce/arkhos"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub"
                 className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-150"
               >
                 <Code2 className="w-4 h-4" />
@@ -49,6 +49,7 @@ export function Footer() {
                 href="https://x.com/arkhosai"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Arkhos website"
                 className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-150"
               >
                 <Globe className="w-4 h-4" />
@@ -56,7 +57,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Product */}
           <div>
             <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3">
               {t("footer.product")}
@@ -75,7 +75,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
           <div>
             <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3">
               {t("footer.companySection")}
@@ -94,19 +93,18 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3">
               {t("footer.legal")}
             </h4>
             <ul className="space-y-2">
               {LEGAL_LINKS.map((link) => (
-                <li key={link.label}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-150"
                   >
-                    {link.label}
+                    {t(`footer.${link.key}`)}
                   </Link>
                 </li>
               ))}
@@ -118,11 +116,10 @@ export function Footer() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-[var(--text-muted)]">
-            &copy; {new Date().getFullYear()} {t("footer.company")} &middot;{" "}
-            {t("footer.location")}
+            &copy; {new Date().getFullYear()} {t("footer.company")} &middot; {t("footer.location")} &middot; {t("footer.rights")}
           </p>
           <p className="text-xs text-[var(--text-muted)]">
-            Powered by{" "}
+            Powered by {" "}
             <a
               href="https://pypi.org/project/tramontane/"
               target="_blank"

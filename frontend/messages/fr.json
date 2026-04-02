@@ -24,6 +24,10 @@
     },
     "status": {
       "idle": "Prêt",
+      "starting": "Démarrage...",
+      "planning": "Planification...",
+      "planReady": "Plan prêt",
+      "building": "Construction...",
       "running": "Génération en cours...",
       "complete": "Terminé",
       "error": "Erreur"
@@ -80,7 +84,11 @@
     "rights": "Tous droits réservés",
     "product": "Produit",
     "companySection": "Entreprise",
-    "legal": "Mentions légales"
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies",
+    "imprint": "Éditeur"
   },
   "theme": {
     "dark": "Sombre",
@@ -91,5 +99,171 @@
     "active": "GPU local",
     "free": "Gratuit sur votre GPU",
     "badge": "Mode GPU"
+  },
+  "pages": {
+    "pricing": {
+      "kicker": "Tarifs",
+      "title": "Une tarification simple pour les usages locaux, hébergés et en équipe.",
+      "description": "Choisissez la configuration qui correspond à votre manière de générer, d'inspecter et de livrer des sites avec ArkhosAI.",
+      "plans": {
+        "starter": {
+          "label": "Starter",
+          "price": "Gratuit / auto-hébergé",
+          "description": "Exécutez ArkhosAI en local et gardez un contrôle complet sur votre stack.",
+          "feature1": "Pipeline auto-hébergé",
+          "feature2": "Vos propres clés Mistral",
+          "feature3": "Idéal pour construire et expérimenter"
+        },
+        "pro": {
+          "label": "Pro",
+          "price": "Cloud hébergé",
+          "description": "Une infrastructure gérée avec le même flux de génération transparent.",
+          "feature1": "Déploiement européen géré",
+          "feature2": "Espace de travail de génération en direct",
+          "feature3": "Onboarding plus rapide pour l'équipe"
+        },
+        "team": {
+          "label": "Équipe",
+          "price": "Sur mesure",
+          "description": "Pour les agences et plateformes internes qui ont besoin de gouvernance et d'intégrations plus poussées.",
+          "feature1": "Flux partagés et boucles de revue",
+          "feature2": "Cibles de déploiement personnalisées",
+          "feature3": "Support prioritaire et accès roadmap"
+        }
+      },
+      "ctaTitle": "Commencez avec le mode qui convient aujourd'hui.",
+      "ctaBody": "Vous pouvez démarrer en local puis passer à une configuration gérée quand votre équipe a besoin de plus de structure.",
+      "ctaAction": "Ouvrir le générateur"
+    },
+    "gallery": {
+      "kicker": "Galerie",
+      "title": "Quelques directions que ArkhosAI peut déjà générer.",
+      "description": "Des pages marketing produit aux sites hospitality, le système adapte le langage visuel tout en gardant le pipeline visible.",
+      "items": {
+        "saas": {
+          "tag": "SaaS",
+          "title": "Landing page de lancement produit",
+          "description": "Une hiérarchie nette, des CTA forts, des blocs de prix et des détails qui renforcent la confiance."
+        },
+        "restaurant": {
+          "tag": "Restaurant",
+          "title": "Site hospitality chaleureux",
+          "description": "Des mises en page éditoriales, une structure orientée réservation et un rythme visuel plus tactile."
+        },
+        "portfolio": {
+          "tag": "Portfolio",
+          "title": "Vitrine personnelle de studio",
+          "description": "Une mise en page sobre et typographique pour mettre en valeur les études de cas et le point de vue."
+        }
+      },
+      "ctaBody": "Prêt à générer votre propre version au lieu de parcourir des exemples ?",
+      "ctaAction": "Commencer"
+    },
+    "docs": {
+      "kicker": "Documentation",
+      "title": "Comment ArkhosAI fonctionne, du prompt jusqu'au rendu final.",
+      "description": "Le générateur repose sur un pipeline transparent, des surfaces frontend typées et un backend conçu pour le streaming et la revue.",
+      "sections": {
+        "start": {
+          "title": "Commencer par un prompt",
+          "body": "Décrivez le site voulu, choisissez un profil de qualité, puis lancez le pipeline avec un routage sensible à la locale."
+        },
+        "pipeline": {
+          "title": "Suivre le pipeline en direct",
+          "body": "Regardez chaque étape agent s'afficher, inspectez le plan et suivez le coût cumulé ainsi que les fichiers générés en temps réel."
+        },
+        "deployment": {
+          "title": "Livrer ou itérer",
+          "body": "Téléchargez le résultat, poursuivez l'itération dans l'espace de travail ou reliez la sortie générée à un flux produit plus large."
+        }
+      }
+    },
+    "about": {
+      "kicker": "À propos",
+      "title": "ArkhosAI construit une réponse européenne aux outils opaques de génération de sites.",
+      "description": "L'objectif n'est pas seulement de générer des pages rapidement, mais de rendre le processus compréhensible, souverain et extensible.",
+      "principles": {
+        "sovereign": {
+          "title": "Européen par défaut",
+          "body": "L'infrastructure, les choix de modèles et le positionnement sont pensés pour l'hébergement et les attentes de confidentialité en Europe."
+        },
+        "transparent": {
+          "title": "Génération transparente",
+          "body": "Le pipeline expose la planification, le streaming, les fichiers produits et le coût au lieu de tout cacher derrière un simple spinner."
+        },
+        "open": {
+          "title": "Open-core pragmatique",
+          "body": "L'auto-hébergement et le produit hébergé peuvent coexister lorsque l'architecture reste simple et composable."
+        }
+      }
+    },
+    "blog": {
+      "kicker": "Blog",
+      "title": "Notes sur la génération de sites par IA, le design produit et les pipelines d'agents.",
+      "description": "Un espace pour les détails d'implémentation, les décisions produit et les arbitrages derrière la construction publique de ArkhosAI.",
+      "posts": {
+        "shipping": {
+          "tag": "Produit",
+          "title": "Livrer le premier vrai workspace",
+          "excerpt": "Ce qui change quand le générateur passe d'un simple formulaire à un workspace streaming avec état."
+        },
+        "routing": {
+          "tag": "Modèles",
+          "title": "Pourquoi le routage intelligent compte",
+          "excerpt": "Des agents différents demandent des compromis différents. Le routage garde qualité, vitesse et coût en équilibre."
+        },
+        "design": {
+          "tag": "Design",
+          "title": "Éviter l'interface IA générique",
+          "excerpt": "Pourquoi ArkhosAI adopte une direction plus éditoriale au lieu de reproduire les gradients SaaS interchangeables."
+        }
+      }
+    }
+  },
+  "legal": {
+    "privacy": {
+      "kicker": "Mentions légales",
+      "title": "Politique de confidentialité",
+      "description": "Cette page décrit la manière dont ArkhosAI gère les données produit, génération et opérationnelles.",
+      "section1Title": "Ce que nous collectons",
+      "section1Body": "Nous collectons les informations nécessaires au fonctionnement du produit, à la sécurité de la plateforme et à la compréhension des usages de génération.",
+      "section2Title": "Comment elles sont utilisées",
+      "section2Body": "Les données d'usage servent à améliorer la fiabilité, le rate limiting, le débogage et l'expérience globale de génération.",
+      "section3Title": "Vos contrôles",
+      "section3Body": "Les déploiements hébergés et auto-hébergés peuvent appliquer des politiques de rétention et d'accès différentes selon l'environnement."
+    },
+    "terms": {
+      "kicker": "Mentions légales",
+      "title": "Conditions d'utilisation",
+      "description": "Ces conditions décrivent les règles générales d'utilisation de ArkhosAI et de ses variantes hébergées ou auto-hébergées.",
+      "section1Title": "Usage acceptable",
+      "section1Body": "Utilisez le produit de manière légale, respectez les limites d'infrastructure et évitez les comportements abusifs de génération ou de scraping.",
+      "section2Title": "Périmètre du service",
+      "section2Body": "La disponibilité des fonctionnalités peut varier entre les versions locales, hébergées et les futures offres entreprises de ArkhosAI.",
+      "section3Title": "Évolutions",
+      "section3Body": "À mesure que le produit évolue, ces conditions peuvent être mises à jour pour refléter de nouvelles capacités, une nouvelle tarification ou de nouveaux modes de déploiement."
+    },
+    "cookies": {
+      "kicker": "Mentions légales",
+      "title": "Politique relative aux cookies",
+      "description": "Les cookies et le stockage local sont utilisés avec parcimonie pour les préférences produit et certains comportements de session.",
+      "section1Title": "Stockage des préférences",
+      "section1Body": "Le thème, la langue et d'autres réglages d'interface peuvent être conservés localement afin de garder une expérience cohérente entre les visites.",
+      "section2Title": "Cookies opérationnels",
+      "section2Body": "Les environnements hébergés peuvent utiliser des cookies essentiels pour l'authentification, la continuité de session et la sécurité de la plateforme.",
+      "section3Title": "Contrôle",
+      "section3Body": "Vous pouvez gérer le stockage navigateur directement, et les déploiements auto-hébergés peuvent définir leur propre posture cookies."
+    },
+    "imprint": {
+      "kicker": "Mentions légales",
+      "title": "Éditeur",
+      "description": "Informations de société et de publication pour ArkhosAI et son opérateur.",
+      "section1Title": "Société",
+      "section1Body": "ArkhosAI est développé sous Bleucommerce SAS, basée à Orléans, France.",
+      "section2Title": "Projet",
+      "section2Body": "Le produit se concentre sur la génération assistée de sites web avec une stratégie infrastructure et produit pensée pour l'Europe.",
+      "section3Title": "Contact",
+      "section3Body": "Pour les demandes légales ou commerciales, utilisez les canaux officiels du projet et de la société associés à ArkhosAI."
+    }
   }
 }

@@ -24,6 +24,10 @@
     },
     "status": {
       "idle": "Ready",
+      "starting": "Starting...",
+      "planning": "Planning...",
+      "planReady": "Plan ready",
+      "building": "Building...",
       "running": "Generating...",
       "complete": "Complete",
       "error": "Error"
@@ -80,7 +84,11 @@
     "rights": "All rights reserved",
     "product": "Product",
     "companySection": "Company",
-    "legal": "Legal"
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "imprint": "Imprint"
   },
   "theme": {
     "dark": "Dark",
@@ -91,5 +99,171 @@
     "active": "Local GPU",
     "free": "Free on your GPU",
     "badge": "GPU Mode"
+  },
+  "pages": {
+    "pricing": {
+      "kicker": "Pricing",
+      "title": "Simple pricing for local, hosted, and team workflows.",
+      "description": "Choose the setup that matches how you want to generate, inspect, and ship websites with ArkhosAI.",
+      "plans": {
+        "starter": {
+          "label": "Starter",
+          "price": "Free / self-hosted",
+          "description": "Run ArkhosAI locally and keep full control over your stack.",
+          "feature1": "Self-host the pipeline",
+          "feature2": "Use your own Mistral keys",
+          "feature3": "Perfect for builders and experiments"
+        },
+        "pro": {
+          "label": "Pro",
+          "price": "Hosted cloud",
+          "description": "Managed infrastructure with the same transparent generation workflow.",
+          "feature1": "Managed EU deployment",
+          "feature2": "Live generation workspace",
+          "feature3": "Faster team onboarding"
+        },
+        "team": {
+          "label": "Team",
+          "price": "Custom",
+          "description": "For agencies and internal platforms that need governance and deeper integration.",
+          "feature1": "Shared workflows and review loops",
+          "feature2": "Custom deployment targets",
+          "feature3": "Priority support and roadmap access"
+        }
+      },
+      "ctaTitle": "Start with the workflow that fits today.",
+      "ctaBody": "You can begin locally, then move to a managed setup when your team needs more structure.",
+      "ctaAction": "Open generator"
+    },
+    "gallery": {
+      "kicker": "Gallery",
+      "title": "A few directions ArkhosAI can already generate.",
+      "description": "From product marketing pages to hospitality sites, the system adapts the design language while keeping the build pipeline visible.",
+      "items": {
+        "saas": {
+          "tag": "SaaS",
+          "title": "Product launch landing page",
+          "description": "Sharp hierarchy, strong CTA flow, pricing blocks, and trust-building detail for a software launch."
+        },
+        "restaurant": {
+          "tag": "Restaurant",
+          "title": "Warm hospitality site",
+          "description": "Editorial photography layouts, reservation-first structure, and a more tactile visual rhythm."
+        },
+        "portfolio": {
+          "tag": "Portfolio",
+          "title": "Personal studio showcase",
+          "description": "A restrained, type-led layout built to highlight case studies, craft, and a distinct point of view."
+        }
+      },
+      "ctaBody": "Ready to generate your own version instead of browsing examples?",
+      "ctaAction": "Start generating"
+    },
+    "docs": {
+      "kicker": "Docs",
+      "title": "How ArkhosAI works, from prompt to production output.",
+      "description": "The generator is built around a transparent pipeline, typed frontend surfaces, and a backend designed for streaming and reviewability.",
+      "sections": {
+        "start": {
+          "title": "Start with a prompt",
+          "body": "Describe the site you want, choose a quality profile, and launch the generation pipeline with locale-aware routing."
+        },
+        "pipeline": {
+          "title": "Review the live pipeline",
+          "body": "Watch each agent step stream in, inspect plan output, and follow cumulative cost and file generation in real time."
+        },
+        "deployment": {
+          "title": "Ship or iterate",
+          "body": "Download the result, keep iterating through the workspace, or connect the generated output to a larger product flow."
+        }
+      }
+    },
+    "about": {
+      "kicker": "About",
+      "title": "ArkhosAI is building an EU-native answer to opaque website generation tools.",
+      "description": "The goal is not just to generate pages quickly, but to make the underlying process understandable, sovereign, and extensible.",
+      "principles": {
+        "sovereign": {
+          "title": "European by default",
+          "body": "Infrastructure, model choices, and positioning are shaped around EU hosting and privacy expectations."
+        },
+        "transparent": {
+          "title": "Transparent generation",
+          "body": "The pipeline exposes planning, streaming, file output, and cost instead of hiding the whole process behind a spinner."
+        },
+        "open": {
+          "title": "Open-core pragmatism",
+          "body": "Self-hosting and hosted product development can coexist when the architecture stays simple and composable."
+        }
+      }
+    },
+    "blog": {
+      "kicker": "Blog",
+      "title": "Notes on AI website generation, product design, and agent pipelines.",
+      "description": "A place for implementation details, product decisions, and the tradeoffs behind building ArkhosAI in public.",
+      "posts": {
+        "shipping": {
+          "tag": "Product",
+          "title": "Shipping the first real workspace",
+          "excerpt": "What changed when the generator moved from a simple input form to a stateful streaming workspace."
+        },
+        "routing": {
+          "tag": "Models",
+          "title": "Why smart routing matters",
+          "excerpt": "Different agents need different tradeoffs. Routing is what keeps quality, speed, and cost in balance."
+        },
+        "design": {
+          "tag": "Design",
+          "title": "Avoiding generic AI UI",
+          "excerpt": "Why ArkhosAI leans into a sharper editorial look instead of defaulting to interchangeable SaaS gradients."
+        }
+      }
+    }
+  },
+  "legal": {
+    "privacy": {
+      "kicker": "Legal",
+      "title": "Privacy policy",
+      "description": "This page outlines how ArkhosAI handles product, generation, and operational data.",
+      "section1Title": "What we collect",
+      "section1Body": "We collect the information needed to operate the product, secure the platform, and understand generation usage patterns.",
+      "section2Title": "How we use it",
+      "section2Body": "Usage data helps improve reliability, rate limiting, debugging, and the overall generation experience.",
+      "section3Title": "Your controls",
+      "section3Body": "Hosted and self-hosted deployments can apply different retention and access policies depending on the environment."
+    },
+    "terms": {
+      "kicker": "Legal",
+      "title": "Terms of service",
+      "description": "These terms describe the general rules for using ArkhosAI and its hosted or self-hosted variants.",
+      "section1Title": "Acceptable use",
+      "section1Body": "Use the product lawfully, respect infrastructure limits, and avoid abusive generation or scraping behavior.",
+      "section2Title": "Service scope",
+      "section2Body": "Feature availability may differ between local, hosted, and future enterprise versions of ArkhosAI.",
+      "section3Title": "Changes",
+      "section3Body": "As the product evolves, these terms may be updated to reflect new capabilities, pricing, or deployment models."
+    },
+    "cookies": {
+      "kicker": "Legal",
+      "title": "Cookie policy",
+      "description": "Cookies and local storage are used sparingly for product preferences and session-level behavior.",
+      "section1Title": "Preference storage",
+      "section1Body": "Theme, locale, and similar UI settings may be persisted locally to keep the interface consistent between visits.",
+      "section2Title": "Operational cookies",
+      "section2Body": "Hosted environments may use essential cookies required for authentication, session continuity, and platform security.",
+      "section3Title": "Control",
+      "section3Body": "You can manage browser storage directly, and self-hosted deployments can define their own cookie posture."
+    },
+    "imprint": {
+      "kicker": "Legal",
+      "title": "Imprint",
+      "description": "Company and publishing information for ArkhosAI and its operator.",
+      "section1Title": "Company",
+      "section1Body": "ArkhosAI is developed under Bleucommerce SAS, based in Orléans, France.",
+      "section2Title": "Project",
+      "section2Body": "The product focuses on AI-assisted website generation with an EU-first infrastructure and product strategy.",
+      "section3Title": "Contact",
+      "section3Body": "For legal or business inquiries, use the official project and company channels associated with ArkhosAI."
+    }
   }
 }

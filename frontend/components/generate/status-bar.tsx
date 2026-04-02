@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Cpu, Clock, FileCode2, Layers } from "lucide-react";
 import type { GenerationState } from "@/hooks/use-sse";
 
@@ -8,19 +9,20 @@ interface StatusBarProps {
 }
 
 export function StatusBar({ state }: StatusBarProps) {
+  const t = useTranslations("generate");
+
   const statusLabel = {
-    idle: "Ready",
-    starting: "Starting...",
-    planning: "Planning...",
-    plan_ready: "Plan ready",
-    building: "Building...",
-    complete: "Complete",
-    error: "Error",
+    idle: t("status.idle"),
+    starting: t("status.starting"),
+    planning: t("status.planning"),
+    plan_ready: t("status.planReady"),
+    building: t("status.building"),
+    complete: t("status.complete"),
+    error: t("status.error"),
   }[state.status];
 
   return (
     <div className="flex items-center gap-4 px-4 py-2 border-t border-[var(--border)] bg-[var(--deep)] text-[10px] font-[var(--font-code)] text-[var(--text-muted)]">
-      {/* Status */}
       <div className="flex items-center gap-1.5">
         <div
           className={`w-1.5 h-1.5 rounded-full ${
@@ -36,15 +38,13 @@ export function StatusBar({ state }: StatusBarProps) {
         {statusLabel}
       </div>
 
-      {/* Cost */}
       {state.totalCostEur > 0 && (
         <div className="flex items-center gap-1">
           <Layers className="w-3 h-3" />
-          <span className="tabular-nums">{"\u20AC"}{state.totalCostEur.toFixed(4)}</span>
+          <span className="tabular-nums">€{state.totalCostEur.toFixed(4)}</span>
         </div>
       )}
 
-      {/* Duration */}
       {state.totalDurationS > 0 && (
         <div className="flex items-center gap-1">
           <Clock className="w-3 h-3" />
@@ -52,15 +52,13 @@ export function StatusBar({ state }: StatusBarProps) {
         </div>
       )}
 
-      {/* Files */}
       {state.fileCount > 0 && (
         <div className="flex items-center gap-1">
           <FileCode2 className="w-3 h-3" />
-          <span>{state.fileCount} files</span>
+          <span>{t("workspace.filesGenerated", { count: state.fileCount })}</span>
         </div>
       )}
 
-      {/* Profile */}
       {state.profile && (
         <div className="flex items-center gap-1 ml-auto">
           <Cpu className="w-3 h-3" />
