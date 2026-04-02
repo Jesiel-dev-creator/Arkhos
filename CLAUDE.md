@@ -292,10 +292,45 @@ error             {error, error_type, agent}
 
 ---
 
+## Design Standards — STRICT
+
+This product must look like it belongs next to NVIDIA, Apple, Linear, or Vercel.
+NOT an indie project. NOT a Lovable/Bolt clone. Industry-level or nothing.
+
+### Mandatory
+- Every page follows the same layout rhythm: kicker (xs uppercase tracking) → h1 (Syne 5xl) → description (lg text-secondary) → content grid
+- Cards: rounded-2xl, border border-[var(--border)], bg-[var(--deep)], p-5 or p-6
+- Spacing: py-20 for page sections, mt-12 between major blocks, gap-4 or gap-5 in grids
+- Buttons: rounded-xl, px-5 py-3, text-sm font-medium, hover:brightness-110
+- No decorative elements that don't serve a purpose
+- No gradients except the hero radial glow (subtle, single use)
+- No shadows on cards — depth comes from background color hierarchy (void → deep → surface)
+- No border-radius mixing — 2xl for cards, xl for buttons, md for small elements
+- Typography hierarchy is sacred: Syne for display only, DM Sans for everything else
+- Maximum restraint — if unsure whether to add a visual element, don't
+
+### Reference Aesthetic
+- Apple: whitespace, typography-driven, no clutter
+- NVIDIA: dark, technical precision, green accents for GPU
+- Linear: monochrome depth, clean cards, functional beauty
+- Vercel: terminal-like precision, code-focused, no decoration
+
+### What Makes It Look Cheap (NEVER DO)
+- Excessive border-radius (pill shapes on cards)
+- Multiple gradient directions on one page
+- Colored backgrounds on cards (use depth hierarchy instead)
+- Emoji or decorative icons that don't convey information
+- Inconsistent spacing between sections
+- Text that's too small to read (minimum 14px body)
+- Hover effects that cause layout shift
+- Too many colors on screen at once (indigo + text hierarchy, that's it)
+
+---
+
 ## Current Status (April 2026)
 
-### Done
-- Backend: 28 tests passing, ruff clean, mypy clean
+### Done — Backend
+- 28 tests passing, ruff clean, mypy clean
 - Tramontane integration: 10 exports used (was 3)
 - Fleet profiles + adaptive budget (Budget/Balanced/Quality)
 - ParallelGroup for Designer + Architect (saves ~5-8s)
@@ -304,19 +339,31 @@ error             {error, error_type, agent}
 - Smart skill injection via MarkdownSkill.matches()
 - GDPR standard on Planner, audit_actions on all agents
 - /api/simulate + /api/telemetry endpoints
-- Frontend rebuilt on Next.js 16.2 with Electric Indigo
+
+### Done — Frontend (9 pages built)
+- Next.js 16.2 with Electric Indigo design system
 - Three themes: Dark (indigo) / Light (indigo) / GPU (NVIDIA green)
-- FR/EN i18n with next-intl
-- Generate page: /generate (entry) + /generate/[id] (workspace)
+- FR/EN i18n with next-intl (full translations with diacritics)
+- Home page with hero, radial glow, 3-card feature grid
+- Generate entry: /generate (prompt, fleet toggle, templates)
+- Generate workspace: /generate/[id] (pipeline panel, preview/code tabs, status bar)
+- Pricing page (3 tiers: Starter/Pro/Team + CTA)
+- About page (3 principles: Sovereign/Transparent/Open)
+- Gallery page (3 showcase items + CTA)
+- Blog page (3 posts)
+- Docs page (3 sections: Start/Pipeline/Deployment)
+- Legal pages: /legal/[slug] (privacy, terms, cookies, imprint — dynamic route)
 - Floating glass navbar + minimal footer
+- Custom ThemeProvider (no next-themes dependency)
 
 ### TODO (next session)
-- Home page hero (prompt input as the product, live demo section)
-- Port useWebContainer hook for live preview
-- Remaining pages: Pricing, About, Gallery, Blog, Docs, etc.
+- Port useWebContainer hook for live preview in /generate/[id]
+- Connect Gallery to /api/gallery (currently static)
 - Loading/error boundaries (loading.tsx, error.tsx)
+- Polish: Home page needs live demo section, comparison strip
 - NVIDIA NIM backend (Tramontane v0.2.4)
 - Docker deployment config
+- shadcn/ui components (not yet installed — run `pnpm dlx shadcn@latest init`)
 
 ---
 
