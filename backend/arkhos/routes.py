@@ -489,3 +489,21 @@ async def telemetry_stats() -> dict[str, Any]:
         "total_outcomes": telemetry.total_outcomes,
         "model_stats": telemetry.get_model_stats(),
     }
+
+
+# ── Waitlist ──────────────────────────────────────────────────────
+
+
+class WaitlistRequest(BaseModel):
+    """Request body for POST /api/waitlist."""
+
+    email: str = Field(..., min_length=5, max_length=254)
+
+
+@router.post("/waitlist")
+async def waitlist(body: WaitlistRequest) -> dict[str, str]:
+    """Add email to the early access waitlist."""
+    from arkhos.waitlist import add_email
+
+    add_email(body.email)
+    return {"status": "ok"}
