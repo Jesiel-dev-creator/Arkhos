@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant gpu (&:is(.gpu *));
@@ -6,12 +8,15 @@
 /* ═══════════════════════════════════════════
    ArkhosAI — Electric Indigo Design System
    Three themes: Dark (default), Light, GPU
+   shadcn/ui variables mapped to our tokens
    ═══════════════════════════════════════════ */
 
 @theme inline {
   --font-display: var(--font-syne);
   --font-body: var(--font-dm-sans);
   --font-code: var(--font-jetbrains-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-heading: var(--font-syne);
 
   --color-void: var(--void);
   --color-deep: var(--deep);
@@ -24,6 +29,34 @@
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-gold: var(--gold);
+
+  /* shadcn/ui theme mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 /* ── Dark Theme (default — Cloud/Indigo) ── */
@@ -53,7 +86,7 @@
   --glass-bg: rgba(15, 23, 42, 0.6);
   --glass-border: rgba(255, 255, 255, 0.06);
 
-  /* shadcn/ui */
+  /* shadcn/ui — mapped to Electric Indigo dark */
   --background: var(--void);
   --foreground: var(--text-primary);
   --card: var(--deep);
@@ -161,3 +194,18 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--void); }
 ::-webkit-scrollbar-thumb { background: var(--elevated); border-radius: 3px; }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
+
+/* ── Syntax tokens ── */
+.tk-kw { color: var(--brand-light); }
+.tk-str { color: var(--success); }
+.tk-cmt { color: var(--text-muted); font-style: italic; }
+.tk-tag { color: var(--brand); }
+.tk-num { color: var(--warning); }
+.tk-key { color: var(--brand-light); }
+.tk-lit { color: var(--warning); }
