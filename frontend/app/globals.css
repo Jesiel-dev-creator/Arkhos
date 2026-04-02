@@ -201,6 +201,10 @@ body {
   }
 }
 
+/* ── Full-screen workspace — no footer ── */
+body:has([data-workspace]) footer { display: none; }
+body:has([data-workspace]) main { padding-bottom: 0; }
+
 /* ── Syntax tokens ── */
 .tk-kw { color: var(--brand-light); }
 .tk-str { color: var(--success); }

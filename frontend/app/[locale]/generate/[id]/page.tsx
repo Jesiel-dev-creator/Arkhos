@@ -22,6 +22,7 @@ import { CodeBlock } from "@/components/generate/code-block";
 import { FileTree } from "@/components/generate/file-tree";
 import { ErrorPanel } from "@/components/generate/error-panel";
 import { IterationChat } from "@/components/generate/iteration-chat";
+import { Breadcrumbs } from "@/components/generate/breadcrumbs";
 import { cn } from "@/lib/utils";
 
 export default function GenerationWorkspacePage() {
@@ -98,7 +99,7 @@ export default function GenerationWorkspacePage() {
   const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] flex flex-col px-4 pb-4">
+    <div data-workspace className="min-h-[calc(100vh-5rem)] flex flex-col px-4 pb-4">
       <div className="mx-auto w-full max-w-[1600px] flex-1 flex flex-col gap-3">
         {/* ── Top bar ── */}
         <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--deep)] px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
@@ -110,9 +111,9 @@ export default function GenerationWorkspacePage() {
             >
               <ArrowLeft className="w-4 h-4 text-[var(--text-muted)]" />
             </Link>
-            <div>
+            <div className="flex flex-col gap-0.5">
+              <Breadcrumbs generationId={generationId} />
               <p className="text-sm font-medium text-[var(--text-primary)]">{t("title")}</p>
-              <p className="text-[10px] font-[var(--font-code)] text-[var(--text-muted)]">{generationId}</p>
             </div>
           </div>
 
@@ -176,7 +177,7 @@ export default function GenerationWorkspacePage() {
             : "lg:grid-cols-[280px_minmax(0,1fr)]",
         )}>
           {/* Left: Pipeline + Plan */}
-          <aside className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden flex flex-col">
+          <aside className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden flex flex-col max-h-64 lg:max-h-none">
             <div className="flex-1 overflow-y-auto p-4">
               <PipelinePanel
                 agents={state.agents}
@@ -242,7 +243,7 @@ export default function GenerationWorkspacePage() {
                 </div>
               ) : (
                 <div className="flex flex-1 overflow-hidden">
-                  <div className="w-56 shrink-0 border-r border-[var(--border)] bg-[var(--void)] overflow-y-auto">
+                  <div className="w-44 lg:w-56 shrink-0 border-r border-[var(--border)] bg-[var(--void)] overflow-y-auto">
                     <div className="px-2 py-2">
                       <p className="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wider px-2 py-1.5">
                         {t("workspace.files", { count: fileList.length })}
@@ -268,7 +269,7 @@ export default function GenerationWorkspacePage() {
 
           {/* Right: Iteration chat */}
           {chatOpen && (
-            <aside className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden flex flex-col min-h-[36rem]">
+            <aside className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden flex flex-col h-80 lg:h-auto lg:min-h-[36rem]">
               <IterationChat
                 state={iterateState}
                 onSend={handleIterate}
