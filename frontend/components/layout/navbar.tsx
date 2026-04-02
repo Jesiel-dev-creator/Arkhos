@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Menu, X, Cpu } from "lucide-react";
+import { Menu, Cpu, LogIn, UserPlus } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { LocaleSwitcher } from "./locale-switcher";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -18,7 +24,6 @@ const NAV_LINKS = [
 export function Navbar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
@@ -42,7 +47,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-0.5">
+        <div className="hidden lg:flex items-center gap-0.5">
           {NAV_LINKS.map((link) => {
             const isActive = pathname.includes(link.href);
             return (
@@ -62,65 +67,128 @@ export function Navbar() {
           })}
         </div>
 
-        {/* Right side */}
-        <div className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center gap-2">
-            <LocaleSwitcher />
-            <ThemeToggle />
-          </div>
+        {/* Right side — desktop */}
+        <div className="hidden lg:flex items-center gap-2">
+          <a
+            href="#"
+            title="Coming soon"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
+                       text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]
+                       transition-colors duration-150
+                       focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+          >
+            <LogIn className="w-4 h-4" />
+            {t("signIn")}
+          </a>
+          <a
+            href="#"
+            title="Coming soon"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
+                       bg-[var(--brand)]/10 text-[var(--brand)] hover:bg-[var(--brand)]/20
+                       transition-colors duration-150
+                       focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+          >
+            <UserPlus className="w-4 h-4" />
+            {t("signUp")}
+          </a>
+          <ThemeToggle />
+          <LocaleSwitcher />
           <Link
             href="/generate"
             className="inline-flex items-center px-3.5 py-1.5 rounded-lg text-sm font-medium
                        bg-[var(--brand)] text-white
-                       hover:brightness-110 transition-all duration-150 cursor-pointer"
+                       hover:brightness-110 transition-all duration-150 cursor-pointer
+                       focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+          >
+            {t("generate")}
+          </Link>
+        </div>
+
+        {/* Mobile right side */}
+        <div className="flex lg:hidden items-center gap-2">
+          <Link
+            href="/generate"
+            className="inline-flex items-center px-3.5 py-1.5 rounded-lg text-sm font-medium
+                       bg-[var(--brand)] text-white
+                       hover:brightness-110 transition-all duration-150 cursor-pointer
+                       focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
           >
             {t("generate")}
           </Link>
 
-          {/* Mobile toggle */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden flex items-center justify-center w-9 h-9
-                       rounded-md bg-[var(--surface)] border border-[var(--border)]
-                       transition-colors duration-150 cursor-pointer"
-            aria-label="Menu"
-          >
-            {mobileOpen ? (
-              <X className="w-4 h-4 text-[var(--text-secondary)]" />
-            ) : (
+          <Sheet>
+            <SheetTrigger
+              className="flex items-center justify-center w-9 h-9
+                         rounded-md bg-[var(--surface)] border border-[var(--border)]
+                         transition-colors duration-150 cursor-pointer
+                         focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+              aria-label="Menu"
+            >
               <Menu className="w-4 h-4 text-[var(--text-secondary)]" />
-            )}
-          </button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="bg-[var(--deep)] border-[var(--border)] p-0"
+            >
+              <SheetTitle className="sr-only">Navigation</SheetTitle>
+              <div className="flex flex-col h-full">
+                {/* Nav links */}
+                <div className="flex flex-col gap-1 p-4 pt-12">
+                  {NAV_LINKS.map((link) => {
+                    const isActive = pathname.includes(link.href);
+                    return (
+                      <SheetClose key={link.key} render={<Link href={link.href} />}>
+                        <span
+                          className={cn(
+                            "flex w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150",
+                            isActive
+                              ? "text-[var(--text-primary)] bg-[var(--surface)]"
+                              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]",
+                          )}
+                        >
+                          {t(link.key)}
+                        </span>
+                      </SheetClose>
+                    );
+                  })}
+                </div>
+
+                {/* Auth buttons */}
+                <div className="flex flex-col gap-2 px-4 pt-3 border-t border-[var(--border)]">
+                  <a
+                    href="#"
+                    title="Coming soon"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
+                               text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]
+                               transition-colors duration-150
+                               focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    {t("signIn")}
+                  </a>
+                  <a
+                    href="#"
+                    title="Coming soon"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
+                               bg-[var(--brand)]/10 text-[var(--brand)] hover:bg-[var(--brand)]/20
+                               transition-colors duration-150
+                               focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    {t("signUp")}
+                  </a>
+                </div>
+
+                {/* Theme + Locale */}
+                <div className="flex items-center gap-2 px-4 pt-3 mt-auto pb-6 border-t border-[var(--border)]">
+                  <ThemeToggle />
+                  <LocaleSwitcher />
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div
-          className="md:hidden mt-2 mx-auto max-w-6xl rounded-xl
-                      bg-[var(--glass-bg)] backdrop-blur-xl
-                      border border-[var(--glass-border)] p-3"
-        >
-          <div className="flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.key}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="px-4 py-2.5 rounded-lg text-sm font-medium
-                           text-[var(--text-secondary)] hover:text-[var(--text-primary)]
-                           hover:bg-[var(--surface)] transition-colors duration-150"
-              >
-                {t(link.key)}
-              </Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-2 px-4 pt-3 mt-2 border-t border-[var(--border)]">
-            <LocaleSwitcher />
-            <ThemeToggle />
-          </div>
-        </div>
-      )}
     </nav>
   );
 }

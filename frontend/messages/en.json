@@ -6,7 +6,9 @@
     "pricing": "Pricing",
     "about": "About",
     "docs": "Docs",
-    "blog": "Blog"
+    "blog": "Blog",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
   },
   "hero": {
     "title": "Build beautiful websites with AI",

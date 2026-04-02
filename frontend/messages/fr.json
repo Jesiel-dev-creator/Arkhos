@@ -6,7 +6,9 @@
     "pricing": "Tarifs",
     "about": "À propos",
     "docs": "Documentation",
-    "blog": "Blog"
+    "blog": "Blog",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire"
   },
   "hero": {
     "title": "Créez de beaux sites web avec l'IA",
