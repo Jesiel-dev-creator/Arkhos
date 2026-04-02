@@ -300,10 +300,30 @@
       }
     }
   },
-  "cookies": {
-    "message": "This site uses essential cookies for theme and locale preferences.",
-    "learnMore": "Learn more",
-    "accept": "Accept"
+  "cookieConsent": {
+    "title": "Cookie preferences",
+    "message": "We use cookies to keep your preferences and improve the experience.",
+    "learnMore": "Cookie policy",
+    "close": "Close",
+    "acceptAll": "Accept all",
+    "rejectAll": "Essential only",
+    "savePreferences": "Save preferences",
+    "showSettings": "Customize",
+    "hideSettings": "Hide settings",
+    "categories": {
+      "essential": {
+        "title": "Essential",
+        "description": "Theme, locale, and session preferences. Always active."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Anonymous usage data to improve the product."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Personalization and outreach. Currently unused."
+      }
+    }
   },
   "legal": {
     "privacy": {

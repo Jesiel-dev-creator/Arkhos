@@ -300,10 +300,30 @@
       }
     }
   },
-  "cookies": {
-    "message": "Ce site utilise des cookies essentiels pour les préférences de thème et de langue.",
-    "learnMore": "En savoir plus",
-    "accept": "Accepter"
+  "cookieConsent": {
+    "title": "Préférences de cookies",
+    "message": "Nous utilisons des cookies pour conserver vos préférences et améliorer l'expérience.",
+    "learnMore": "Politique de cookies",
+    "close": "Fermer",
+    "acceptAll": "Tout accepter",
+    "rejectAll": "Essentiels uniquement",
+    "savePreferences": "Enregistrer",
+    "showSettings": "Personnaliser",
+    "hideSettings": "Masquer les réglages",
+    "categories": {
+      "essential": {
+        "title": "Essentiels",
+        "description": "Thème, langue et préférences de session. Toujours actifs."
+      },
+      "analytics": {
+        "title": "Analytique",
+        "description": "Données d'utilisation anonymes pour améliorer le produit."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Personnalisation et communication. Actuellement non utilisé."
+      }
+    }
   },
   "legal": {
     "privacy": {

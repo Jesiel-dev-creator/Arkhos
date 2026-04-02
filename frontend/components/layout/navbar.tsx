@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Menu, Cpu, LogIn, UserPlus } from "lucide-react";
+import { Menu, Cpu } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { LocaleSwitcher } from "./locale-switcher";
 import {
@@ -69,28 +69,6 @@ export function Navbar() {
 
         {/* Right side — desktop */}
         <div className="hidden lg:flex items-center gap-2">
-          <a
-            href="#"
-            title="Coming soon"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
-                       text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]
-                       transition-colors duration-150
-                       focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
-          >
-            <LogIn className="w-4 h-4" />
-            {t("signIn")}
-          </a>
-          <a
-            href="#"
-            title="Coming soon"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
-                       bg-[var(--brand)]/10 text-[var(--brand)] hover:bg-[var(--brand)]/20
-                       transition-colors duration-150
-                       focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
-          >
-            <UserPlus className="w-4 h-4" />
-            {t("signUp")}
-          </a>
           <ThemeToggle />
           <LocaleSwitcher />
           <Link
@@ -104,7 +82,7 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile right side */}
+        {/* Mobile */}
         <div className="flex lg:hidden items-center gap-2">
           <Link
             href="/generate"
@@ -151,32 +129,6 @@ export function Navbar() {
                       </SheetClose>
                     );
                   })}
-                </div>
-
-                {/* Auth buttons */}
-                <div className="flex flex-col gap-2 px-4 pt-3 border-t border-[var(--border)]">
-                  <a
-                    href="#"
-                    title="Coming soon"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
-                               text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]
-                               transition-colors duration-150
-                               focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    {t("signIn")}
-                  </a>
-                  <a
-                    href="#"
-                    title="Coming soon"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
-                               bg-[var(--brand)]/10 text-[var(--brand)] hover:bg-[var(--brand)]/20
-                               transition-colors duration-150
-                               focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    {t("signUp")}
-                  </a>
                 </div>
 
                 {/* Theme + Locale */}

@@ -6,8 +6,20 @@ import { useTranslations } from "next-intl";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { apiPost } from "@/lib/api";
 import { FleetToggle } from "@/components/generate/fleet-toggle";
+import { useTypingPlaceholder } from "@/hooks/use-typing-placeholder";
 
 type Profile = "budget" | "balanced" | "quality";
+
+const PLACEHOLDER_PROMPTS = [
+  "A SaaS landing page with pricing, features, and testimonials...",
+  "A restaurant site with reservations, menu, and photo gallery...",
+  "A developer portfolio with project cards and a dark theme...",
+  "An e-commerce store with product grid and shopping cart...",
+  "A startup pitch page with team bios and investor CTA...",
+  "A photography portfolio with masonry grid and lightbox...",
+  "A law firm site with practice areas and contact form...",
+  "A fitness studio page with class schedule and membership tiers...",
+];
 
 export function HeroPrompt() {
   const t = useTranslations();
@@ -16,6 +28,8 @@ export function HeroPrompt() {
   const [profile, setProfile] = useState<Profile>("balanced");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const typingText = useTypingPlaceholder(PLACEHOLDER_PROMPTS);
 
   const handleGenerate = async () => {
     const trimmed = prompt.trim();
@@ -44,14 +58,26 @@ export function HeroPrompt() {
 
   return (
     <div className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--deep)]/80 backdrop-blur-xl p-5">
-      <textarea
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={t("hero.placeholder")}
-        rows={3}
-        className="w-full resize-none bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none leading-relaxed"
-      />
+      <div className="relative">
+        <textarea
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={3}
+          className="w-full resize-none bg-transparent text-sm text-[var(--text-primary)] placeholder:text-transparent focus:outline-none leading-relaxed"
+          aria-label={t("hero.placeholder")}
+        />
+        {/* Typing placeholder — only visible when textarea is empty */}
+        {!prompt && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 text-sm leading-relaxed text-[var(--text-muted)]"
+          >
+            {typingText}
+            <span className="inline-block w-[2px] h-[14px] ml-0.5 -mb-[2px] bg-[var(--brand)] animate-pulse" />
+          </div>
+        )}
+      </div>
       <div className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <FleetToggle value={profile} onChange={setProfile} />
         <button
