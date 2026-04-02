@@ -201,9 +201,11 @@ body {
   }
 }
 
-/* ── Full-screen workspace — no footer ── */
+/* ── Full-screen workspace — hide nav, footer, reset main padding ── */
+body:has([data-workspace]) > nav,
+body:has([data-workspace]) nav.fixed { display: none; }
 body:has([data-workspace]) footer { display: none; }
-body:has([data-workspace]) main { padding-bottom: 0; }
+body:has([data-workspace]) main { padding-top: 0; padding-bottom: 0; }
 
 /* ── Syntax tokens ── */
 .tk-kw { color: var(--brand-light); }

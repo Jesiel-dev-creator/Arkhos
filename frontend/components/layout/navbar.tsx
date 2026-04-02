@@ -9,7 +9,6 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
-  SheetClose,
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -115,18 +114,18 @@ export function Navbar() {
                   {NAV_LINKS.map((link) => {
                     const isActive = pathname.includes(link.href);
                     return (
-                      <SheetClose key={link.key} render={<Link href={link.href} />}>
-                        <span
-                          className={cn(
-                            "flex w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150",
-                            isActive
-                              ? "text-[var(--text-primary)] bg-[var(--surface)]"
-                              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]",
-                          )}
-                        >
-                          {t(link.key)}
-                        </span>
-                      </SheetClose>
+                      <Link
+                        key={link.key}
+                        href={link.href}
+                        className={cn(
+                          "flex w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150",
+                          isActive
+                            ? "text-[var(--text-primary)] bg-[var(--surface)]"
+                            : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]",
+                        )}
+                      >
+                        {t(link.key)}
+                      </Link>
                     );
                   })}
                 </div>
