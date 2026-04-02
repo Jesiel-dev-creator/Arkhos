@@ -200,7 +200,7 @@ def _get_aceternity_for_section(section_name: str) -> list[str]:
     return []
 
 
-def get_builder_context(section_names: list[str], max_templates: int = 3) -> str:
+def get_builder_context(section_names: list[str], max_templates: int = 5) -> str:
     """Build reference context for the Builder from both template sources.
 
     21st.dev sections → tagged as SECTION REFERENCE (layout/structure)
@@ -213,14 +213,15 @@ def get_builder_context(section_names: list[str], max_templates: int = 3) -> str
     for name in section_names:
         # Layer 1: 21st.dev section structure (max 1 per section type)
         templates = get_templates_for_section(name)
-        for template in templates[:1]:
+        for template in templates[:2]:
             key = template[:50]
             if key not in seen and template:
                 seen.add(key)
                 section_refs.append(
                     f"# SECTION REFERENCE for '{name}' — "
                     f"use as layout/structure base:\n"
-                    f"{template[:1200]}\n..."
+                    f"{template[:10000]}"
+                    + ("\n..." if len(template) > 10000 else "")
                 )
         if len(section_refs) >= max_templates:
             break
@@ -236,9 +237,10 @@ def get_builder_context(section_names: list[str], max_templates: int = 3) -> str
                 effect_refs.append(
                     f"# EFFECT REFERENCE — use for backgrounds, "
                     f"animations, micro-interactions within sections:\n"
-                    f"{effect[:1000]}\n..."
+                    f"{effect[:8000]}"
+                    + ("\n..." if len(effect) > 8000 else "")
                 )
-            if len(effect_refs) >= 2:
+            if len(effect_refs) >= 3:
                 break
         if len(effect_refs) >= 2:
             break

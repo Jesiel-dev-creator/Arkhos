@@ -12,9 +12,10 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from tramontane import simulate_pipeline
 
 from arkhos.config import get_settings
-from arkhos.pipeline import FleetProfile
+from arkhos.pipeline import PROFILES, FleetProfile, _create_agents
 from arkhos.rate_limit import rate_limiter
 from arkhos.sanitize import sanitize_prompt
 from arkhos.sse import SSEEventType, format_sse
@@ -431,3 +432,60 @@ async def _run_iteration(
 
     await generation.event_queue.put(None)
     rate_limiter.record_generation(client_ip, total_cost)
+
+
+# ── Simulate (cost estimation) ──────────────────────────────────
+
+
+class SimulateRequest(BaseModel):
+    """Request body for POST /api/simulate."""
+
+    prompt: str = Field(..., min_length=1, max_length=1000)
+    profile: FleetProfile = FleetProfile.BALANCED
+
+
+@router.post("/simulate")
+async def simulate_generation(body: SimulateRequest) -> dict[str, Any]:
+    """Estimate generation cost without making API calls."""
+    from arkhos.app import mistral_router
+
+    cfg = PROFILES[body.profile]
+    agents_dict = _create_agents(cfg)
+    agents_list = [
+        agents_dict["planner"],
+        agents_dict["designer"],
+        agents_dict["architect"],
+        agents_dict["builder"],
+        agents_dict["reviewer"],
+    ]
+
+    sim = simulate_pipeline(
+        agents=agents_list,
+        input_text=body.prompt,
+        budget_eur=cfg.total_budget_eur,
+        router=mistral_router,
+    )
+
+    return {
+        "profile": body.profile.value,
+        "estimated_cost_eur": round(sim.total_estimated_cost_eur, 6),
+        "estimated_time_s": round(sim.total_estimated_time_s, 1),
+        "budget_eur": cfg.total_budget_eur,
+        "budget_status": sim.budget_status,
+        "models": [a.model for a in agents_list],
+        "est_label": cfg.est_cost,
+    }
+
+
+# ── Telemetry stats ─────────────────────────────────────────────
+
+
+@router.get("/telemetry")
+async def telemetry_stats() -> dict[str, Any]:
+    """Return fleet telemetry stats (model performance data)."""
+    from arkhos.app import telemetry
+
+    return {
+        "total_outcomes": telemetry.total_outcomes,
+        "model_stats": telemetry.get_model_stats(),
+    }

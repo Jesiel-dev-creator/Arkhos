@@ -25,6 +25,10 @@ class SSEEventType(StrEnum):
 def format_sse(event: SSEEventType | str, data: dict[str, Any]) -> str:
     """Format a Server-Sent Event string.
 
+    SSE spec requires multi-line data to use separate `data:` lines.
+    json.dumps with ensure_ascii=True keeps \\n as escaped sequences
+    (not literal newlines) so the entire JSON stays on one data: line.
+
     Args:
         event: The SSE event type.
         data: The event payload (will be JSON-serialized).
@@ -33,5 +37,7 @@ def format_sse(event: SSEEventType | str, data: dict[str, Any]) -> str:
         Formatted SSE string ready to send over HTTP.
     """
     event_name = event.value if isinstance(event, SSEEventType) else event
-    json_data = json.dumps(data, ensure_ascii=False)
+    # ensure_ascii=True ensures \n stays as \\n in the JSON string,
+    # preventing literal newlines from breaking the SSE data: field.
+    json_data = json.dumps(data, ensure_ascii=True)
     return f"event: {event_name}\ndata: {json_data}\n\n"

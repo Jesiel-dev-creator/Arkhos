@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "generate": "Générer",
+    "gallery": "Galerie",
+    "pricing": "Tarifs",
+    "about": "À propos",
+    "docs": "Documentation",
+    "blog": "Blog"
+  },
+  "hero": {
+    "title": "Créez de beaux sites web avec l'IA",
+    "subtitle": "Souveraineté européenne. Open source. Propulsé par Mistral.",
+    "cta": "Commencer",
+    "placeholder": "Décrivez votre site web...",
+    "badge": "Générateur de sites IA"
+  },
+  "generate": {
+    "title": "Générer",
+    "fleet": {
+      "budget": "Économique",
+      "balanced": "Équilibré",
+      "quality": "Qualité"
+    },
+    "status": {
+      "idle": "Prêt",
+      "running": "Génération en cours...",
+      "complete": "Terminé",
+      "error": "Erreur"
+    },
+    "agents": {
+      "planner": "Planificateur",
+      "designer": "Designer",
+      "architect": "Architecte",
+      "builder": "Développeur",
+      "reviewer": "Vérificateur"
+    },
+    "tabs": {
+      "preview": "Aperçu",
+      "code": "Code"
+    },
+    "actions": {
+      "download": "Télécharger",
+      "approve": "Approuver et construire"
+    },
+    "sections": {
+      "plan": "Plan",
+      "pipeline": "Pipeline"
+    },
+    "templates": {
+      "label": "Ou commencer avec un modèle"
+    },
+    "features": {
+      "agents": "Pipeline d'agents IA",
+      "agentsDesc": "Orchestration multi-agents avec streaming en direct",
+      "routing": "Routage intelligent",
+      "routingDesc": "Modèle optimal par tâche",
+      "react": "React + shadcn",
+      "reactDesc": "Code prêt pour la production",
+      "design": "Design System",
+      "designDesc": "Couleurs, polices, mise en page",
+      "seo": "SEO intégré",
+      "seoDesc": "Balises méta, responsive",
+      "sovereign": "Souveraineté UE",
+      "sovereignDesc": "RGPD, Mistral, Scaleway"
+    },
+    "workspace": {
+      "agentWorking": "{agent} travaille...",
+      "starting": "Démarrage du pipeline...",
+      "complete": "Génération terminée",
+      "filesGenerated": "{count} fichiers générés",
+      "previewPlaceholder": "L'aperçu apparaîtra ici",
+      "selectFile": "Sélectionner un fichier",
+      "files": "Fichiers ({count})"
+    }
+  },
+  "footer": {
+    "company": "Bleucommerce SAS",
+    "location": "Orléans, France",
+    "rights": "Tous droits réservés",
+    "product": "Produit",
+    "companySection": "Entreprise",
+    "legal": "Mentions légales"
+  },
+  "theme": {
+    "dark": "Sombre",
+    "light": "Clair",
+    "system": "Système"
+  },
+  "gpu": {
+    "active": "GPU local",
+    "free": "Gratuit sur votre GPU",
+    "badge": "Mode GPU"
+  }
+}

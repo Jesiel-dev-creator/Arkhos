@@ -9,8 +9,10 @@ from typing import TYPE_CHECKING
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from tramontane import FleetTelemetry, MistralRouter, TramontaneMemory
 
 from arkhos import __version__
+from arkhos.intelligence import load_skills
 from arkhos.routes import router
 
 load_dotenv()  # Load .env so MISTRAL_API_KEY is available to Tramontane
@@ -20,11 +22,29 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# ── App-level singletons ─────────────────────────────────────────
+# FleetTelemetry persists routing outcomes to SQLite.
+# After ~50 generations the router starts using production data
+# instead of hand-crafted rules.
+telemetry = FleetTelemetry(db_path="arkhos_telemetry.db")
+mistral_router = MistralRouter(telemetry=telemetry)
+
+# Cross-generation memory — learns what works across all generations.
+memory = TramontaneMemory(db_path="arkhos_memory.db")
+
+# Skill registry — 24 markdown skill files loaded as MarkdownSkill objects.
+# get_relevant_skills() uses .matches() for smart injection.
+skill_registry = load_skills()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan: startup and shutdown."""
-    logger.info("ArkhosAI v%s starting", __version__)
+    skill_count = sum(len(v) for v in skill_registry.values())
+    logger.info(
+        "ArkhosAI v%s starting (telemetry: %d outcomes, skills: %d, memory: %s)",
+        __version__, telemetry.total_outcomes, skill_count, memory.stats(),
+    )
     yield
     logger.info("ArkhosAI shutting down")
 

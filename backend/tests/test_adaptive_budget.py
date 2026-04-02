@@ -37,7 +37,8 @@ class TestAdaptiveBudgetManager:
         mgr.record_spend("architect", 0.10)
 
         builder_base = 0.40  # 40% of 1.00
-        effective = mgr.builder_budget(builder_base)
+        # Verify cap is applied (unspent would push past 65% cap)
+        assert mgr.builder_budget(builder_base) == pytest.approx(1.00 * 0.65, abs=1e-6)
 
         # Unspent: (0.08-0.001) + (0.20-0.10) + (0.20-0.10) = 0.079 + 0.10 + 0.10 = 0.279
         # base + unspent = 0.40 + 0.279 = 0.679, cap = 1.00 * 0.65 = 0.65

@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "cloudinary@claude-plugins-official": true,
+    "legalzoom@claude-plugins-official": true
+  }
+}

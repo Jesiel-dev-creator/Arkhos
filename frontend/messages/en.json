@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "home": "Home",
+    "generate": "Generate",
+    "gallery": "Gallery",
+    "pricing": "Pricing",
+    "about": "About",
+    "docs": "Docs",
+    "blog": "Blog"
+  },
+  "hero": {
+    "title": "Build beautiful websites with AI",
+    "subtitle": "EU sovereign. Open source. Powered by Mistral.",
+    "cta": "Start generating",
+    "placeholder": "Describe your website...",
+    "badge": "AI Website Generator"
+  },
+  "generate": {
+    "title": "Generate",
+    "fleet": {
+      "budget": "Budget",
+      "balanced": "Balanced",
+      "quality": "Quality"
+    },
+    "status": {
+      "idle": "Ready",
+      "running": "Generating...",
+      "complete": "Complete",
+      "error": "Error"
+    },
+    "agents": {
+      "planner": "Planner",
+      "designer": "Designer",
+      "architect": "Architect",
+      "builder": "Builder",
+      "reviewer": "Reviewer"
+    },
+    "tabs": {
+      "preview": "Preview",
+      "code": "Code"
+    },
+    "actions": {
+      "download": "Download",
+      "approve": "Approve & Build"
+    },
+    "sections": {
+      "plan": "Plan",
+      "pipeline": "Pipeline"
+    },
+    "templates": {
+      "label": "Or start from a template"
+    },
+    "features": {
+      "agents": "AI Agent Pipeline",
+      "agentsDesc": "Multi-agent orchestration with live streaming",
+      "routing": "Smart Routing",
+      "routingDesc": "Optimal model per task",
+      "react": "React + shadcn",
+      "reactDesc": "Production-ready code",
+      "design": "Design System",
+      "designDesc": "Colors, fonts, layout",
+      "seo": "SEO Ready",
+      "seoDesc": "Meta tags, responsive",
+      "sovereign": "EU Sovereign",
+      "sovereignDesc": "GDPR, Mistral, Scaleway"
+    },
+    "workspace": {
+      "agentWorking": "{agent} is working...",
+      "starting": "Starting pipeline...",
+      "complete": "Generation complete",
+      "filesGenerated": "{count} files generated",
+      "previewPlaceholder": "Preview will appear here",
+      "selectFile": "Select a file to view",
+      "files": "Files ({count})"
+    }
+  },
+  "footer": {
+    "company": "Bleucommerce SAS",
+    "location": "Orléans, France",
+    "rights": "All rights reserved",
+    "product": "Product",
+    "companySection": "Company",
+    "legal": "Legal"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System"
+  },
+  "gpu": {
+    "active": "Local GPU",
+    "free": "Free on your GPU",
+    "badge": "GPU Mode"
+  }
+}

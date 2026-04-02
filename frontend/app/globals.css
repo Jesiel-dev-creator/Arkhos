@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+@custom-variant gpu (&:is(.gpu *));
+
+/* ═══════════════════════════════════════════
+   ArkhosAI — Electric Indigo Design System
+   Three themes: Dark (default), Light, GPU
+   ═══════════════════════════════════════════ */
+
+@theme inline {
+  --font-display: var(--font-syne);
+  --font-body: var(--font-dm-sans);
+  --font-code: var(--font-jetbrains-mono);
+
+  --color-void: var(--void);
+  --color-deep: var(--deep);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
+  --color-brand: var(--brand);
+  --color-brand-light: var(--brand-light);
+  --color-brand-dark: var(--brand-dark);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-gold: var(--gold);
+}
+
+/* ── Dark Theme (default — Cloud/Indigo) ── */
+:root {
+  --void: #030712;
+  --deep: #0F172A;
+  --surface: #1E293B;
+  --elevated: #334155;
+
+  --border: #1E293B;
+  --border-strong: #334155;
+
+  --brand: #6366F1;
+  --brand-light: #818CF8;
+  --brand-dark: #4F46E5;
+  --brand-glow: rgba(99, 102, 241, 0.12);
+
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --gold: #CA8A04;
+
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.06);
+
+  /* shadcn/ui */
+  --background: var(--void);
+  --foreground: var(--text-primary);
+  --card: var(--deep);
+  --card-foreground: var(--text-primary);
+  --popover: var(--deep);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--brand);
+  --primary-foreground: #ffffff;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text-secondary);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--elevated);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--error);
+  --input: var(--border);
+  --ring: var(--brand);
+  --radius: 0.5rem;
+}
+
+/* ── Light Theme (Cloud/Indigo) ── */
+.light {
+  --void: #FFFFFF;
+  --deep: #F8FAFC;
+  --surface: #F1F5F9;
+  --elevated: #E2E8F0;
+
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.06);
+
+  --background: var(--void);
+  --foreground: var(--text-primary);
+  --card: var(--deep);
+  --card-foreground: var(--text-primary);
+  --popover: var(--deep);
+  --popover-foreground: var(--text-primary);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text-secondary);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--elevated);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--error);
+  --input: var(--border);
+  --primary: var(--brand);
+  --primary-foreground: #ffffff;
+  --ring: var(--brand);
+}
+
+/* ── GPU Theme (NVIDIA Local Mode) ── */
+.gpu {
+  --void: #0A0A0A;
+  --deep: #141414;
+  --surface: #1E1E1E;
+  --elevated: #2A2A2A;
+
+  --border: #1E1E1E;
+  --border-strong: #333333;
+
+  --brand: #76B900;
+  --brand-light: #93D500;
+  --brand-dark: #5A8C00;
+  --brand-glow: rgba(118, 185, 0, 0.12);
+
+  --text-primary: #E5E5E5;
+  --text-secondary: #999999;
+  --text-muted: #666666;
+
+  --glass-bg: rgba(10, 10, 10, 0.8);
+  --glass-border: rgba(118, 185, 0, 0.08);
+
+  --background: var(--void);
+  --foreground: var(--text-primary);
+  --card: var(--deep);
+  --card-foreground: var(--text-primary);
+  --popover: var(--deep);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--brand);
+  --primary-foreground: #000000;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text-secondary);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--elevated);
+  --accent-foreground: var(--text-primary);
+  --input: var(--border);
+  --ring: var(--brand);
+}
+
+/* ── Base ── */
+body {
+  background: var(--void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--elevated); border-radius: 3px; }

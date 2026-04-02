@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     mistral_api_key: str = Field(alias="MISTRAL_API_KEY")
     arkhos_env: str = "development"
     max_generations_per_ip: int = 3
-    budget_per_generation_eur: float = 0.02
-    global_daily_budget_eur: float = 5.00
+    budget_per_generation_eur: float = 0.25
+    global_daily_budget_eur: float = 25.00
     max_prompt_length: int = 1000
     database_path: str = "arkhos.db"
 

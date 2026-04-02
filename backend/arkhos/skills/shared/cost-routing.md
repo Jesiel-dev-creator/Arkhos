@@ -15,11 +15,11 @@ Always use the cheapest model that can reliably handle the task. Over-provisioni
 
 ## Budget Management
 
-Hard ceiling per generation: EUR 0.02. This covers all 4-5 agents with margin. If the planner uses EUR 0.001, the remaining EUR 0.019 is distributed across designer, architect, builder, and reviewer. The builder gets the largest allocation because code generation requires the most tokens. If any agent approaches its budget limit, Tramontane will truncate the response — better to allocate generously.
+Hard ceiling per generation: EUR 0.25. This gives every agent generous room to use skills and templates fully. The builder gets the largest allocation (EUR 0.10) because code generation requires the most tokens. Designer and Reviewer each get EUR 0.05 to work with skills properly. If any agent approaches its budget limit, Tramontane will truncate the response — better to allocate generously than produce low-quality output.
 
 ## Global Daily Spend
 
-Daily spend cap: EUR 5.00 across all generations. At EUR 0.004-0.01 per generation, this allows 500-1250 generations per day. Rate limiting (3 per IP per day) ensures this budget is distributed fairly across users. Monitor daily spend and alert at 80% threshold.
+Daily spend cap: EUR 25.00 across all generations. At EUR 0.01-0.05 per generation typical cost, this allows 500+ generations per day. Rate limiting (3 per IP per day) ensures this budget is distributed fairly across users. Monitor daily spend and alert at 80% threshold.
 
 ## When to Upgrade Models
 

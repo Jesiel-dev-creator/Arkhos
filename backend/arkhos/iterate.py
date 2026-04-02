@@ -108,7 +108,7 @@ async def run_iteration(
         goal="Modify existing React project files based on user feedback",
         backstory=ITERATE_SYSTEM_PROMPT,
         model="devstral-small",
-        budget_eur=0.02,
+        budget_eur=0.08,
     )
 
     # v0.2: smart file selection

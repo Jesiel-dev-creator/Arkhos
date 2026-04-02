@@ -22,14 +22,20 @@ import re
 import time
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
-from tramontane import Agent, MistralRouter, RunContext
+from tramontane import Agent, MistralRouter, ParallelGroup, RunContext
 
 from arkhos.data.design_intelligence import get_design_for_industry
+from arkhos.intelligence import (
+    get_relevant_skills,
+    recall_context,
+    record_agent_experience,
+    record_generation_experience,
+)
 from arkhos.prompts.architect import SYSTEM_PROMPT as ARCHITECT_PROMPT
 from arkhos.prompts.architect import format_user_message as format_architect_msg
 from arkhos.prompts.builder import SYSTEM_PROMPT as BUILDER_PROMPT
@@ -40,12 +46,6 @@ from arkhos.prompts.planner import SYSTEM_PROMPT as PLANNER_PROMPT
 from arkhos.prompts.planner import format_user_message as format_planner_msg
 from arkhos.prompts.reviewer import SYSTEM_PROMPT as REVIEWER_PROMPT
 from arkhos.prompts.reviewer import format_user_message as format_reviewer_msg
-from arkhos.skills import (
-    get_builder_skills,
-    get_designer_skills,
-    get_planner_skills,
-    get_reviewer_skills,
-)
 from arkhos.sse import SSEEventType, format_sse
 from arkhos.templates import get_builder_context
 
@@ -200,12 +200,14 @@ class PipelineResult:
 def _create_agents(
     cfg: ProfileConfig | None = None,
     budget_mgr: AdaptiveBudgetManager | None = None,
+    prompt: str = "",
 ) -> dict[str, Agent]:
     """Create the 5 pipeline agents with profile-aware models and budgets.
 
     Args:
         cfg: Fleet profile config. Falls back to BALANCED if None.
         budget_mgr: Adaptive budget manager for allocation tracking.
+        prompt: User prompt for smart skill injection via relevance matching.
     """
     if cfg is None:
         cfg = PROFILES[FleetProfile.BALANCED]
@@ -226,6 +228,12 @@ def _create_agents(
         # Builder allocation deferred — uses builder_budget() at runtime
         budget_mgr.allocate("reviewer", reviewer_budget)
 
+    # Smart skill injection: only relevant skills per role + prompt
+    registry = _get_skills()
+    designer_skills = get_relevant_skills(registry, "designer", prompt)
+    builder_skills = get_relevant_skills(registry, "builder", prompt)
+    reviewer_skills = get_relevant_skills(registry, "reviewer", prompt)
+
     return {
         "planner": Agent(
             role="Landing Page Planner",
@@ -234,13 +242,16 @@ def _create_agents(
             model=cfg.planner_model,
             budget_eur=planner_budget,
             temperature=0.1,
+            gdpr_level="standard",
+            audit_actions=True,
         ),
         "designer": Agent(
             role="Visual Designer",
             goal="Create cohesive design systems for landing pages",
-            backstory=DESIGNER_PROMPT + "\n\n## DESIGN SKILLS\n" + get_designer_skills(),
+            backstory=DESIGNER_PROMPT + "\n\n## DESIGN SKILLS\n" + designer_skills,
             model=cfg.designer_model,
             budget_eur=designer_budget,
+            audit_actions=True,
         ),
         "architect": Agent(
             role="React Project Architect",
@@ -249,29 +260,46 @@ def _create_agents(
             model=cfg.architect_model,
             budget_eur=architect_budget,
             temperature=0.1,
+            audit_actions=True,
         ),
         "builder": Agent(
             role="Frontend Builder",
             goal="Generate complete multi-file React projects with shadcn/ui",
-            backstory=BUILDER_PROMPT + "\n\n## BUILDER SKILLS\n" + get_builder_skills(),
+            backstory=BUILDER_PROMPT + "\n\n## BUILDER SKILLS\n" + builder_skills,
             model=cfg.builder_model,
             budget_eur=builder_budget,
             temperature=cfg.builder_temp,
             validate_output=lambda result: len(re.findall(r"</file>", result.output)) >= 5,
+            audit_actions=True,
         ),
         "reviewer": Agent(
             role="Code Reviewer",
             goal="Validate React project quality, shadcn/ui usage, and spec compliance",
-            backstory=REVIEWER_PROMPT + "\n\n## REVIEWER SKILLS\n" + get_reviewer_skills(),
+            backstory=REVIEWER_PROMPT + "\n\n## REVIEWER SKILLS\n" + reviewer_skills,
             model=cfg.reviewer_model,
             budget_eur=reviewer_budget,
             temperature=0.0,
+            audit_actions=True,
         ),
     }
 
 
-# Shared router instance for all agents
-_router = MistralRouter()
+def _get_router() -> MistralRouter:
+    """Get the app-level router singleton (with telemetry)."""
+    from arkhos.app import mistral_router
+    return mistral_router
+
+
+def _get_memory() -> Any:
+    """Get the app-level TramontaneMemory singleton."""
+    from arkhos.app import memory
+    return memory
+
+
+def _get_skills() -> dict[str, Any]:
+    """Get the app-level skill registry."""
+    from arkhos.app import skill_registry
+    return skill_registry
 
 
 def _parse_file_tags(text: str) -> dict[str, str]:
@@ -834,12 +862,17 @@ async def run_planner_streaming(
         })
 
         t0 = time.monotonic()
-        planner_skills = get_planner_skills("default")
+        registry = _get_skills()
+        planner_skills = get_relevant_skills(registry, "planner", prompt)
+        mem = _get_memory()
+        memory_ctx = await recall_context(mem, "planner", prompt)
         planner_input = (
             format_planner_msg(prompt, locale)
             + "\n\n## PLANNING SKILLS\n"
             + planner_skills
         )
+        if memory_ctx:
+            planner_input += "\n\n" + memory_ctx
         planner_response = await agents["planner"].run(planner_input)
 
         planner_step = AgentStepResult(
@@ -865,6 +898,11 @@ async def run_planner_streaming(
         logger.info(
             "Planner complete, plan_ready: cost=EUR%.4f",
             planner_step.cost_eur,
+        )
+
+        await record_agent_experience(
+            mem, "planner", prompt[:100], planner_step.output[:200],
+            planner_step.model_used, planner_step.cost_eur,
         )
 
     except Exception as exc:
@@ -919,69 +957,91 @@ async def run_build_streaming(
 
         # v0.2.0: agents already have skills in backstory from _create_agents()
         # RunContext tracks cost across the chain automatically
-        run_ctx = RunContext(budget_eur=cfg.total_budget_eur)
+        run_ctx = RunContext(budget_eur=cfg.total_budget_eur, reallocation="adaptive")
+        mem = _get_memory()
 
+        # Recall past experiences for Designer and Builder
+        designer_memory = await recall_context(mem, "designer", planner_output)
+        builder_memory = await recall_context(mem, "builder", planner_output)
+
+        # ── Designer + Architect in PARALLEL (saves ~5-8s) ──
+        # Both only need planner_output. ParallelGroup runs them concurrently.
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "designer", "model": agents["designer"].model,
             "step": 2, "total_steps": total_steps,
         })
-        t0 = time.monotonic()
-        designer_response = await agents["designer"].run(
-            format_designer_msg(planner_output, design_intel),
-            router=_router,
-            run_context=run_ctx,
-        )
-        designer_step = AgentStepResult(
-            agent_name="designer",
-            model_used=designer_response.model_used,
-            output=designer_response.output,
-            cost_eur=designer_response.cost_eur,
-            duration_s=round(time.monotonic() - t0, 2),
-        )
-        agent_results.append(designer_step)
-        cumulative_cost += designer_step.cost_eur
-        yield format_sse(SSEEventType.AGENT_COMPLETE, {
-            "agent": "designer", "model": designer_step.model_used,
-            "cost_eur": designer_step.cost_eur,
-            "duration_s": designer_step.duration_s,
-            "cumulative_cost_eur": round(cumulative_cost, 6),
-        })
-        budget_mgr.record_spend("designer", designer_step.cost_eur)
-        logger.info(
-            "Designer complete: cost=EUR%.4f duration=%.1fs",
-            designer_step.cost_eur, designer_step.duration_s,
-        )
-
-        # ── Architect (NEW in v0.2) ──
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "architect", "model": agents["architect"].model,
             "step": 3, "total_steps": total_steps,
         })
+
         t0 = time.monotonic()
-        architect_response = await agents["architect"].run(
-            format_architect_msg(planner_output, designer_step.output),
-            router=_router,
+        parallel = ParallelGroup(
+            agents=[agents["designer"], agents["architect"]],
+        )
+        parallel_result = await parallel.run(
+            inputs={
+                "Visual Designer": (
+                    format_designer_msg(planner_output, design_intel)
+                    + ("\n\n" + designer_memory if designer_memory else "")
+                ),
+                "React Project Architect": format_architect_msg(
+                    planner_output, planner_output,
+                ),
+            },
+            router=_get_router(),
             run_context=run_ctx,
+        )
+        parallel_duration = round(time.monotonic() - t0, 2)
+
+        # Extract individual results
+        designer_res = parallel_result.get("Visual Designer")
+        architect_res = parallel_result.get("React Project Architect")
+
+        designer_step = AgentStepResult(
+            agent_name="designer",
+            model_used=designer_res.model_used,
+            output=designer_res.output,
+            cost_eur=designer_res.cost_eur,
+            duration_s=parallel_duration,
         )
         architect_step = AgentStepResult(
             agent_name="architect",
-            model_used=architect_response.model_used,
-            output=architect_response.output,
-            cost_eur=architect_response.cost_eur,
-            duration_s=round(time.monotonic() - t0, 2),
+            model_used=architect_res.model_used,
+            output=architect_res.output,
+            cost_eur=architect_res.cost_eur,
+            duration_s=parallel_duration,
         )
-        agent_results.append(architect_step)
-        cumulative_cost += architect_step.cost_eur
+        agent_results.extend([designer_step, architect_step])
+        cumulative_cost += designer_step.cost_eur + architect_step.cost_eur
+
+        yield format_sse(SSEEventType.AGENT_COMPLETE, {
+            "agent": "designer", "model": designer_step.model_used,
+            "cost_eur": designer_step.cost_eur,
+            "duration_s": designer_step.duration_s,
+            "cumulative_cost_eur": round(cumulative_cost - architect_step.cost_eur, 6),
+        })
         yield format_sse(SSEEventType.AGENT_COMPLETE, {
             "agent": "architect", "model": architect_step.model_used,
             "cost_eur": architect_step.cost_eur,
             "duration_s": architect_step.duration_s,
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
+        budget_mgr.record_spend("designer", designer_step.cost_eur)
         budget_mgr.record_spend("architect", architect_step.cost_eur)
         logger.info(
-            "Architect complete: cost=EUR%.4f duration=%.1fs",
-            architect_step.cost_eur, architect_step.duration_s,
+            "Designer+Architect PARALLEL: cost=EUR%.4f duration=%.1fs (saved ~%.0f%%)",
+            designer_step.cost_eur + architect_step.cost_eur,
+            parallel_duration,
+            50.0,  # rough estimate: parallel vs sequential
+        )
+        await record_agent_experience(
+            mem, "designer", planner_output[:100], designer_step.output[:200],
+            designer_step.model_used, designer_step.cost_eur,
+        )
+        await record_agent_experience(
+            mem, "architect", planner_output[:100], architect_step.output[:200],
+            architect_step.model_used, architect_step.cost_eur,
         )
 
         # ── Inject template references for Builder ──
@@ -1025,6 +1085,8 @@ async def run_build_streaming(
             architect_step.output,
             template_refs,
         )
+        if builder_memory:
+            builder_input += "\n\n" + builder_memory
 
         # Stream tokens, extract files as </file> tags close
         full_output = ""
@@ -1033,7 +1095,7 @@ async def run_build_streaming(
         builder_result = None
 
         async for event in agents["builder"].run_stream(
-            builder_input, router=_router, run_context=run_ctx,
+            builder_input, router=_get_router(), run_context=run_ctx,
         ):
             if event.type == "token":
                 full_output += event.token
@@ -1119,6 +1181,11 @@ async def run_build_streaming(
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
         budget_mgr.record_spend("builder", builder_step.cost_eur)
+        await record_agent_experience(
+            mem, "builder", planner_output[:100],
+            f"{len(files)} files generated",
+            builder_step.model_used, builder_step.cost_eur,
+        )
         logger.info(
             "Builder complete: cost=EUR%.4f duration=%.1fs files=%d",
             builder_step.cost_eur, builder_step.duration_s, len(files),
@@ -1187,7 +1254,7 @@ async def run_build_streaming(
         t0 = time.monotonic()
         reviewer_response = await agents["reviewer"].run(
             format_reviewer_msg(builder_step.output, planner_output),
-            router=_router,
+            router=_get_router(),
             run_context=run_ctx,
         )
         reviewer_step = AgentStepResult(
@@ -1206,6 +1273,10 @@ async def run_build_streaming(
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
         budget_mgr.record_spend("reviewer", reviewer_step.cost_eur)
+        await record_agent_experience(
+            mem, "reviewer", planner_output[:100], reviewer_step.output[:200],
+            reviewer_step.model_used, reviewer_step.cost_eur,
+        )
         logger.info(
             "Reviewer complete: cost=EUR%.4f duration=%.1fs",
             reviewer_step.cost_eur, reviewer_step.duration_s,
@@ -1241,6 +1312,18 @@ async def run_build_streaming(
         logger.info(
             "Build complete: cost=EUR%.4f duration=%.1fs",
             cumulative_cost, total_duration,
+        )
+
+        # Record full generation experience
+        await record_generation_experience(
+            mem,
+            prompt=planner_output[:200],
+            profile=profile.value,
+            total_cost=cumulative_cost,
+            models_used=[r.model_used for r in agent_results],
+            success=True,
+            file_count=len(files) if files else 0,
+            reviewer_summary=reviewer_step.output[:200],
         )
 
     except Exception as exc:

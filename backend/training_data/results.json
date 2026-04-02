@@ -1,0 +1,1642 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create a website for a boulangerie in Paris called 'Le Pain Dore' with testimonials section",
+    "timestamp": "2026-04-01T20:43:10.995690+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 54,
+        "output_tokens": 2474,
+        "output_length": 9780
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0062320000000000006,
+        "input_tokens": 2510,
+        "output_tokens": 3318,
+        "output_length": 10643
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 3347,
+        "output_tokens": 5023,
+        "output_length": 17275
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0031695,
+        "input_tokens": 5052,
+        "output_tokens": 429,
+        "output_length": 1619
+      }
+    ],
+    "total_cost_eur": 0.0094015,
+    "success": true
+  },
+  {
+    "id": 2,
+    "prompt": "Build a landing page for a French tech startup in Station F",
+    "timestamp": "2026-04-01T20:45:20.468716+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 44,
+        "output_tokens": 1381,
+        "output_length": 5441
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.013094,
+        "input_tokens": 1417,
+        "output_tokens": 2052,
+        "output_length": 8488
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2240,
+        "output_tokens": 2010,
+        "output_length": 7202
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0028615000000000003,
+        "input_tokens": 2042,
+        "output_tokens": 1227,
+        "output_length": 4770
+      }
+    ],
+    "total_cost_eur": 0.0159555,
+    "success": true
+  },
+  {
+    "id": 3,
+    "prompt": "Create a bilingual FR/EN website for an EU consultancy",
+    "timestamp": "2026-04-01T20:46:44.281109+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 44,
+        "output_tokens": 1980,
+        "output_length": 7789
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0046815,
+        "input_tokens": 2016,
+        "output_tokens": 2449,
+        "output_length": 7808
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2478,
+        "output_tokens": 6619,
+        "output_length": 23015
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004764,
+        "input_tokens": 6651,
+        "output_tokens": 959,
+        "output_length": 3760
+      }
+    ],
+    "total_cost_eur": 0.009445499999999999,
+    "success": true
+  },
+  {
+    "id": 4,
+    "prompt": "Create a photography portfolio site",
+    "timestamp": "2026-04-01T20:49:20.734487+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 37,
+        "output_tokens": 1838,
+        "output_length": 7853
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0073285,
+        "input_tokens": 1874,
+        "output_tokens": 4261,
+        "output_length": 14693
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 4290,
+        "output_tokens": 7233,
+        "output_length": 20309
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0049975,
+        "input_tokens": 7265,
+        "output_tokens": 910,
+        "output_length": 3565
+      }
+    ],
+    "total_cost_eur": 0.012326,
+    "success": true
+  },
+  {
+    "id": 5,
+    "prompt": "Build a wedding invitation website with contact form",
+    "timestamp": "2026-04-01T20:51:51.108122+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 40,
+        "output_tokens": 1914,
+        "output_length": 7446
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0049785,
+        "input_tokens": 1950,
+        "output_tokens": 2669,
+        "output_length": 8831
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2698,
+        "output_tokens": 6411,
+        "output_length": 21456
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004765,
+        "input_tokens": 6443,
+        "output_tokens": 1029,
+        "output_length": 4100
+      }
+    ],
+    "total_cost_eur": 0.0097435,
+    "success": true
+  },
+  {
+    "id": 6,
+    "prompt": "Create a SaaS landing page for an AI writing tool mobile-first responsive",
+    "timestamp": "2026-04-01T20:56:56.788228+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 47,
+        "output_tokens": 1767,
+        "output_length": 7677
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.013671,
+        "input_tokens": 1803,
+        "output_tokens": 2013,
+        "output_length": 8443
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2232,
+        "output_tokens": 1137,
+        "output_length": 4304
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.012403,
+        "input_tokens": 1169,
+        "output_tokens": 2013,
+        "output_length": 9175
+      }
+    ],
+    "total_cost_eur": 0.026074,
+    "success": true
+  },
+  {
+    "id": 7,
+    "prompt": "Create a site for a patisserie in Lyon specializing in macarons",
+    "timestamp": "2026-04-01T20:57:58.858474+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 48,
+        "output_tokens": 1407,
+        "output_length": 5549
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0034289999999999998,
+        "input_tokens": 1443,
+        "output_tokens": 1805,
+        "output_length": 5368
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1834,
+        "output_tokens": 4951,
+        "output_length": 17096
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0033404999999999997,
+        "input_tokens": 4983,
+        "output_tokens": 566,
+        "output_length": 2187
+      }
+    ],
+    "total_cost_eur": 0.0067694999999999995,
+    "success": true
+  },
+  {
+    "id": 8,
+    "prompt": "Build a pricing page for a project management SaaS mobile-first responsive",
+    "timestamp": "2026-04-01T20:59:27.153283+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 46,
+        "output_tokens": 1436,
+        "output_length": 6020
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0036730000000000005,
+        "input_tokens": 1472,
+        "output_tokens": 1958,
+        "output_length": 6322
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1987,
+        "output_tokens": 6470,
+        "output_length": 19740
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0039905,
+        "input_tokens": 6502,
+        "output_tokens": 493,
+        "output_length": 2037
+      }
+    ],
+    "total_cost_eur": 0.0076635,
+    "success": true
+  },
+  {
+    "id": 9,
+    "prompt": "Create an online store for handmade jewelry with contact form",
+    "timestamp": "2026-04-01T21:01:09.046255+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 43,
+        "output_tokens": 1504,
+        "output_length": 5776
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004625,
+        "input_tokens": 1540,
+        "output_tokens": 2570,
+        "output_length": 8400
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2599,
+        "output_tokens": 3777,
+        "output_length": 13471
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0028215000000000002,
+        "input_tokens": 3807,
+        "output_tokens": 612,
+        "output_length": 2427
+      }
+    ],
+    "total_cost_eur": 0.0074465,
+    "success": true
+  },
+  {
+    "id": 10,
+    "prompt": "Create a developer documentation site for an API with blog section",
+    "timestamp": "2026-04-01T21:02:51.769919+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 43,
+        "output_tokens": 2090,
+        "output_length": 8407
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.010227,
+        "input_tokens": 2126,
+        "output_tokens": 1195,
+        "output_length": 5147
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1385,
+        "output_tokens": 863,
+        "output_length": 3268
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0019175,
+        "input_tokens": 895,
+        "output_tokens": 980,
+        "output_length": 3904
+      }
+    ],
+    "total_cost_eur": 0.012144499999999999,
+    "success": true
+  },
+  {
+    "id": 11,
+    "prompt": "Create a real estate agency site in Nice",
+    "timestamp": "2026-04-01T21:03:40.415740+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 40,
+        "output_tokens": 1557,
+        "output_length": 6450
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0030629999999999998,
+        "input_tokens": 1593,
+        "output_tokens": 1511,
+        "output_length": 5010
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1540,
+        "output_tokens": 4883,
+        "output_length": 16758
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.00332,
+        "input_tokens": 4915,
+        "output_tokens": 575,
+        "output_length": 2118
+      }
+    ],
+    "total_cost_eur": 0.006383,
+    "success": true
+  },
+  {
+    "id": 12,
+    "prompt": "Create a real estate agency site in Nice with hero video background",
+    "timestamp": "2026-04-01T21:05:18.361546+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 44,
+        "output_tokens": 1508,
+        "output_length": 5973
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0037849999999999997,
+        "input_tokens": 1543,
+        "output_tokens": 2009,
+        "output_length": 6252
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2038,
+        "output_tokens": 3657,
+        "output_length": 12121
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0032110000000000003,
+        "input_tokens": 3689,
+        "output_tokens": 911,
+        "output_length": 3606
+      }
+    ],
+    "total_cost_eur": 0.0069960000000000005,
+    "success": true
+  },
+  {
+    "id": 13,
+    "prompt": "Create a personal blog with minimalist design with animated scroll effects",
+    "timestamp": "2026-04-01T21:06:48.557382+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 44,
+        "output_tokens": 1777,
+        "output_length": 7284
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0061955000000000005,
+        "input_tokens": 1813,
+        "output_tokens": 3526,
+        "output_length": 12115
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 3556,
+        "output_tokens": 6176,
+        "output_length": 20751
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004517,
+        "input_tokens": 6208,
+        "output_tokens": 942,
+        "output_length": 3491
+      }
+    ],
+    "total_cost_eur": 0.0107125,
+    "success": true
+  },
+  {
+    "id": 14,
+    "prompt": "Build a landing page for a French tech startup in Station F with dark theme",
+    "timestamp": "2026-04-01T21:09:02.441521+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 47,
+        "output_tokens": 2119,
+        "output_length": 7809
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0052580000000000005,
+        "input_tokens": 2155,
+        "output_tokens": 2787,
+        "output_length": 8909
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2816,
+        "output_tokens": 9554,
+        "output_length": 20985
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0057740000000000005,
+        "input_tokens": 9586,
+        "output_tokens": 654,
+        "output_length": 2718
+      }
+    ],
+    "total_cost_eur": 0.011032,
+    "success": true
+  },
+  {
+    "id": 15,
+    "prompt": "Build a portfolio site for a French architect in Marseille with hero video background",
+    "timestamp": "2026-04-01T21:11:12.469902+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 46,
+        "output_tokens": 1168,
+        "output_length": 4706
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.009958,
+        "input_tokens": 1204,
+        "output_tokens": 1510,
+        "output_length": 6784
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1716,
+        "output_tokens": 1083,
+        "output_length": 4496
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.025245,
+        "input_tokens": 1115,
+        "output_tokens": 4603,
+        "output_length": 22998
+      }
+    ],
+    "total_cost_eur": 0.035203,
+    "success": true
+  },
+  {
+    "id": 16,
+    "prompt": "Create a website for an Italian restaurant in Amsterdam with contact form",
+    "timestamp": "2026-04-01T21:12:31.520676+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 44,
+        "output_tokens": 2191,
+        "output_length": 8491
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0040225,
+        "input_tokens": 2228,
+        "output_tokens": 1939,
+        "output_length": 6314
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1968,
+        "output_tokens": 5768,
+        "output_length": 19102
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004286,
+        "input_tokens": 5800,
+        "output_tokens": 924,
+        "output_length": 3589
+      }
+    ],
+    "total_cost_eur": 0.0083085,
+    "success": true
+  },
+  {
+    "id": 17,
+    "prompt": "Create a website for a lavender farm in Provence with hero video background",
+    "timestamp": "2026-04-01T21:14:35.303895+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 46,
+        "output_tokens": 2129,
+        "output_length": 8709
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0041515,
+        "input_tokens": 2165,
+        "output_tokens": 2046,
+        "output_length": 6807
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2075,
+        "output_tokens": 9580,
+        "output_length": 31740
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.005916,
+        "input_tokens": 9612,
+        "output_tokens": 740,
+        "output_length": 3237
+      }
+    ],
+    "total_cost_eur": 0.0100675,
+    "success": true
+  },
+  {
+    "id": 18,
+    "prompt": "Create a freelance designer portfolio with light minimal design",
+    "timestamp": "2026-04-01T21:17:15.335044+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 42,
+        "output_tokens": 1442,
+        "output_length": 5791
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.010860999999999999,
+        "input_tokens": 1478,
+        "output_tokens": 1581,
+        "output_length": 7154
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1739,
+        "output_tokens": 946,
+        "output_length": 3863
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.018335999999999998,
+        "input_tokens": 978,
+        "output_tokens": 3276,
+        "output_length": 16293
+      }
+    ],
+    "total_cost_eur": 0.029196999999999997,
+    "success": true
+  },
+  {
+    "id": 19,
+    "prompt": "Create a law firm website in Paris",
+    "timestamp": "2026-04-01T21:18:38.013491+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 39,
+        "output_tokens": 2319,
+        "output_length": 8984
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0065445,
+        "input_tokens": 2355,
+        "output_tokens": 3578,
+        "output_length": 12986
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 3607,
+        "output_tokens": 6675,
+        "output_length": 23021
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0043615,
+        "input_tokens": 6707,
+        "output_tokens": 672,
+        "output_length": 2683
+      }
+    ],
+    "total_cost_eur": 0.010905999999999999,
+    "success": true
+  },
+  {
+    "id": 20,
+    "prompt": "Build a status page for a cloud service with pricing table",
+    "timestamp": "2026-04-01T21:21:42.907491+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 43,
+        "output_tokens": 1898,
+        "output_length": 7336
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.003931,
+        "input_tokens": 1934,
+        "output_tokens": 1976,
+        "output_length": 6034
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2005,
+        "output_tokens": 4285,
+        "output_length": 15871
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0035115,
+        "input_tokens": 4317,
+        "output_tokens": 902,
+        "output_length": 3845
+      }
+    ],
+    "total_cost_eur": 0.0074424999999999995,
+    "success": true
+  },
+  {
+    "id": 21,
+    "prompt": "Build a site for a French fashion boutique in Le Marais with booking system",
+    "timestamp": "2026-04-01T21:23:57.401827+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 47,
+        "output_tokens": 1455,
+        "output_length": 6046
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.002952,
+        "input_tokens": 1491,
+        "output_tokens": 1471,
+        "output_length": 4512
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1500,
+        "output_tokens": 2660,
+        "output_length": 8900
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0043820000000000005,
+        "input_tokens": 2692,
+        "output_tokens": 2024,
+        "output_length": 7888
+      }
+    ],
+    "total_cost_eur": 0.007334,
+    "success": true
+  },
+  {
+    "id": 22,
+    "prompt": "Create a SaaS landing page for an AI writing tool with booking system",
+    "timestamp": "2026-04-01T21:26:41.715323+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 47,
+        "output_tokens": 1672,
+        "output_length": 6678
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.019785999999999998,
+        "input_tokens": 1708,
+        "output_tokens": 3274,
+        "output_length": 12867
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 3545,
+        "output_tokens": 1298,
+        "output_length": 4433
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.00903,
+        "input_tokens": 1330,
+        "output_tokens": 1274,
+        "output_length": 6725
+      }
+    ],
+    "total_cost_eur": 0.028815999999999998,
+    "success": true
+  },
+  {
+    "id": 23,
+    "prompt": "Create a SaaS landing page for an AI writing tool with animated scroll effects",
+    "timestamp": "2026-04-01T21:28:09.038710+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 48,
+        "output_tokens": 2177,
+        "output_length": 8736
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.005490999999999999,
+        "input_tokens": 2213,
+        "output_tokens": 2923,
+        "output_length": 9758
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2952,
+        "output_tokens": 5333,
+        "output_length": 17049
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0038135,
+        "input_tokens": 5365,
+        "output_tokens": 754,
+        "output_length": 2995
+      }
+    ],
+    "total_cost_eur": 0.0093045,
+    "success": true
+  },
+  {
+    "id": 24,
+    "prompt": "Create a freelance designer portfolio",
+    "timestamp": "2026-04-01T21:30:41.289336+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 38,
+        "output_tokens": 2992,
+        "output_length": 12028
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.007197,
+        "input_tokens": 3030,
+        "output_tokens": 3788,
+        "output_length": 12203
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 3817,
+        "output_tokens": 6552,
+        "output_length": 23129
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0048565,
+        "input_tokens": 6584,
+        "output_tokens": 1043,
+        "output_length": 3901
+      }
+    ],
+    "total_cost_eur": 0.0120535,
+    "success": true
+  },
+  {
+    "id": 25,
+    "prompt": "Create a bilingual FR/EN website for an EU consultancy with booking system",
+    "timestamp": "2026-04-01T21:33:45.146557+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 47,
+        "output_tokens": 1340,
+        "output_length": 5280
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0029770000000000005,
+        "input_tokens": 1376,
+        "output_tokens": 1526,
+        "output_length": 4784
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1555,
+        "output_tokens": 4767,
+        "output_length": 16591
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0031405,
+        "input_tokens": 4799,
+        "output_tokens": 494,
+        "output_length": 1909
+      }
+    ],
+    "total_cost_eur": 0.0061175000000000005,
+    "success": true
+  },
+  {
+    "id": 26,
+    "prompt": "Build a medical practice website with booking system",
+    "timestamp": "2026-04-01T21:35:31.518687+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 40,
+        "output_tokens": 1343,
+        "output_length": 5586
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0041965,
+        "input_tokens": 1379,
+        "output_tokens": 2338,
+        "output_length": 7837
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2367,
+        "output_tokens": 5754,
+        "output_length": 22704
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0035425,
+        "input_tokens": 5786,
+        "output_tokens": 433,
+        "output_length": 1808
+      }
+    ],
+    "total_cost_eur": 0.007738999999999999,
+    "success": true
+  },
+  {
+    "id": 27,
+    "prompt": "Create a SaaS landing page for an AI writing tool with dark theme",
+    "timestamp": "2026-04-01T21:37:43.852751+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 47,
+        "output_tokens": 1840,
+        "output_length": 6835
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004073,
+        "input_tokens": 1876,
+        "output_tokens": 2090,
+        "output_length": 6461
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2118,
+        "output_tokens": 9650,
+        "output_length": 34480
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0058985,
+        "input_tokens": 9682,
+        "output_tokens": 705,
+        "output_length": 2991
+      }
+    ],
+    "total_cost_eur": 0.009971500000000001,
+    "success": true
+  },
+  {
+    "id": 28,
+    "prompt": "Build a product page for artisan coffee beans with pricing table",
+    "timestamp": "2026-04-01T21:40:25.799124+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 43,
+        "output_tokens": 2763,
+        "output_length": 10075
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0067055000000000005,
+        "input_tokens": 2800,
+        "output_tokens": 3537,
+        "output_length": 10544
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 3566,
+        "output_tokens": 4051,
+        "output_length": 14398
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0031235,
+        "input_tokens": 4084,
+        "output_tokens": 721,
+        "output_length": 3220
+      }
+    ],
+    "total_cost_eur": 0.009829000000000001,
+    "success": true
+  },
+  {
+    "id": 29,
+    "prompt": "Build a subscription box landing page with hero video background",
+    "timestamp": "2026-04-01T21:42:14.889842+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 42,
+        "output_tokens": 2123,
+        "output_length": 7914
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004672,
+        "input_tokens": 2159,
+        "output_tokens": 2395,
+        "output_length": 7536
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2424,
+        "output_tokens": 9367,
+        "output_length": 27373
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0055695,
+        "input_tokens": 9399,
+        "output_tokens": 580,
+        "output_length": 2331
+      }
+    ],
+    "total_cost_eur": 0.0102415,
+    "success": true
+  },
+  {
+    "id": 30,
+    "prompt": "Build a medical practice website",
+    "timestamp": "2026-04-01T21:44:47.768188+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 37,
+        "output_tokens": 2529,
+        "output_length": 10396
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0042475,
+        "input_tokens": 2564,
+        "output_tokens": 1977,
+        "output_length": 7238
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2006,
+        "output_tokens": 7018,
+        "output_length": 24301
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0046275,
+        "input_tokens": 7050,
+        "output_tokens": 735,
+        "output_length": 2817
+      }
+    ],
+    "total_cost_eur": 0.008875000000000001,
+    "success": true
+  },
+  {
+    "id": 31,
+    "prompt": "Create a bilingual FR/EN website for an EU consultancy with animated scroll effects",
+    "timestamp": "2026-04-01T21:49:00.381579+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 48,
+        "output_tokens": 1319,
+        "output_length": 5477
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0024865,
+        "input_tokens": 1355,
+        "output_tokens": 1206,
+        "output_length": 3619
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1235,
+        "output_tokens": 8860,
+        "output_length": 27479
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0053805,
+        "input_tokens": 8892,
+        "output_tokens": 623,
+        "output_length": 2689
+      }
+    ],
+    "total_cost_eur": 0.007866999999999999,
+    "success": true
+  },
+  {
+    "id": 32,
+    "prompt": "Build a landing page for a French wine estate in Bordeaux",
+    "timestamp": "2026-04-01T21:51:49.047222+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 43,
+        "output_tokens": 2839,
+        "output_length": 10793
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004205,
+        "input_tokens": 2875,
+        "output_tokens": 1845,
+        "output_length": 5418
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1874,
+        "output_tokens": 8563,
+        "output_length": 34609
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0050085,
+        "input_tokens": 8595,
+        "output_tokens": 474,
+        "output_length": 2349
+      }
+    ],
+    "total_cost_eur": 0.0092135,
+    "success": true
+  },
+  {
+    "id": 33,
+    "prompt": "Build a site for a French fashion boutique in Le Marais",
+    "timestamp": "2026-04-01T21:53:52.934728+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 44,
+        "output_tokens": 2406,
+        "output_length": 9443
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0052320000000000005,
+        "input_tokens": 2442,
+        "output_tokens": 2674,
+        "output_length": 9205
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2703,
+        "output_tokens": 5201,
+        "output_length": 17220
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.004253,
+        "input_tokens": 5233,
+        "output_tokens": 1091,
+        "output_length": 4051
+      }
+    ],
+    "total_cost_eur": 0.009485,
+    "success": true
+  },
+  {
+    "id": 34,
+    "prompt": "Create a real estate agency site in Nice with animated scroll effects",
+    "timestamp": "2026-04-01T21:55:46.400040+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 44,
+        "output_tokens": 1351,
+        "output_length": 5414
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.002981,
+        "input_tokens": 1387,
+        "output_tokens": 1525,
+        "output_length": 5367
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1554,
+        "output_tokens": 7914,
+        "output_length": 33969
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0050695,
+        "input_tokens": 7946,
+        "output_tokens": 731,
+        "output_length": 3095
+      }
+    ],
+    "total_cost_eur": 0.0080505,
+    "success": true
+  },
+  {
+    "id": 35,
+    "prompt": "Build a landing page for a French tech startup in Station F with contact form",
+    "timestamp": "2026-04-01T21:59:31.639571+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 47,
+        "output_tokens": 1697,
+        "output_length": 6573
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0027655,
+        "input_tokens": 1733,
+        "output_tokens": 1266,
+        "output_length": 3767
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1295,
+        "output_tokens": 3515,
+        "output_length": 14156
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0029255,
+        "input_tokens": 3547,
+        "output_tokens": 768,
+        "output_length": 3284
+      }
+    ],
+    "total_cost_eur": 0.005691,
+    "success": true
+  },
+  {
+    "id": 36,
+    "prompt": "Build a status page for a cloud service",
+    "timestamp": "2026-04-01T22:00:41.585371+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 40,
+        "output_tokens": 2203,
+        "output_length": 10864
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0053285,
+        "input_tokens": 2239,
+        "output_tokens": 2806,
+        "output_length": 8725
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2835,
+        "output_tokens": 7713,
+        "output_length": 23243
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.005338,
+        "input_tokens": 7745,
+        "output_tokens": 977,
+        "output_length": 4328
+      }
+    ],
+    "total_cost_eur": 0.010666499999999999,
+    "success": true
+  },
+  {
+    "id": 37,
+    "prompt": "Build a landing page for a French wine estate in Bordeaux with dark theme",
+    "timestamp": "2026-04-01T22:02:41.239582+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 46,
+        "output_tokens": 1705,
+        "output_length": 6422
+      },
+      {
+        "role": "Designer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0034999999999999996,
+        "input_tokens": 1741,
+        "output_tokens": 1753,
+        "output_length": 5667
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1782,
+        "output_tokens": 4389,
+        "output_length": 14816
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "devstral-2",
+        "cost_eur": 0.0034449999999999997,
+        "input_tokens": 4421,
+        "output_tokens": 823,
+        "output_length": 3244
+      }
+    ],
+    "total_cost_eur": 0.006945,
+    "success": true
+  },
+  {
+    "id": 38,
+    "prompt": "Create a freelance designer portfolio with pricing table",
+    "timestamp": "2026-04-01T22:04:11.237033+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 41,
+        "output_tokens": 1315,
+        "output_length": 5081
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.012216999999999999,
+        "input_tokens": 1351,
+        "output_tokens": 1903,
+        "output_length": 8138
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2126,
+        "output_tokens": 430,
+        "output_length": 1728
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "magistral-small",
+        "cost_eur": 0.0023295,
+        "input_tokens": 462,
+        "output_tokens": 1399,
+        "output_length": 6119
+      }
+    ],
+    "total_cost_eur": 0.014546499999999999,
+    "success": true
+  },
+  {
+    "id": 39,
+    "prompt": "Build a landing page for an open-source framework",
+    "timestamp": "2026-04-01T22:04:49.886952+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 41,
+        "output_tokens": 1505,
+        "output_length": 5893
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.011187,
+        "input_tokens": 1541,
+        "output_tokens": 1621,
+        "output_length": 7533
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 1798,
+        "output_tokens": 1046,
+        "output_length": 4570
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.010631,
+        "input_tokens": 1078,
+        "output_tokens": 1695,
+        "output_length": 7987
+      }
+    ],
+    "total_cost_eur": 0.021818,
+    "success": true
+  },
+  {
+    "id": 40,
+    "prompt": "Create a freelance designer portfolio with blog section",
+    "timestamp": "2026-04-01T22:05:46.674056+00:00",
+    "agents": [
+      {
+        "role": "Planner",
+        "model_used": "ministral-3b-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 41,
+        "output_tokens": 2577,
+        "output_length": 10171
+      },
+      {
+        "role": "Designer",
+        "model_used": "magistral-medium",
+        "cost_eur": 0.016586,
+        "input_tokens": 2613,
+        "output_tokens": 2272,
+        "output_length": 9641
+      },
+      {
+        "role": "Builder",
+        "model_used": "devstral-small-latest",
+        "cost_eur": 0.0,
+        "input_tokens": 2467,
+        "output_tokens": 556,
+        "output_length": 2239
+      },
+      {
+        "role": "Reviewer",
+        "model_used": "magistral-small",
+        "cost_eur": 0.001836,
+        "input_tokens": 588,
+        "output_tokens": 1028,
+        "output_length": 5393
+      }
+    ],
+    "total_cost_eur": 0.018422,
+    "success": true
+  }
+]
