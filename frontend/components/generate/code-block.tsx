@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
+import { Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CodeBlockProps {
@@ -59,8 +60,24 @@ export function CodeBlock({ code, filename, className }: CodeBlockProps) {
   const highlighted = useMemo(() => tokenize(code, lang), [code, lang]);
   const lines = highlighted.split("\n");
 
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [code]);
+
   return (
-    <div className={cn("overflow-auto", className)}>
+    <div className={cn("overflow-auto relative", className)}>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="absolute top-2 right-2 flex items-center justify-center w-7 h-7 rounded-md bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none transition-colors duration-150 cursor-pointer"
+        aria-label="Copy code"
+      >
+        {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+      </button>
       <pre className="p-4 text-xs leading-6 font-[var(--font-code)]">
         <code>
           {lines.map((line, i) => (

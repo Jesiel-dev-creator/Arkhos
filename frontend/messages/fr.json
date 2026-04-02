@@ -86,6 +86,7 @@
       "plan": "Plan",
       "pipeline": "Pipeline"
     },
+    "estimate": "Estimation : ~{cost} \u20AC \u00B7 ~{time}s",
     "templates": {
       "label": "Ou commencer avec un modèle"
     },

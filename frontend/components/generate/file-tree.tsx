@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronRight, File, Folder } from "lucide-react";
+import { ChevronRight, File, Folder, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FileTreeProps {
@@ -124,7 +124,15 @@ function TreeItem({
 }
 
 export function FileTree({ files, activeFile, onSelect }: FileTreeProps) {
-  const tree = useMemo(() => buildTree(files), [files]);
+  const [search, setSearch] = useState("");
+
+  const filteredFiles = useMemo(() => {
+    if (!search.trim()) return files;
+    const query = search.trim().toLowerCase();
+    return files.filter((f) => f.toLowerCase().includes(query));
+  }, [files, search]);
+
+  const tree = useMemo(() => buildTree(filteredFiles), [filteredFiles]);
 
   const [expanded, setExpanded] = useState<Set<string>>(() => {
     const dirs = new Set<string>();
@@ -148,6 +156,16 @@ export function FileTree({ files, activeFile, onSelect }: FileTreeProps) {
 
   return (
     <nav aria-label="File tree" className="p-2 space-y-0.5">
+      <div className="relative mb-2">
+        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[var(--text-muted)]" />
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search files..."
+          className="w-full pl-6 pr-2 py-1 text-xs rounded-md border border-[var(--border)] bg-[var(--void)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+        />
+      </div>
       {tree.map((node) => (
         <TreeItem
           key={node.path}

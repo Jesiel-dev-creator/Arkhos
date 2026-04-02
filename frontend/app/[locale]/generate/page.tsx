@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, Cpu, Sparkles, Code2, Palette, Search, Shield } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
@@ -36,6 +36,36 @@ export default function GeneratePage() {
   const [profile, setProfile] = useState<"budget" | "balanced" | "quality">("balanced");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [estimate, setEstimate] = useState<{ cost: string; time: string } | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (prompt.trim().length < 10) {
+      setEstimate(null);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await apiPost<{ estimated_cost_eur: number; estimated_time_s: number }>("/simulate", {
+          prompt: prompt.trim(),
+          profile,
+        });
+        setEstimate({
+          cost: res.estimated_cost_eur.toFixed(3),
+          time: Math.round(res.estimated_time_s).toString(),
+        });
+      } catch {
+        setEstimate(null);
+      }
+    }, 500);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [prompt, profile]);
 
   const handleGenerate = useCallback(
     async (text: string) => {
@@ -110,6 +140,12 @@ export default function GeneratePage() {
           </div>
 
           {error && <p className="mt-2 text-sm text-[var(--error)]">{error}</p>}
+
+          {estimate && (
+            <p className="mt-1 text-[10px] text-[var(--text-muted)]">
+              {t("generate.estimate", { cost: estimate.cost, time: estimate.time })}
+            </p>
+          )}
 
           <div className="mt-6">
             <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-3">
