@@ -5,7 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, Cpu, Sparkles, Code2, Palette, Search, Shield } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { apiPost } from "@/lib/api";
+import { apiPost, apiGet } from "@/lib/api";
+import { Link } from "@/i18n/navigation";
 import { FleetToggle } from "@/components/generate/fleet-toggle";
 
 const TEMPLATES = [
@@ -37,7 +38,14 @@ export default function GeneratePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [estimate, setEstimate] = useState<{ cost: string; time: string } | null>(null);
+  const [recentGenerations, setRecentGenerations] = useState<Array<{ id: string; prompt: string; cost_eur: number }>>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    apiGet<Array<{ id: string; prompt: string; cost_eur: number }>>("/gallery")
+      .then((data) => setRecentGenerations(data))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -165,6 +173,30 @@ export default function GeneratePage() {
               ))}
             </div>
           </div>
+
+          {recentGenerations.length > 0 && (
+            <div className="mt-6">
+              <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-3">
+                {t("generate.recent")}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {recentGenerations.map((gen) => (
+                  <Link
+                    key={gen.id}
+                    href={`/generate/${gen.id}`}
+                    className="rounded-xl border border-[var(--border)] bg-[var(--deep)] p-4 hover:border-[var(--brand)]/30 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+                  >
+                    <p className="text-sm text-[var(--text-primary)] line-clamp-2">
+                      {gen.prompt}
+                    </p>
+                    <p className="mt-1 text-xs font-[var(--font-code)] text-[var(--text-muted)]">
+                      {`€${gen.cost_eur.toFixed(3)}`}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -87,6 +87,7 @@
       "pipeline": "Pipeline"
     },
     "estimate": "Estimation : ~{cost} \u20AC \u00B7 ~{time}s",
+    "recent": "Générations récentes",
     "templates": {
       "label": "Ou commencer avec un modèle"
     },
@@ -277,6 +278,39 @@
           "body": "L'auto-hébergement et le produit hébergé peuvent coexister lorsque l'architecture reste simple et composable."
         }
       }
+    },
+    "changelog": {
+      "kicker": "Journal des modifications",
+      "title": "Nouveautés de ArkhosAI",
+      "description": "Notes de version et mises à jour."
+    },
+    "roadmap": {
+      "kicker": "Feuille de route",
+      "title": "Où nous allons",
+      "description": "Priorités actuelles et prochaines étapes.",
+      "phases": {
+        "now": { "label": "Maintenant", "title": "En cours" },
+        "next": { "label": "Ensuite", "title": "À venir" },
+        "later": { "label": "Plus tard", "title": "À l'horizon" }
+      }
+    },
+    "status": {
+      "kicker": "État du système",
+      "title": "Statut opérationnel",
+      "description": "État actuel de la plateforme ArkhosAI.",
+      "api": "Serveur API",
+      "checking": "Vérification...",
+      "operational": "Opérationnel",
+      "down": "Inaccessible"
+    },
+    "contact": {
+      "kicker": "Contact",
+      "title": "Nous contacter",
+      "description": "Questions, retours ou demandes de partenariat.",
+      "email": "E-mail",
+      "messageLabel": "Message",
+      "send": "Envoyer",
+      "success": "Message envoyé. Nous reviendrons vers vous bientôt."
     },
     "blog": {
       "kicker": "Blog",

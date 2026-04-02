@@ -87,6 +87,7 @@
       "pipeline": "Pipeline"
     },
     "estimate": "Estimated: ~\u20AC{cost} \u00B7 ~{time}s",
+    "recent": "Recent generations",
     "templates": {
       "label": "Or start from a template"
     },
@@ -277,6 +278,39 @@
           "body": "Self-hosting and hosted product development can coexist when the architecture stays simple and composable."
         }
       }
+    },
+    "changelog": {
+      "kicker": "Changelog",
+      "title": "What's new in ArkhosAI",
+      "description": "Release notes and feature updates."
+    },
+    "roadmap": {
+      "kicker": "Roadmap",
+      "title": "Where we're headed",
+      "description": "Current priorities and what's coming next.",
+      "phases": {
+        "now": { "label": "Now", "title": "In progress" },
+        "next": { "label": "Next", "title": "Up next" },
+        "later": { "label": "Later", "title": "On the horizon" }
+      }
+    },
+    "status": {
+      "kicker": "Status",
+      "title": "System status",
+      "description": "Current operational status of the ArkhosAI platform.",
+      "api": "API Server",
+      "checking": "Checking...",
+      "operational": "Operational",
+      "down": "Unreachable"
+    },
+    "contact": {
+      "kicker": "Contact",
+      "title": "Get in touch",
+      "description": "Questions, feedback, or partnership inquiries.",
+      "email": "Email",
+      "messageLabel": "Message",
+      "send": "Send message",
+      "success": "Message sent. We'll get back to you soon."
     },
     "blog": {
       "kicker": "Blog",
