@@ -351,7 +351,7 @@ export default function GenerationWorkspacePage() {
                   previewDevice === "desktop" ? "w-full" : previewDevice === "tablet" ? "w-[768px] rounded-lg border border-[var(--border)] my-4" : "w-[375px] rounded-xl border border-[var(--border)] my-4",
                 )}>
                   {sandboxReady ? (
-                    <iframe src={state.sandbox.previewUrl!} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin" title="Live sandbox preview" />
+                    <iframe src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${state.sandbox.previewUrl}`} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin" title="Live sandbox preview" />
                   ) : (
                     <iframe srcDoc={state.previewHtml} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin" title="Site preview" />
                   )}
