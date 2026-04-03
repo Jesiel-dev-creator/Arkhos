@@ -9,9 +9,11 @@ import logging
 import zipfile
 from typing import Any
 
+import httpx as _httpx
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from starlette.responses import Response
 from tramontane import simulate_pipeline
 
 from arkhos.config import get_settings
@@ -386,6 +388,39 @@ async def stream(generation_id: str) -> StreamingResponse:
             "X-Accel-Buffering": "no",
         },
     )
+
+
+# ── Preview Proxy ────────────────────────────────────────────────
+
+
+@router.get("/preview/{generation_id}/{path:path}")
+@router.get("/preview/{generation_id}")
+async def preview_proxy(generation_id: str, path: str = "") -> Response:
+    """Reverse proxy to the generation's Vite dev server."""
+    from arkhos.app import port_manager
+
+    port = port_manager.get_port(generation_id)
+    if port is None:
+        raise HTTPException(status_code=404, detail="Preview not available")
+
+    port_manager.touch(generation_id)
+
+    target_url = f"http://localhost:{port}/{path}"
+    try:
+        async with _httpx.AsyncClient() as client:
+            resp = await client.get(target_url, timeout=10.0, follow_redirects=True)
+            return Response(
+                content=resp.content,
+                status_code=resp.status_code,
+                headers={
+                    k: v for k, v in resp.headers.items()
+                    if k.lower() not in ("transfer-encoding", "connection")
+                },
+            )
+    except _httpx.ConnectError:
+        raise HTTPException(status_code=502, detail="Preview server not ready")
+    except _httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Preview server timeout")
 
 
 # ── Result / Gallery ─────────────────────────────────────────────
