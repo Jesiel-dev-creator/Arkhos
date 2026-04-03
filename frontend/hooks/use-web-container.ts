@@ -176,15 +176,16 @@ function buildFileTree(files: Record<string, string>): Record<string, TreeNode> 
   const root: Record<string, TreeNode> = {};
 
   for (const [rawPath, contents] of Object.entries(files)) {
-    // Sanitize: strip leading ./ or /, reject paths with .. or empty segments
+    // Sanitize: strip leading ./ or /
     const cleaned = rawPath.replace(/^\.?\/+/, "");
     const segments = cleaned.split("/").filter(Boolean);
 
+    // Only reject truly invalid paths: traversal (..) or OS-forbidden chars
     if (
       segments.length === 0 ||
-      segments.some((s) => s === ".." || s.startsWith(".") && s !== "." || /[<>:"|?*]/.test(s))
+      segments.some((s) => s === ".." || /[<>:"|?*]/.test(s))
     ) {
-      continue; // Skip invalid paths
+      continue;
     }
 
     let current = root;
