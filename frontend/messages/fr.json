@@ -234,11 +234,11 @@
       "price": "0\u00a0\u20ac",
       "period": "pour toujours",
       "cta": "Commencer",
-      "costPerGen": "~0,003\u00a0\u20ac/g\u00e9n",
+      "costPerGen": "~0,004\u00a0\u20ac/g\u00e9n",
       "features": {
         "generations": "10 g\u00e9n\u00e9rations/mois",
         "profiles": "Profil Budget uniquement",
-        "models": "ministral-3b + devstral-small",
+        "models": "ministral-7b + devstral-small",
         "projects": "3 projets",
         "preview": "Aper\u00e7u 5 min",
         "support": "Support communautaire"
@@ -250,7 +250,7 @@
       "period": "/mois",
       "badge": "Le plus populaire",
       "cta": "Commencer",
-      "costPerGen": "~0,005\u20130,020\u00a0\u20ac/g\u00e9n",
+      "costPerGen": "~0,006\u20130,020\u00a0\u20ac/g\u00e9n",
       "features": {
         "generations": "100 g\u00e9n\u00e9rations/mois",
         "profiles": "Tous les profils (Budget, \u00c9quilibr\u00e9, Qualit\u00e9)",
@@ -265,7 +265,7 @@
       "price": "29\u00a0\u20ac",
       "period": "/mois",
       "cta": "Nous contacter",
-      "costPerGen": "~0,005\u20130,020\u00a0\u20ac/g\u00e9n",
+      "costPerGen": "~0,006\u20130,020\u00a0\u20ac/g\u00e9n",
       "features": {
         "generations": "500 g\u00e9n\u00e9rations/mois",
         "profiles": "Tous les profils (Budget, \u00c9quilibr\u00e9, Qualit\u00e9)",
@@ -276,7 +276,7 @@
         "seats": "5 membres"
       }
     },
-    "modelNote": "Budget\u00a0: ministral-3b + devstral-small \u00b7 \u00c9quilibr\u00e9\u00a0: mistral-small + devstral-small \u00b7 Qualit\u00e9\u00a0: mistral-small + devstral-2 + magistral-small",
+    "modelNote": "Budget\u00a0: ministral-7b + devstral-small \u00b7 \u00c9quilibr\u00e9\u00a0: mistral-small + devstral-small \u00b7 Qualit\u00e9\u00a0: mistral-small + devstral-2 + magistral-small",
     "cta": {
       "title": "Pr\u00eat \u00e0 cr\u00e9er\u00a0?",
       "description": "Commencez gratuitement. Passez \u00e0 un forfait sup\u00e9rieur quand vous en avez besoin.",

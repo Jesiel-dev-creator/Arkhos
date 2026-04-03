@@ -234,11 +234,11 @@
       "price": "\u20ac0",
       "period": "forever",
       "cta": "Get started",
-      "costPerGen": "~\u20ac0.003/gen",
+      "costPerGen": "~\u20ac0.004/gen",
       "features": {
         "generations": "10 generations/month",
         "profiles": "Budget profile only",
-        "models": "ministral-3b + devstral-small",
+        "models": "ministral-7b + devstral-small",
         "projects": "3 projects",
         "preview": "5 min preview",
         "support": "Community support"
@@ -250,7 +250,7 @@
       "period": "/month",
       "badge": "Most popular",
       "cta": "Start building",
-      "costPerGen": "~\u20ac0.005\u2013\u20ac0.020/gen",
+      "costPerGen": "~\u20ac0.006\u2013\u20ac0.020/gen",
       "features": {
         "generations": "100 generations/month",
         "profiles": "All fleet profiles (Budget, Balanced, Quality)",
@@ -265,7 +265,7 @@
       "price": "\u20ac29",
       "period": "/month",
       "cta": "Contact us",
-      "costPerGen": "~\u20ac0.005\u2013\u20ac0.020/gen",
+      "costPerGen": "~\u20ac0.006\u2013\u20ac0.020/gen",
       "features": {
         "generations": "500 generations/month",
         "profiles": "All fleet profiles (Budget, Balanced, Quality)",
@@ -276,7 +276,7 @@
         "seats": "5 team seats"
       }
     },
-    "modelNote": "Budget: ministral-3b + devstral-small \u00b7 Balanced: mistral-small + devstral-small \u00b7 Quality: mistral-small + devstral-2 + magistral-small",
+    "modelNote": "Budget: ministral-7b + devstral-small \u00b7 Balanced: mistral-small + devstral-small \u00b7 Quality: mistral-small + devstral-2 + magistral-small",
     "cta": {
       "title": "Ready to build?",
       "description": "Start with the free plan. Upgrade when you need more.",

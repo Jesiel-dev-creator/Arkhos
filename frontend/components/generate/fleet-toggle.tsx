@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 type Profile = "budget" | "balanced" | "quality";
 
 const PROFILES: { key: Profile; label: string; cost: string; time: string; models: string }[] = [
-  { key: "budget", label: "Budget", cost: "~\u20AC0.003", time: "~30s", models: "ministral-3b + devstral-small" },
-  { key: "balanced", label: "Balanced", cost: "~\u20AC0.005", time: "~45s", models: "mistral-small + devstral-small" },
-  { key: "quality", label: "Quality", cost: "~\u20AC0.020", time: "~60s", models: "devstral-2 + magistral-small" },
+  { key: "budget", label: "Budget", cost: "~\u20AC0.004", time: "~25s", models: "ministral-7b + devstral-small" },
+  { key: "balanced", label: "Balanced", cost: "~\u20AC0.006", time: "~40s", models: "mistral-small + devstral-small" },
+  { key: "quality", label: "Quality", cost: "~\u20AC0.020", time: "~90s", models: "devstral-2 + magistral-small" },
 ];
 
 interface FleetToggleProps {
