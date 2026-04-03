@@ -35,6 +35,7 @@ Our advantages:
 8. Open source + self-hostable (MIT, Docker)
 9. NVIDIA NIM local GPU mode planned (free, offline, private)
 10. Fleet profiles: Budget / Balanced / Quality user toggle
+11. Docker sandbox preview (cloud on Scaleway + local GPU, same API)
 
 ---
 
@@ -53,8 +54,20 @@ User prompt
 Total: ~EUR 0.005/generation
 ```
 
+**MCP Parallel Pipeline (New):**
+
+```
+User prompt
+  → PHASE 1: Planner + Designer PARALLEL (MCP)  ~EUR 0.0006 (~44% faster)
+  → PHASE 2: Builder + Reviewer PARALLEL (MCP)   ~EUR 0.0029 (~25% faster)
+
+Total: ~EUR 0.0035/generation (~50% faster overall)
+```
+
 The pipeline is extensible. Do NOT hardcode agent count in frontend.
 New agents can be added in backend without frontend changes.
+
+**MCP Integration:** See MCP.md for full parallel execution architecture.
 
 ---
 
@@ -95,9 +108,34 @@ from tramontane import (
 # Also: Agent fields gdpr_level, audit_actions
 ```
 
+### MCP Integration (New)
+```python
+from arkhos.integrations.magic_mcp import (
+    MagicMCP,           # MCP client for parallel coordination
+    coordinate_agents,  # Parallel agent execution
+    fetch_inspiration,  # Design inspiration from MCP
+)
+```
+
+### Sandbox (Docker — Cloud + Local)
+- **Cloud mode:** Sandbox container hosted on Scaleway fr-par (per-generation)
+- **Local/GPU mode:** Sandbox on user's machine (Docker, same API)
+- **Status:** RUNNING on localhost:8001 (WSL2 Ubuntu)
+- Container: Node 22 + pnpm, FastAPI, runs as user `sandbox` (uid 1000)
+- **API endpoints:**
+  - `POST /execute` — `{command, cwd?}` → `{stdout, stderr, success, returncode}`
+  - `POST /write-file` — `{path, content}` → ⚠️ has bug (cwd attr error), use base64 via /execute instead
+  - No `/health` endpoint — health check uses `POST /execute {command: "echo ok"}`
+- **Workspace:** `/home/sandbox/` (writable). `/workspace` is root-owned, NOT writable.
+- `SandboxClient` (arkhos/sandbox/client.py): async httpx, retries, health check via execute
+- `SandboxExecutor` (arkhos/generation/sandbox_executor.py): base64 file writing → pnpm install → dev server
+- Config via env: `ARKHOS_SANDBOX_URL` (default http://localhost:8001), `ARKHOS_SANDBOX_PREVIEW_URL` (default http://localhost:3001)
+- Pipeline integration: runs after Reviewer, emits `sandbox_start`/`sandbox_complete` SSE
+- Graceful degradation: if sandbox unreachable, generation still succeeds with HTML fallback preview
+
 ### Infrastructure
 - Development: WSL2 Ubuntu, project at ~/Arkhos (native Linux filesystem)
-- Production: Scaleway fr-par
+- Production: Scaleway fr-par (backend + sandbox containers)
 - Docker + docker-compose
 - Nginx reverse proxy + Let's Encrypt SSL
 
@@ -201,12 +239,26 @@ frontend/
 backend/
 ├── arkhos/
 │   ├── app.py                 (FastAPI + singletons: telemetry, router, memory, skills)
-│   ├── pipeline.py            (5-agent pipeline with SSE, fleet profiles, adaptive budget)
+│   ├── pipeline.py            (5-agent pipeline + MCP parallel pipeline with SSE)
 │   ├── intelligence.py        (smart skill injection + cross-generation memory)
-│   ├── routes.py              (API endpoints including /simulate, /telemetry)
-│   ├── config.py, sse.py, store.py, rate_limit.py, sanitize.py, iterate.py
+│   ├── routes.py              (API endpoints including /simulate, /telemetry, /generate-mcp)
+│   ├── config.py              (pydantic-settings: env vars, sandbox URLs)
+│   ├── sse.py, store.py, rate_limit.py, sanitize.py, iterate.py
+│   ├── integrations/
+│   │   └── magic_mcp.py        (MCP client, parallel coordination, error handling)
+│   ├── sandbox/
+│   │   ├── __init__.py        (exports SandboxClient, SandboxResult)
+│   │   └── client.py          (async httpx client, health check, retries, timing)
+│   ├── generation/
+│   │   ├── __init__.py        (exports SandboxExecutor)
+│   │   └── sandbox_executor.py (write files → pnpm install → dev server)
 │   ├── prompts/               (per-agent system prompts)
-│   ├── skills/                (24 markdown skill files — loaded via MarkdownSkill)
+│   ├── skills/                (26 markdown skill files — includes MCP skills)
+│   │   ├── shared/             (mistral-prompting, cost-routing, eu-gdpr, parallel-processing)
+│   │   ├── builder/            (react-patterns, tailwind, shadcn, framer-motion, mcp-integration)
+│   │   ├── designer/           (taste, eu-design, typography)
+│   │   ├── planner/            (copywriting, marketing, seo, industries/)
+│   │   └── reviewer/          (security, code-quality)
 │   ├── data/                  (design intelligence per industry)
 │   └── templates/             (Aceternity-style component references)
 ├── scripts/
@@ -215,7 +267,7 @@ backend/
 │   ├── test_smoke.py          (8 tests — API endpoints)
 │   ├── test_adaptive_budget.py (5 tests — budget allocation)
 │   └── test_intelligence.py   (15 tests — skills + memory)
-└── pyproject.toml             (tramontane>=0.2.3)
+└── pyproject.toml             (tramontane>=0.2.3, httpx>=0.28.0, pydantic>=2.0.0)
 ```
 
 ### App-Level Singletons (in app.py)
@@ -226,13 +278,14 @@ memory = TramontaneMemory(db_path="arkhos_memory.db")        # 37+ facts
 skill_registry = load_skills()                                # 23 MarkdownSkills
 ```
 
-### Fleet Profiles
-```python
-BUDGET:   EUR 0.008 total, ministral-3b all except Builder (devstral-small)
-BALANCED: EUR 0.25 total, ministral-3b Planner, mistral-small others, devstral-small Builder
-QUALITY:  EUR 1.00 total, mistral-small all except Builder (devstral-small)
+### Fleet Profiles (verified against Mistral API pricing)
+```
+BUDGET:   ~EUR 0.004/gen  ministral-3b Planner, ministral-7b Design/Arch/Review, devstral-small Builder  ~25s
+BALANCED: ~EUR 0.006/gen  mistral-small all, devstral-small Builder                                      ~40s
+QUALITY:  ~EUR 0.020/gen  mistral-small Plan/Design/Arch, devstral-2 Builder, magistral-small Reviewer   ~90s
 ```
 
+Cost differentiation: 1x → 1.4x → 4.8x (Budget → Balanced → Quality)
 Budget allocation: Planner 8% / Designer 20% / Architect 20% / Builder 40% / Reviewer 12%
 Adaptive: unspent from early agents flows to Builder (capped 65%)
 
@@ -242,6 +295,7 @@ Adaptive: unspent from early agents flows to Builder (capped 65%)
 
 ```
 POST /api/generate       Body: {prompt, locale, profile}  → {generation_id}
+POST /api/generate-mcp   Body: {prompt, locale, profile}  → {generation_id} (MCP parallel)
 POST /api/approve/{id}   Resume build after plan approval
 GET  /api/stream/{id}    SSE stream of agent events
 GET  /api/result/{id}    Final result
@@ -258,15 +312,19 @@ GET  /health             Health check
 ## SSE Event Types
 
 ```
-pipeline_start    {profile, label, est_cost, est_time, total_budget}
-agent_start       {agent, model, step, total_steps}
-agent_complete    {agent, model, cost_eur, duration_s, cumulative_cost_eur}
-plan_ready        {plan}
-file_chunk        {path, content}     ← streamed to WebContainer in real-time
-files_ready       {files, file_count}
-preview_ready     {html, stage}
-generation_complete {total_cost_eur, total_duration_s, models_used, success}
-error             {error, error_type, agent}
+pipeline_start      {profile, label, est_cost, est_time, total_budget}
+phase_start         {phase, description}                    ← MCP parallel phases
+phase_complete      {phase, duration_s}                     ← MCP parallel phases
+agent_start         {agent, model, step, total_steps}
+agent_complete      {agent, model, cost_eur, duration_s, cumulative_cost_eur}
+plan_ready          {plan}
+file_chunk          {path, content}     ← streamed in real-time
+files_ready         {files, file_count}
+preview_ready       {html, stage}
+sandbox_start       {message}
+sandbox_complete    {success, preview_url, stage, duration_s}
+generation_complete {total_cost_eur, total_duration_s, models_used, success, sandbox_preview, parallel_mode}
+error               {error, error_type, agent, parallel_mode}
 ```
 
 ---
@@ -356,13 +414,35 @@ NOT an indie project. NOT a Lovable/Bolt clone. Industry-level or nothing.
 - Floating glass navbar + minimal footer
 - Custom ThemeProvider (no next-themes dependency)
 
+### Done — Sandbox
+- SandboxClient: async httpx, health check with cold-start retries, per-command timing
+- SandboxExecutor: write files → pnpm install → background dev server
+- Pipeline integration: sandbox_start/sandbox_complete SSE events after Reviewer
+- Configurable via env: ARKHOS_SANDBOX_URL, ARKHOS_SANDBOX_PREVIEW_URL
+- Graceful degradation: generation succeeds even if sandbox is down
+- Works identically for cloud (Scaleway) and local (GPU/Docker) modes
+
 ### TODO (next session)
-- Port useWebContainer hook for live preview in /generate/[id]
+- ✅ **MCP Integration COMPLETED** (April 2026)
+  - Parallel pipeline implementation
+  - MagicMCP client with error handling
+  - MCP skills for all agents
+  - Docker setup for parallel execution
+  - API endpoint `/generate-mcp`
+  - Phase-based SSE events
+  - Comprehensive documentation in MCP.md
+
+- Sandbox Dockerfile + docker-compose service (Node 20 + pnpm, /execute + /health API)
+- Sandbox file write API (replace heredoc with JSON POST to avoid content injection)
+- Per-generation sandbox isolation (dynamic port or reverse proxy by generation ID)
+- Sandbox workspace cleanup (TTL or post-download)
+- Sandbox resource limits (CPU/memory/time caps in container)
+- Handle `sandbox_start`/`sandbox_complete` in frontend use-sse.ts
 - Connect Gallery to /api/gallery (currently static)
 - Loading/error boundaries (loading.tsx, error.tsx)
 - Polish: Home page needs live demo section, comparison strip
 - NVIDIA NIM backend (Tramontane v0.2.4)
-- Docker deployment config
+- Docker deployment config (backend + sandbox in docker-compose)
 - shadcn/ui components (not yet installed — run `pnpm dlx shadcn@latest init`)
 
 ---
@@ -374,11 +454,14 @@ When NIM is detected, GPU theme activates automatically (NVIDIA green).
 
 ```
 Cloud Mode:  User prompt → Mistral API (Paris) → EUR 0.005/gen
+             Preview → Scaleway sandbox container → ARKHOS_SANDBOX_URL
 GPU Mode:    User prompt → Local NIM (user's RTX) → EUR 0.000/gen
+             Preview → Local Docker sandbox → localhost:8001
 ```
 
 Tramontane already has local_mode in MistralRouter.
 NIMBackend = change base_url + dummy API key. Nearly zero code change.
+Sandbox works identically in both modes — same SandboxClient API, different URL.
 
 ---
 
