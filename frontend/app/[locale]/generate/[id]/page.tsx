@@ -229,10 +229,11 @@ export default function GenerationWorkspacePage() {
               <div className="px-4 pb-4">
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--void)]/50 p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <Lightbulb className="w-3.5 h-3.5 text-[var(--brand)]" />
-                    <p className="text-xs font-medium text-[var(--text-primary)]">Connecting...</p>
+                    <Loader2 className="w-3.5 h-3.5 text-[var(--brand)] animate-spin" />
+                    <p className="text-xs font-medium text-[var(--text-primary)]">Loading your generation</p>
                   </div>
-                  <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">Loading your generation. The pipeline will start streaming events shortly.</p>
+                  <p className="text-[10px] font-[var(--font-code)] text-[var(--text-muted)] mb-2">{generationId}</p>
+                  <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">The pipeline will start streaming events shortly.</p>
                 </div>
               </div>
             )}
@@ -245,10 +246,17 @@ export default function GenerationWorkspacePage() {
                     <p className="text-xs font-medium text-[var(--text-primary)]">Generation complete</p>
                   </div>
                   <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
-                    Your site is ready. Use the chat below to refine it.
+                    Your site is ready! Download it or refine it with the chat below.
                   </p>
+                  {(state.totalCostEur > 0 || state.totalDurationS > 0 || state.fileCount > 0) && (
+                    <div className="mt-2 flex items-center gap-3 text-[10px] text-[var(--text-muted)]">
+                      {state.totalCostEur > 0 && <span className="flex items-center gap-0.5"><Coins className="w-2.5 h-2.5" />€{state.totalCostEur.toFixed(4)}</span>}
+                      {state.totalDurationS > 0 && <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{state.totalDurationS.toFixed(1)}s</span>}
+                      {state.fileCount > 0 && <span className="flex items-center gap-0.5"><Code2 className="w-2.5 h-2.5" />{state.fileCount} files</span>}
+                    </div>
+                  )}
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {["Make the hero bigger", "Add dark mode", "Change colors to blue"].map((suggestion) => (
+                    {["Add a contact form", "Improve mobile responsiveness", "Add animations to the hero", "Change the color scheme", "Add a pricing section"].map((suggestion) => (
                       <button key={suggestion} type="button" onClick={() => { setChatInput(suggestion); }} className="px-2 py-1 rounded-md text-[10px] font-medium text-[var(--brand)] bg-[var(--brand)]/10 hover:bg-[var(--brand)]/20 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none">
                         {suggestion}
                       </button>
@@ -505,6 +513,8 @@ const TIPS = [
   { icon: Coins, text: "Costs are tracked per agent in real-time. You'll see the total in the status bar." },
   { icon: Lightbulb, text: "After generation, you can iterate — describe changes and a Builder agent applies them." },
   { icon: Sparkles, text: "The smart router picks the optimal model for each agent based on past performance." },
+  { icon: Eye, text: "The sandbox preview renders your site live as files are generated — watch it take shape in real-time." },
+  { icon: Download, text: "Once complete, download your project as a zip — it's a production-ready React app you can deploy anywhere." },
 ];
 
 function GenerationTips() {
@@ -598,7 +608,7 @@ function PreviewSkeleton({ agent, completed, total, t }: {
         {/* Status in browser footer */}
         <div className="px-5 py-2.5 border-t border-[var(--border)] flex items-center gap-3 bg-[var(--deep)]">
           <div className="w-4 h-4 border-2 border-[var(--brand)]/30 border-t-[var(--brand)] rounded-full animate-spin" />
-          <p className="text-[11px] text-[var(--text-secondary)]">{agent ? t("workspace.agentWorking", { agent }) : t("workspace.starting")}</p>
+          <p className="text-[11px] text-[var(--text-secondary)]">{agent ? t("workspace.agentWorking", { agent }) : t("workspace.starting")} — building your site</p>
           <div className="flex-1" />
           {total > 0 && (
             <>
