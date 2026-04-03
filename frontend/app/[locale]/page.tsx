@@ -1,8 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Check, X, Minus, Clock, Coins } from "lucide-react";
-import { HeroPrompt } from "@/components/marketing/hero-prompt";
-import { WaitlistForm } from "@/components/marketing/waitlist-form";
-import { TrustStrip } from "@/components/marketing/trust-strip";
+import { Link } from "@/i18n/navigation";
 
 const DEMO_STEPS = ["step1", "step2", "step3", "step4"] as const;
 
@@ -55,25 +53,26 @@ export default function Home() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.18),transparent_42%)]" />
       <div className="absolute inset-x-0 top-24 h-72 bg-[linear-gradient(180deg,rgba(99,102,241,0.14),transparent)] blur-3xl" />
 
-      {/* ── Hero with embedded prompt ── */}
+      {/* ── Hero — cinematic marketing ── */}
       <section className="relative mx-auto max-w-6xl px-4 py-24 sm:py-32">
         <div className="max-w-3xl">
-          <p className="inline-flex items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-[var(--brand)] backdrop-blur-xl">
-            {t("hero.badge")}
+          <p className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">
+            {t("hero.kicker")}
           </p>
-          <h1 className="mt-6 font-[var(--font-display)] text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[0.95] text-[var(--text-primary)]">
+          <h1 className="mt-6 font-[var(--font-display)] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[0.95] text-[var(--text-primary)]">
             {t("hero.title")}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg sm:text-xl leading-relaxed text-[var(--text-secondary)]">
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-secondary)]">
             {t("hero.subtitle")}
           </p>
-        </div>
-
-        <HeroPrompt />
-
-        {/* Trust strip */}
-        <div className="mt-12">
-          <TrustStrip />
+          <div className="mt-10">
+            <Link
+              href="/login"
+              className="inline-flex items-center rounded-xl bg-[var(--brand)] px-6 py-3 text-sm font-medium text-white hover:brightness-110 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--void)]"
+            >
+              {t("hero.cta")}
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -181,17 +180,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Waitlist ── */}
+      {/* ── CTA ── */}
       <section className="mx-auto max-w-6xl px-4 py-20">
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-8 sm:p-12 text-center">
           <h2 className="font-[var(--font-display)] text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-primary)]">
-            {t("waitlist.title")}
+            {t("cta.title")}
           </h2>
           <p className="mt-3 text-sm text-[var(--text-secondary)] max-w-lg mx-auto">
-            {t("waitlist.description")}
+            {t("cta.description")}
           </p>
-          <div className="mt-6 max-w-md mx-auto">
-            <WaitlistForm />
+          <div className="mt-6">
+            <Link
+              href="/login"
+              className="inline-flex items-center rounded-xl bg-[var(--brand)] px-6 py-3 text-sm font-medium text-white hover:brightness-110 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--void)]"
+            >
+              {t("cta.action")}
+            </Link>
           </div>
         </div>
       </section>

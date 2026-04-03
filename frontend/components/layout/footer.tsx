@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { Code2, Globe } from "lucide-react";
 
 const PRODUCT_LINKS = [
-  { key: "generate", href: "/#generate" },
+  { key: "generate", href: "/login" },
   { key: "gallery", href: "/gallery" },
   { key: "pricing", href: "/pricing" },
   { key: "docs", href: "/docs" },

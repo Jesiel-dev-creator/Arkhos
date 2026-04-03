@@ -32,11 +32,15 @@
     "signOut": "Sign out"
   },
   "hero": {
-    "title": "Build beautiful websites with AI",
-    "subtitle": "EU sovereign. Open source. Powered by Mistral.",
-    "cta": "Start generating",
-    "placeholder": "Describe your website...",
-    "badge": "AI Website Generator"
+    "kicker": "Open-source AI builder",
+    "title": "Build production websites with AI agents.",
+    "subtitle": "EU sovereign. Transparent cost. Open source. Powered by Mistral.",
+    "cta": "Start building \u2192"
+  },
+  "cta": {
+    "title": "Ready to build?",
+    "description": "Sign in and generate your first production website in under a minute.",
+    "action": "Start building \u2192"
   },
   "demo": {
     "kicker": "See it in action",

@@ -35,7 +35,7 @@ export default function PricingPage() {
           <p className="text-lg font-medium text-[var(--text-primary)]">{t("ctaTitle")}</p>
           <p className="text-sm text-[var(--text-secondary)] mt-1">{t("ctaBody")}</p>
         </div>
-        <Link href="/#generate" className="inline-flex items-center justify-center rounded-xl bg-[var(--brand)] px-5 py-3 text-sm font-medium text-white hover:brightness-110 transition-all duration-150">
+        <Link href="/login" className="inline-flex items-center justify-center rounded-xl bg-[var(--brand)] px-5 py-3 text-sm font-medium text-white hover:brightness-110 transition-all duration-150">
           {t("ctaAction")}
         </Link>
       </div>

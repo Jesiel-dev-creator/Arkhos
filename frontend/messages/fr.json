@@ -32,11 +32,15 @@
     "signOut": "Se déconnecter"
   },
   "hero": {
-    "title": "Créez de beaux sites web avec l'IA",
-    "subtitle": "Souveraineté européenne. Open source. Propulsé par Mistral.",
-    "cta": "Commencer",
-    "placeholder": "Décrivez votre site web...",
-    "badge": "Générateur de sites IA"
+    "kicker": "Générateur IA open source",
+    "title": "Créez des sites de production avec des agents IA.",
+    "subtitle": "Souveraineté européenne. Coûts transparents. Open source. Propulsé par Mistral.",
+    "cta": "Commencer \u2192"
+  },
+  "cta": {
+    "title": "Prêt à créer\u00a0?",
+    "description": "Connectez-vous et générez votre premier site de production en moins d'une minute.",
+    "action": "Commencer \u2192"
   },
   "demo": {
     "kicker": "Voyez par vous-même",
