@@ -225,41 +225,58 @@
     "free": "Free on your GPU",
     "badge": "GPU Mode"
   },
-  "pages": {
-    "pricing": {
-      "kicker": "Pricing",
-      "title": "Simple pricing for local, hosted, and team workflows.",
-      "description": "Choose the setup that matches how you want to generate, inspect, and ship websites with ArkhosAI.",
-      "plans": {
-        "starter": {
-          "label": "Starter",
-          "price": "Free / self-hosted",
-          "description": "Run ArkhosAI locally and keep full control over your stack.",
-          "feature1": "Self-host the pipeline",
-          "feature2": "Use your own Mistral keys",
-          "feature3": "Perfect for builders and experiments"
-        },
-        "pro": {
-          "label": "Pro",
-          "price": "Hosted cloud",
-          "description": "Managed infrastructure with the same transparent generation workflow.",
-          "feature1": "Managed EU deployment",
-          "feature2": "Live generation workspace",
-          "feature3": "Faster team onboarding"
-        },
-        "team": {
-          "label": "Team",
-          "price": "Custom",
-          "description": "For agencies and internal platforms that need governance and deeper integration.",
-          "feature1": "Shared workflows and review loops",
-          "feature2": "Custom deployment targets",
-          "feature3": "Priority support and roadmap access"
-        }
-      },
-      "ctaTitle": "Start with the workflow that fits today.",
-      "ctaBody": "You can begin locally, then move to a managed setup when your team needs more structure.",
-      "ctaAction": "Open generator"
+  "pricing": {
+    "kicker": "Pricing",
+    "title": "Simple, transparent pricing",
+    "description": "Pay only for what you use. No hidden fees. All costs visible in real-time.",
+    "free": {
+      "name": "Free",
+      "price": "\u20ac0",
+      "period": "forever",
+      "cta": "Get started",
+      "features": {
+        "generations": "10 generations/month",
+        "profiles": "Budget profile only",
+        "projects": "3 projects",
+        "preview": "5 min preview",
+        "support": "Community support"
+      }
     },
+    "pro": {
+      "name": "Pro",
+      "price": "\u20ac12",
+      "period": "/month",
+      "badge": "Most popular",
+      "cta": "Start building",
+      "features": {
+        "generations": "100 generations/month",
+        "profiles": "All fleet profiles",
+        "projects": "Unlimited projects",
+        "preview": "30 min preview",
+        "support": "Email support"
+      }
+    },
+    "team": {
+      "name": "Team",
+      "price": "\u20ac29",
+      "period": "/month",
+      "cta": "Contact us",
+      "features": {
+        "generations": "500 generations/month",
+        "profiles": "All fleet profiles",
+        "projects": "Unlimited projects",
+        "preview": "Persistent preview",
+        "support": "Priority support",
+        "seats": "5 team seats"
+      }
+    },
+    "cta": {
+      "title": "Ready to build?",
+      "description": "Start with the free plan. Upgrade when you need more.",
+      "button": "Start building"
+    }
+  },
+  "pages": {
     "gallery": {
       "kicker": "Gallery",
       "title": "A few directions ArkhosAI can already generate.",

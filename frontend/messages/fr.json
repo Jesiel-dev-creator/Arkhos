@@ -225,41 +225,58 @@
     "free": "Gratuit sur votre GPU",
     "badge": "Mode GPU"
   },
-  "pages": {
-    "pricing": {
-      "kicker": "Tarifs",
-      "title": "Une tarification simple pour les usages locaux, hébergés et en équipe.",
-      "description": "Choisissez la configuration qui correspond à votre manière de générer, d'inspecter et de livrer des sites avec ArkhosAI.",
-      "plans": {
-        "starter": {
-          "label": "Starter",
-          "price": "Gratuit / auto-hébergé",
-          "description": "Exécutez ArkhosAI en local et gardez un contrôle complet sur votre stack.",
-          "feature1": "Pipeline auto-hébergé",
-          "feature2": "Vos propres clés Mistral",
-          "feature3": "Idéal pour construire et expérimenter"
-        },
-        "pro": {
-          "label": "Pro",
-          "price": "Cloud hébergé",
-          "description": "Une infrastructure gérée avec le même flux de génération transparent.",
-          "feature1": "Déploiement européen géré",
-          "feature2": "Espace de travail de génération en direct",
-          "feature3": "Onboarding plus rapide pour l'équipe"
-        },
-        "team": {
-          "label": "Équipe",
-          "price": "Sur mesure",
-          "description": "Pour les agences et plateformes internes qui ont besoin de gouvernance et d'intégrations plus poussées.",
-          "feature1": "Flux partagés et boucles de revue",
-          "feature2": "Cibles de déploiement personnalisées",
-          "feature3": "Support prioritaire et accès roadmap"
-        }
-      },
-      "ctaTitle": "Commencez avec le mode qui convient aujourd'hui.",
-      "ctaBody": "Vous pouvez démarrer en local puis passer à une configuration gérée quand votre équipe a besoin de plus de structure.",
-      "ctaAction": "Ouvrir le générateur"
+  "pricing": {
+    "kicker": "Tarifs",
+    "title": "Des tarifs simples et transparents",
+    "description": "Payez uniquement ce que vous utilisez. Aucun frais cach\u00e9. Tous les co\u00fbts visibles en temps r\u00e9el.",
+    "free": {
+      "name": "Gratuit",
+      "price": "0\u00a0\u20ac",
+      "period": "pour toujours",
+      "cta": "Commencer",
+      "features": {
+        "generations": "10 g\u00e9n\u00e9rations/mois",
+        "profiles": "Profil Budget uniquement",
+        "projects": "3 projets",
+        "preview": "Aper\u00e7u 5 min",
+        "support": "Support communautaire"
+      }
     },
+    "pro": {
+      "name": "Pro",
+      "price": "12\u00a0\u20ac",
+      "period": "/mois",
+      "badge": "Le plus populaire",
+      "cta": "Commencer",
+      "features": {
+        "generations": "100 g\u00e9n\u00e9rations/mois",
+        "profiles": "Tous les profils",
+        "projects": "Projets illimit\u00e9s",
+        "preview": "Aper\u00e7u 30 min",
+        "support": "Support par e-mail"
+      }
+    },
+    "team": {
+      "name": "\u00c9quipe",
+      "price": "29\u00a0\u20ac",
+      "period": "/mois",
+      "cta": "Nous contacter",
+      "features": {
+        "generations": "500 g\u00e9n\u00e9rations/mois",
+        "profiles": "Tous les profils",
+        "projects": "Projets illimit\u00e9s",
+        "preview": "Aper\u00e7u persistant",
+        "support": "Support prioritaire",
+        "seats": "5 membres"
+      }
+    },
+    "cta": {
+      "title": "Pr\u00eat \u00e0 cr\u00e9er\u00a0?",
+      "description": "Commencez gratuitement. Passez \u00e0 un forfait sup\u00e9rieur quand vous en avez besoin.",
+      "button": "Commencer"
+    }
+  },
+  "pages": {
     "gallery": {
       "kicker": "Galerie",
       "title": "Quelques directions que ArkhosAI peut déjà générer.",
