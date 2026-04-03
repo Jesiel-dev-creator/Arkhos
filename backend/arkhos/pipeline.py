@@ -1262,9 +1262,9 @@ async def run_build_streaming(
                     f"<style>{index_css}</style>"
                     "</head><body style='background:#020408;color:#fff;font-family:sans-serif;'>"
                     "<div style='text-align:center;padding:20vh 2rem'>"
-                    "<p style='font-size:1.25rem;opacity:0.8'>Loading live preview...</p>"
+                    "<p style='font-size:1.25rem;opacity:0.8'>Building your site...</p>"
                     "<p style='font-size:0.875rem;opacity:0.5;margin-top:0.5rem'>"
-                    "WebContainer is starting. Your site will appear shortly.</p>"
+                    "The preview will appear once the build completes.</p>"
                     "</div></body></html>"
                 )
                 yield format_sse(SSEEventType.PREVIEW_READY, {
