@@ -226,6 +226,30 @@ async def _run_build(
         generation.status = GenerationStatus.COMPLETE
         generation.metadata["total_cost_eur"] = total_cost
 
+        # Log generation costs for pricing verification
+        try:
+            from supabase import create_client
+            settings = get_settings()
+            if settings.supabase_url and settings.supabase_service_key:
+                sb = create_client(settings.supabase_url, settings.supabase_service_key)
+                sb.table("generation_logs").insert({
+                    "user_id": generation.metadata.get("user_id"),
+                    "project_id": generation.metadata.get("project_id"),
+                    "fleet_profile": generation.metadata.get("profile", "balanced"),
+                    "prompt_length": len(generation.prompt or ""),
+                    "agent_costs": generation.metadata.get("agent_costs", {}),
+                    "total_api_cost_eur": total_cost,
+                    "sandbox_cost_eur": 0.002,
+                    "total_cost_eur": total_cost + 0.002,
+                    "duration_s": generation.metadata.get("total_duration_s", 0),
+                    "models_used": generation.metadata.get("models_used", []),
+                    "file_count": len(generation.metadata.get("files", {})),
+                    "success": True,
+                }).execute()
+                logger.info("Cost logged for generation %s", gen_id)
+        except Exception as log_exc:
+            logger.warning("Failed to log generation cost: %s", log_exc)
+
     except Exception as exc:
         logger.exception("Build %s failed: %s", gen_id, exc)
         generation.status = GenerationStatus.FAILED
