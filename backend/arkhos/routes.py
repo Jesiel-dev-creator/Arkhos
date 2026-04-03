@@ -90,6 +90,85 @@ async def generate(request: Request, body: GenerateRequest) -> GenerateResponse:
     )
 
 
+@router.post("/generate-mcp", response_model=GenerateResponse)
+async def generate_mcp(request: Request, body: GenerateRequest) -> GenerateResponse:
+    """Start a new website generation using MCP parallel processing.
+
+    Runs the full pipeline with parallel agent coordination for faster generation.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+
+    allowed, reason = rate_limiter.check(client_ip)
+    if not allowed:
+        raise HTTPException(status_code=429, detail=reason)
+
+    settings = get_settings()
+    if len(body.prompt) > settings.max_prompt_length:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Prompt too long: {len(body.prompt)} chars "
+            f"(max {settings.max_prompt_length})",
+        )
+
+    sanitized = sanitize_prompt(body.prompt)
+    generation = store.create(prompt=sanitized, locale=body.locale)
+
+    generation.metadata["mcp_mode"] = True
+
+    asyncio.create_task(
+        _run_pipeline_mcp(
+            generation.id, sanitized, body.locale, client_ip, body.profile,
+        )
+    )
+
+    record = rate_limiter._records.get(client_ip)
+    count = record.count if record else 0
+    remaining = max(0, settings.max_generations_per_ip - count - 1)
+
+    return GenerateResponse(
+        generation_id=generation.id,
+        remaining_today=remaining,
+    )
+
+
+async def _run_pipeline_mcp(
+    gen_id: str,
+    prompt: str,
+    locale: str,
+    client_ip: str,
+    profile: FleetProfile = FleetProfile.BALANCED,
+) -> None:
+    """Background task: run full pipeline with MCP parallel processing."""
+    from arkhos.pipeline import run_pipeline_streaming_mcp
+
+    generation = store.get(gen_id)
+    if generation is None:
+        return
+
+    generation.status = GenerationStatus.RUNNING
+
+    try:
+        async for event_str in run_pipeline_streaming_mcp(
+            prompt, locale, profile
+        ):
+            await generation.event_queue.put(event_str)
+
+        generation.status = GenerationStatus.COMPLETE
+
+    except Exception as exc:
+        logger.exception("MCP pipeline failed: %s", exc)
+        generation.status = GenerationStatus.FAILED
+        generation.error = str(exc)
+        await generation.event_queue.put(
+            format_sse(SSEEventType.ERROR, {
+                "error": str(exc),
+                "parallel_mode": True,
+            })
+        )
+
+    await generation.event_queue.put(None)
+
+
 async def _run_planner(
     gen_id: str, prompt: str, locale: str, client_ip: str,
     profile: FleetProfile = FleetProfile.BALANCED,
