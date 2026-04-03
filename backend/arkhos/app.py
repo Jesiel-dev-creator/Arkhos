@@ -14,6 +14,7 @@ from tramontane import FleetTelemetry, MistralRouter, TramontaneMemory
 from arkhos import __version__
 from arkhos.intelligence import load_skills
 from arkhos.routes import router
+from arkhos.user_routes import user_router
 
 load_dotenv()  # Load .env so MISTRAL_API_KEY is available to Tramontane
 
@@ -66,6 +67,7 @@ app.add_middleware(
 )
 
 app.include_router(router, prefix="/api")
+app.include_router(user_router, prefix="/api")
 
 
 @app.get("/health")
