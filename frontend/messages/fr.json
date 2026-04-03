@@ -403,6 +403,16 @@
       }
     }
   },
+  "settings": {
+    "kicker": "Paramètres",
+    "title": "Compte",
+    "account": "Détails du compte",
+    "email": "E-mail",
+    "tier": "Forfait",
+    "usage": "Utilisation",
+    "generationsThisMonth": "Générations ce mois-ci",
+    "billingComingSoon": "Facturation et changement de forfait bientôt disponibles."
+  },
   "legal": {
     "privacy": {
       "kicker": "Mentions légales",

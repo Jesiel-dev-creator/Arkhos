@@ -403,6 +403,16 @@
       }
     }
   },
+  "settings": {
+    "kicker": "Settings",
+    "title": "Account",
+    "account": "Account details",
+    "email": "Email",
+    "tier": "Plan",
+    "usage": "Usage",
+    "generationsThisMonth": "Generations this month",
+    "billingComingSoon": "Billing and plan upgrades coming soon."
+  },
   "legal": {
     "privacy": {
       "kicker": "Legal",
