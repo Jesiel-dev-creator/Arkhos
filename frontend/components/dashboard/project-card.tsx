@@ -16,7 +16,7 @@ export interface Project {
   name: string;
   status: "generating" | "complete" | "failed";
   created_at: string;
-  cost_eur: number | null;
+  total_cost_eur: number | null;
   thumbnail_url: string | null;
 }
 
@@ -186,10 +186,10 @@ export function ProjectCard({ project, onDelete, onRename }: ProjectCardProps) {
               addSuffix: true,
             })}
           </span>
-          {project.cost_eur !== null && (
+          {project.total_cost_eur !== null && (
             <span className="text-xs text-[var(--text-muted)] font-[var(--font-body)] ml-auto">
               {"\u20AC"}
-              {project.cost_eur.toFixed(4)}
+              {project.total_cost_eur.toFixed(4)}
             </span>
           )}
         </div>

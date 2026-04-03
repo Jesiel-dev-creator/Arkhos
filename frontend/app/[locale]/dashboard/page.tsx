@@ -21,7 +21,7 @@ export default function DashboardPage() {
     setLoading(true);
     const { data } = await supabase
       .from("projects")
-      .select("id, name, status, created_at, cost_eur, thumbnail_url")
+      .select("id, name, status, created_at, total_cost_eur, thumbnail_url")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 

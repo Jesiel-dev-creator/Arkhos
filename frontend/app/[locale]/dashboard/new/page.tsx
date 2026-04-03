@@ -11,6 +11,13 @@ import { cn } from "@/lib/utils";
 
 type Profile = "budget" | "balanced" | "quality";
 
+const PLACEHOLDER_PHRASES = [
+  "A modern bakery website with online ordering...",
+  "A SaaS landing page with pricing and testimonials...",
+  "A portfolio site with project showcase...",
+  "An elegant restaurant website with reservations...",
+];
+
 const TEMPLATES: Record<string, { label: string; prompt: string }> = {
   bakery: { label: "Bakery", prompt: "A modern bakery website with online ordering, daily specials, and a gallery of fresh pastries." },
   saas: { label: "SaaS", prompt: "A SaaS landing page with hero, features grid, pricing table, testimonials, and signup CTA." },
@@ -33,12 +40,7 @@ export default function NewProjectPage() {
   const [profile, setProfile] = useState<Profile>("balanced");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const placeholder = useTypingPlaceholder([
-    "A modern bakery website with online ordering...",
-    "A SaaS landing page with pricing and testimonials...",
-    "A portfolio site with project showcase...",
-    "An elegant restaurant website with reservations...",
-  ]);
+  const placeholder = useTypingPlaceholder(PLACEHOLDER_PHRASES);
 
   const handleGenerate = useCallback(async () => {
     if (!prompt.trim() || loading || !session) return;
