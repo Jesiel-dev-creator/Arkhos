@@ -345,16 +345,24 @@ export default function GenerationWorkspacePage() {
           ) : (
             /* Preview */
             <div className="flex-1 bg-[var(--void)] overflow-hidden flex items-center justify-center">
-              {state.previewHtml ? (
+              {sandboxReady ? (
                 <div className={cn(
                   "h-full transition-all duration-300 bg-white",
                   previewDevice === "desktop" ? "w-full" : previewDevice === "tablet" ? "w-[768px] rounded-lg border border-[var(--border)] my-4" : "w-[375px] rounded-xl border border-[var(--border)] my-4",
                 )}>
-                  {sandboxReady ? (
-                    <iframe src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${state.sandbox.previewUrl}`} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-modals allow-popups allow-forms" title="Live sandbox preview" />
-                  ) : (
-                    <iframe srcDoc={state.previewHtml} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin" title="Site preview" />
-                  )}
+                  <iframe
+                    src={`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}${state.sandbox.previewUrl}`}
+                    className="w-full h-full border-0"
+                    sandbox="allow-scripts allow-modals allow-popups allow-forms"
+                    title="Live sandbox preview"
+                  />
+                </div>
+              ) : state.previewHtml ? (
+                <div className={cn(
+                  "h-full transition-all duration-300 bg-white",
+                  previewDevice === "desktop" ? "w-full" : previewDevice === "tablet" ? "w-[768px] rounded-lg border border-[var(--border)] my-4" : "w-[375px] rounded-xl border border-[var(--border)] my-4",
+                )}>
+                  <iframe srcDoc={state.previewHtml} className="w-full h-full border-0" sandbox="allow-scripts" title="Site preview" />
                 </div>
               ) : isError ? (
                 <ErrorPanel error={state.error ?? ""} errorType={state.errorType} onRetry={handleRetry} />

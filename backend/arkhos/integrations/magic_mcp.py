@@ -67,7 +67,7 @@ class MagicMCP:
                 return ""
                 
         except httpx.HTTPError as e:
-            logger.warning("MCP HTTP error: %s", str(e))
+            logger.debug("MCP unavailable (DNS/network): %s", str(e))
             return ""
         except json.JSONDecodeError as e:
             logger.warning("MCP JSON decode error: %s", str(e))
@@ -107,7 +107,7 @@ class MagicMCP:
                 return {"success": False, "error": "Coordination failed"}
                 
         except Exception as e:
-            logger.warning("MCP coordination error: %s", str(e))
+            logger.debug("MCP coordination unavailable: %s", str(e))
             return {"success": False, "error": str(e)}
     
     async def close(self):

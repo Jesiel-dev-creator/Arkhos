@@ -394,9 +394,16 @@ async def stream(generation_id: str) -> StreamingResponse:
 # ── Preview Proxy ────────────────────────────────────────────────
 
 
-@router.get("/preview/{generation_id}/{path:path}")
+_PREVIEW_LOADING_HTML = """<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+body{margin:0;background:#0F172A;display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui,sans-serif}
+.msg{color:#94a3b8;font-size:14px}
+</style></head><body><p class="msg">Preview starting…</p>
+<script>setTimeout(()=>location.reload(),2000)</script></body></html>"""
+
+
 @router.get("/preview/{generation_id}")
-@router.get("/preview/{generation_id}/")  # Handle trailing slash for HTTP
+@router.get("/preview/{generation_id}/{path:path}")
 async def preview_proxy(generation_id: str, path: str = "") -> Response:
     """Reverse proxy to the generation's Vite dev server."""
     from arkhos.app import port_manager
@@ -411,6 +418,13 @@ async def preview_proxy(generation_id: str, path: str = "") -> Response:
     try:
         async with _httpx.AsyncClient() as client:
             resp = await client.get(target_url, timeout=10.0, follow_redirects=True)
+            # 426 means Vite's server isn't serving HTTP yet — return a loading page
+            if resp.status_code == 426:
+                return Response(
+                    content=_PREVIEW_LOADING_HTML.encode(),
+                    status_code=200,
+                    media_type="text/html",
+                )
             return Response(
                 content=resp.content,
                 status_code=resp.status_code,
@@ -420,14 +434,19 @@ async def preview_proxy(generation_id: str, path: str = "") -> Response:
                 },
             )
     except _httpx.ConnectError:
-        raise HTTPException(status_code=502, detail="Preview server not ready")
+        # Vite hasn't started yet — serve loading page that auto-reloads
+        return Response(
+            content=_PREVIEW_LOADING_HTML.encode(),
+            status_code=200,
+            media_type="text/html",
+        )
     except _httpx.TimeoutException:
         raise HTTPException(status_code=504, detail="Preview server timeout")
 
 
-@router.websocket("/preview/{generation_id}/")
+@router.websocket("/ws/preview/{generation_id}")
 async def preview_ws_proxy(ws: WebSocket, generation_id: str) -> None:
-    """WebSocket proxy for Vite HMR."""
+    """WebSocket proxy for Vite HMR (distinct path avoids HTTP/WS route conflicts)."""
     from arkhos.app import port_manager
 
     port = port_manager.get_port(generation_id)
