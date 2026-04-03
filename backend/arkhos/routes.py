@@ -10,7 +10,8 @@ import zipfile
 from typing import Any
 
 import httpx as _httpx
-from fastapi import APIRouter, HTTPException, Request
+import websockets
+from fastapi import APIRouter, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from starlette.responses import Response
@@ -421,6 +422,45 @@ async def preview_proxy(generation_id: str, path: str = "") -> Response:
         raise HTTPException(status_code=502, detail="Preview server not ready")
     except _httpx.TimeoutException:
         raise HTTPException(status_code=504, detail="Preview server timeout")
+
+
+@router.websocket("/preview/{generation_id}/")
+async def preview_ws_proxy(ws: WebSocket, generation_id: str) -> None:
+    """WebSocket proxy for Vite HMR."""
+    from arkhos.app import port_manager
+
+    port = port_manager.get_port(generation_id)
+    if port is None:
+        await ws.close(code=4004, reason="Preview not available")
+        return
+
+    port_manager.touch(generation_id)
+    await ws.accept()
+
+    try:
+        async with websockets.connect(f"ws://localhost:{port}/") as vite_ws:
+            async def browser_to_vite():
+                try:
+                    async for msg in ws.iter_text():
+                        await vite_ws.send(msg)
+                except WebSocketDisconnect:
+                    pass
+
+            async def vite_to_browser():
+                try:
+                    async for msg in vite_ws:
+                        await ws.send_text(msg)
+                except websockets.ConnectionClosed:
+                    pass
+
+            await asyncio.gather(browser_to_vite(), vite_to_browser())
+    except Exception as e:
+        logger.warning("HMR proxy error for gen %s: %s", generation_id, e)
+    finally:
+        try:
+            await ws.close()
+        except Exception:
+            pass
 
 
 # ── Result / Gallery ─────────────────────────────────────────────
