@@ -1033,6 +1033,28 @@ async def run_pipeline_streaming_mcp(
         if mcp_inspiration:
             template_refs = (template_refs or "") + "\n\n## 21st.dev Inspiration\n" + mcp_inspiration
 
+        # ── Sandbox: scaffold + dev server BEFORE Builder ─────────
+        # Lovable-style: start the preview first, files hot-reload as they stream in
+        sandbox_executor: SandboxExecutor | None = None
+        try:
+            sandbox_executor = SandboxExecutor()
+            scaffold_result = await sandbox_executor.scaffold_project(
+                project_name=f"gen-{int(start_time)}",
+            )
+            if scaffold_result.get("success"):
+                yield format_sse(SSEEventType.SANDBOX_START, {
+                    "message": "Live preview ready — files will appear as they generate",
+                    "preview_url": scaffold_result.get("preview_url"),
+                })
+                logger.info("Sandbox scaffold OK (%.2fs) — live streaming enabled",
+                            scaffold_result.get("duration_s", 0))
+            else:
+                logger.warning("Sandbox scaffold failed: %s", scaffold_result.get("error"))
+                sandbox_executor = None
+        except Exception as e:
+            logger.warning("Sandbox unavailable, falling back to batch: %s", e)
+            sandbox_executor = None
+
         # ── Phase 3: Builder (streaming) ──────────────────────────
         builder_base = cfg.total_budget_eur * 0.40
         effective_builder_budget = budget_mgr.builder_budget(builder_base)
@@ -1076,9 +1098,13 @@ async def run_pipeline_streaming_mcp(
                             content = _sanitize_iframes(content)
                             content = _fix_missing_imports(content)
                         streamed_files[path] = content
+                        # Stream to frontend
                         yield format_sse("file_chunk", {
                             "path": path, "content": content,
                         })
+                        # Stream to sandbox (Vite HMR hot-reloads)
+                        if sandbox_executor:
+                            await sandbox_executor.write_file(path, content)
                         if path == "src/index.css":
                             await asyncio.sleep(0.05)
                 if new_region:
@@ -1131,6 +1157,8 @@ async def run_pipeline_streaming_mcp(
             app_tsx = _build_app_tsx(files, section_order)
             files["src/App.tsx"] = app_tsx
             yield format_sse("file_chunk", {"path": "src/App.tsx", "content": app_tsx})
+            if sandbox_executor:
+                await sandbox_executor.write_file("src/App.tsx", app_tsx)
 
             files["ARKHOS.md"] = _build_arkhos_md(
                 prompt=planner_output,
@@ -1188,39 +1216,24 @@ async def run_pipeline_streaming_mcp(
             "cumulative_cost_eur": round(cumulative_cost, 6),
         })
 
-        # Apply reviewer fixes
+        # Apply reviewer fixes (also stream to sandbox)
         reviewer_files = _parse_file_tags(reviewer_step.output)
         if reviewer_files:
             for path, content in reviewer_files.items():
                 files[path] = content
                 yield format_sse("file_chunk", {"path": path, "content": content})
+                if sandbox_executor:
+                    await sandbox_executor.write_file(path, content)
 
-        # ── Phase 5: Sandbox Preview ──────────────────────────────
-        sandbox_result: dict | None = None
-        if files:
-            sandbox_t0 = time.monotonic()
-            try:
-                async with SandboxExecutor() as executor:
-                    yield format_sse(SSEEventType.SANDBOX_START, {
-                        "message": "Starting sandbox preview...",
-                    })
-                    sandbox_result = await executor.execute_generated_project(
-                        project_files=files,
-                        project_name=f"gen-{int(start_time)}",
-                    )
-                    yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
-                        "success": sandbox_result.get("success", False),
-                        "preview_url": sandbox_result.get("preview_url"),
-                        "stage": sandbox_result.get("stage"),
-                        "duration_s": round(time.monotonic() - sandbox_t0, 2),
-                    })
-            except Exception as sandbox_exc:
-                logger.warning("Sandbox unavailable: %s", sandbox_exc)
-                yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
-                    "success": False, "error": "Sandbox not available",
-                    "stage": "skipped",
-                    "duration_s": round(time.monotonic() - sandbox_t0, 2),
-                })
+        # ── Sandbox complete ──────────────────────────────────────
+        if sandbox_executor:
+            yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
+                "success": True,
+                "preview_url": sandbox_executor.preview_url,
+                "stage": "running",
+                "duration_s": round(time.monotonic() - start_time, 2),
+            })
+            await sandbox_executor.close()
 
         # ── Complete ──────────────────────────────────────────────
         total_duration = round(time.monotonic() - start_time, 2)
