@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 from tramontane import Agent, MistralRouter, ParallelGroup, RunContext
 
 from arkhos.data.design_intelligence import get_design_for_industry
+from arkhos.generation import SandboxExecutor
+from arkhos.integrations.magic_mcp import coordinate_agents, fetch_inspiration
 from arkhos.intelligence import (
     get_relevant_skills,
     recall_context,
@@ -81,7 +83,7 @@ class ProfileConfig:
 
 PROFILES: dict[FleetProfile, ProfileConfig] = {
     FleetProfile.BUDGET: ProfileConfig(
-        total_budget_eur=0.008,
+        total_budget_eur=0.01,
         planner_model="ministral-3b",
         designer_model="ministral-3b",
         architect_model="ministral-3b",
@@ -89,32 +91,32 @@ PROFILES: dict[FleetProfile, ProfileConfig] = {
         reviewer_model="ministral-3b",
         builder_temp=0.2,
         label="Budget",
-        est_cost="~€0.004",
-        est_time="~12s",
+        est_cost="~€0.003",
+        est_time="~30s",
     ),
     FleetProfile.BALANCED: ProfileConfig(
-        total_budget_eur=0.25,
+        total_budget_eur=0.05,
         planner_model="ministral-3b",
-        designer_model="mistral-small-latest",
-        architect_model="mistral-small-latest",
+        designer_model="mistral-small",
+        architect_model="mistral-small",
         builder_model="devstral-small",
-        reviewer_model="mistral-small-latest",
+        reviewer_model="mistral-small",
         builder_temp=0.2,
         label="Balanced",
-        est_cost="~€0.02",
-        est_time="~20s",
+        est_cost="~€0.005",
+        est_time="~45s",
     ),
     FleetProfile.QUALITY: ProfileConfig(
-        total_budget_eur=1.00,
-        planner_model="mistral-small-latest",
-        designer_model="mistral-small-latest",
-        architect_model="mistral-small-latest",
-        builder_model="devstral-small",
-        reviewer_model="mistral-small-latest",
+        total_budget_eur=0.10,
+        planner_model="mistral-small",
+        designer_model="mistral-small",
+        architect_model="mistral-small",
+        builder_model="devstral-2",
+        reviewer_model="magistral-small",
         builder_temp=0.15,
         label="Quality",
-        est_cost="~€0.08",
-        est_time="~35s",
+        est_cost="~€0.020",
+        est_time="~60s",
     ),
 }
 
@@ -195,6 +197,21 @@ class PipelineResult:
     models_used: list[str] = field(default_factory=list)
     success: bool = True
     error: str | None = None
+
+
+async def _run_parallel_agents_mcp(
+    agents: dict[str, Agent],
+    tasks: list[dict[str, Any]],
+    sse_yield: Any,
+    step_offset: int = 1,
+) -> tuple[list[AgentStepResult], float]:
+    """Run multiple agents in parallel using MCP coordination.
+
+    TODO: MCP parallel execution not yet implemented. This stub exists
+    so run_pipeline_streaming_mcp can be imported without SyntaxError.
+    Use run_build_streaming (sequential with ParallelGroup) instead.
+    """
+    raise NotImplementedError("MCP parallel pipeline not yet implemented")
 
 
 def _create_agents(
@@ -640,7 +657,7 @@ async def run_pipeline_streaming(
         # ── Agent 1: Planner ──────────────────────────────────
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "planner",
-            "model": "ministral-3b-latest",
+            "model": agents["planner"].model,
             "step": 1,
             "total_steps": 5,
         })
@@ -716,7 +733,7 @@ async def run_pipeline_streaming(
         # ── Agent 3: Builder ──────────────────────────────────
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "builder",
-            "model": "devstral-2",
+            "model": agents["builder"].model,
             "step": 3,
             "total_steps": 5,
         })
@@ -827,6 +844,23 @@ async def run_pipeline_streaming(
         })
 
 
+async def run_pipeline_streaming_mcp(
+    prompt: str,
+    locale: str = "en",
+    profile: FleetProfile = FleetProfile.BALANCED,
+) -> AsyncGenerator[str, None]:
+    """MCP parallel pipeline — not yet implemented.
+
+    Use run_planner_streaming + run_build_streaming instead.
+    This stub exists so the import in routes.py doesn't break.
+    """
+    yield format_sse(SSEEventType.ERROR, {
+        "error": "MCP parallel pipeline not yet implemented. Use sequential pipeline.",
+        "error_type": "not_implemented",
+        "agent": "system",
+    })
+
+
 def _classify_error(exc: Exception) -> tuple[str, str]:
     """Classify an exception into user-friendly error type + message."""
     msg = str(exc)
@@ -856,7 +890,7 @@ async def run_planner_streaming(
     try:
         yield format_sse(SSEEventType.AGENT_START, {
             "agent": "planner",
-            "model": "ministral-3b-latest",
+            "model": agents["planner"].model,
             "step": 1,
             "total_steps": 5,
         })
@@ -1302,12 +1336,47 @@ async def run_build_streaming(
                 "html": reviewer_step.output, "stage": "final",
             })
 
+        # ── Sandbox Preview (cloud on Scaleway or local GPU) ──
+        sandbox_result: dict | None = None
+        if files:
+            sandbox_t0 = time.monotonic()
+            try:
+                async with SandboxExecutor() as executor:
+                    yield format_sse(SSEEventType.SANDBOX_START, {
+                        "message": "Starting sandbox preview...",
+                    })
+                    sandbox_result = await executor.execute_generated_project(
+                        project_files=files,
+                        project_name=f"gen-{int(start_time)}",
+                    )
+                    sandbox_elapsed = round(time.monotonic() - sandbox_t0, 2)
+                    yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
+                        "success": sandbox_result.get("success", False),
+                        "preview_url": sandbox_result.get("preview_url"),
+                        "stage": sandbox_result.get("stage"),
+                        "duration_s": sandbox_elapsed,
+                    })
+                    logger.info(
+                        "Sandbox step: success=%s duration=%.2fs",
+                        sandbox_result.get("success"), sandbox_elapsed,
+                    )
+            except Exception as sandbox_exc:
+                sandbox_elapsed = round(time.monotonic() - sandbox_t0, 2)
+                logger.warning("Sandbox unavailable (%.2fs): %s", sandbox_elapsed, sandbox_exc)
+                yield format_sse("sandbox_complete", {
+                    "success": False,
+                    "error": "Sandbox container not available",
+                    "stage": "skipped",
+                    "duration_s": sandbox_elapsed,
+                })
+
         total_duration = round(time.monotonic() - start_time, 2)
         yield format_sse(SSEEventType.GENERATION_COMPLETE, {
             "total_cost_eur": round(cumulative_cost, 6),
             "total_duration_s": total_duration,
             "models_used": [r.model_used for r in agent_results],
             "success": True,
+            "sandbox_preview": sandbox_result.get("preview_url") if sandbox_result else None,
         })
         logger.info(
             "Build complete: cost=EUR%.4f duration=%.1fs",

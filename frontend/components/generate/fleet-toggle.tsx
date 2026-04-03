@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 type Profile = "budget" | "balanced" | "quality";
 
-const PROFILES: { key: Profile; label: string; cost: string; time: string }[] = [
-  { key: "budget", label: "Budget", cost: "~\u20AC0.004", time: "~12s" },
-  { key: "balanced", label: "Balanced", cost: "~\u20AC0.02", time: "~20s" },
-  { key: "quality", label: "Quality", cost: "~\u20AC0.08", time: "~35s" },
+const PROFILES: { key: Profile; label: string; cost: string; time: string; models: string }[] = [
+  { key: "budget", label: "Budget", cost: "~\u20AC0.003", time: "~30s", models: "ministral-3b + devstral-small" },
+  { key: "balanced", label: "Balanced", cost: "~\u20AC0.005", time: "~45s", models: "mistral-small + devstral-small" },
+  { key: "quality", label: "Quality", cost: "~\u20AC0.020", time: "~60s", models: "devstral-2 + magistral-small" },
 ];
 
 interface FleetToggleProps {
@@ -37,9 +37,14 @@ export function FleetToggle({ value, onChange }: FleetToggleProps) {
         ))}
       </div>
       {active && (
-        <span className="text-[10px] text-[var(--text-muted)] tabular-nums">
-          {active.cost} &middot; {active.time}
-        </span>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[10px] text-[var(--text-muted)] tabular-nums">
+            {active.cost} &middot; {active.time}
+          </span>
+          <span className="text-[9px] font-[var(--font-code)] text-[var(--text-muted)]/60">
+            {active.models}
+          </span>
+        </div>
       )}
     </div>
   );
