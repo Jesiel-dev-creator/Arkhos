@@ -253,11 +253,47 @@ export function useSSE(
     [reset, connectToStream],
   );
 
-  // Connect to an existing generation by ID (for workspace page)
+  // Connect to an existing generation by ID (for workspace page).
+  // First checks /api/result to see if the generation already completed.
+  // If still in progress (202), connects to the SSE stream.
   const connectTo = useCallback(
-    (generationId: string) => {
-      setState((prev) => ({ ...prev, generationId, status: "building" }));
-      connectToStream(generationId);
+    async (generationId: string) => {
+      setState((prev) => ({ ...prev, generationId, status: "starting" }));
+
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/result/${generationId}`,
+        );
+
+        if (res.ok) {
+          // Generation already completed — load result
+          const data = await res.json();
+          setState((prev) => ({
+            ...prev,
+            status: "complete",
+            previewHtml: data.html ?? null,
+          }));
+          return;
+        }
+
+        if (res.status === 404) {
+          setState((prev) => ({
+            ...prev,
+            status: "error",
+            error: "Generation not found",
+            errorType: "unknown",
+          }));
+          return;
+        }
+
+        // 202 = still in progress — connect to stream
+        setState((prev) => ({ ...prev, status: "building" }));
+        connectToStream(generationId);
+      } catch {
+        // Backend unreachable — try stream anyway
+        setState((prev) => ({ ...prev, status: "building" }));
+        connectToStream(generationId);
+      }
     },
     [connectToStream],
   );
