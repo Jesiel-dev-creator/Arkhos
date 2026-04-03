@@ -49,6 +49,17 @@
     "planned": "Planned",
     "partial": "Partial"
   },
+  "auth": {
+    "subtitle": "Sign in to start building",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "continueWith": "Continue with",
+    "noAccount": "Don't have an account? Sign up",
+    "hasAccount": "Already have an account? Sign in",
+    "sendMagicLink": "Send magic link"
+  },
   "generate": {
     "title": "Generate",
     "fleet": {
@@ -62,9 +73,16 @@
       "planning": "Planning...",
       "planReady": "Plan ready",
       "building": "Building...",
+      "sandbox": "Starting preview...",
       "running": "Generating...",
       "complete": "Complete",
       "error": "Error"
+    },
+    "sandbox": {
+      "starting": "Sandbox starting...",
+      "live": "Live preview",
+      "failed": "Sandbox unavailable",
+      "skipped": "Sandbox skipped"
     },
     "agents": {
       "planner": "Planner",

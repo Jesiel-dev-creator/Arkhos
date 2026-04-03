@@ -49,6 +49,17 @@
     "planned": "Prévu",
     "partial": "Partiel"
   },
+  "auth": {
+    "subtitle": "Connectez-vous pour commencer",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "continueWith": "Continuer avec",
+    "noAccount": "Pas de compte\u00a0? Inscrivez-vous",
+    "hasAccount": "Déjà un compte\u00a0? Connectez-vous",
+    "sendMagicLink": "Envoyer le lien magique"
+  },
   "generate": {
     "title": "Générer",
     "fleet": {
@@ -62,9 +73,16 @@
       "planning": "Planification...",
       "planReady": "Plan prêt",
       "building": "Construction...",
+      "sandbox": "Lancement de l'aperçu...",
       "running": "Génération en cours...",
       "complete": "Terminé",
       "error": "Erreur"
+    },
+    "sandbox": {
+      "starting": "Démarrage du sandbox...",
+      "live": "Aperçu en direct",
+      "failed": "Sandbox indisponible",
+      "skipped": "Sandbox ignoré"
     },
     "agents": {
       "planner": "Planificateur",
