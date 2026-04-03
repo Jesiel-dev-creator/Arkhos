@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Providers } from "@/components/providers";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { CookieConsent } from "@/components/shared/cookie-consent";
@@ -58,10 +59,12 @@ export default async function LocaleLayout({
       >
         <Providers>
           <NextIntlClientProvider messages={messages}>
-            <Navbar />
-            <main className="pt-20">{children}</main>
-            <Footer />
-            <CookieConsent />
+            <AuthProvider>
+              <Navbar />
+              <main className="pt-20">{children}</main>
+              <Footer />
+              <CookieConsent />
+            </AuthProvider>
           </NextIntlClientProvider>
         </Providers>
       </body>
