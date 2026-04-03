@@ -65,7 +65,17 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  server: { host: '0.0.0.0', port: 3000 },
+  server: {
+    host: '0.0.0.0',
+    port: 3000,
+    watch: {
+      usePolling: true,
+      interval: 100,
+    },
+    hmr: {
+      port: 3000,
+    },
+  },
 })""",
     "src/main.tsx": """import React from 'react'
 import ReactDOM from 'react-dom/client'
@@ -138,9 +148,15 @@ class SandboxExecutor:
             if not await self.sandbox.health_check():
                 return {"success": False, "error": "Sandbox not reachable", "stage": "connection"}
 
-            # Clean previous project if exists
+            # Kill stale dev servers + clean old projects (keep 1 most recent)
+            await self.sandbox.execute("pkill -f 'vite' 2>/dev/null || true")
+            await self.sandbox.execute(
+                "cd /workspace && ls -dt gen-* 2>/dev/null | tail -n +2 | xargs rm -rf 2>/dev/null || true"
+            )
+
+            # Create fresh workspace
             await self.sandbox.execute(f"rm -rf {shlex.quote(self.workspace)}")
-            await self.sandbox.execute(f"mkdir -p {shlex.quote(self.workspace)}/src")
+            await self.sandbox.execute(f"mkdir -p {shlex.quote(self.workspace)}/src/sections")
 
             # Write scaffold files
             for filepath, content in SCAFFOLD_FILES.items():
