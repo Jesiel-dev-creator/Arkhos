@@ -228,15 +228,17 @@
   "pricing": {
     "kicker": "Pricing",
     "title": "Simple, transparent pricing",
-    "description": "Pay only for what you use. No hidden fees. All costs visible in real-time.",
+    "description": "Pay only for what you use. No hidden fees. Every cent tracked per agent in real-time.",
     "free": {
       "name": "Free",
       "price": "\u20ac0",
       "period": "forever",
       "cta": "Get started",
+      "costPerGen": "~\u20ac0.003/gen",
       "features": {
         "generations": "10 generations/month",
         "profiles": "Budget profile only",
+        "models": "ministral-3b + devstral-small",
         "projects": "3 projects",
         "preview": "5 min preview",
         "support": "Community support"
@@ -248,9 +250,11 @@
       "period": "/month",
       "badge": "Most popular",
       "cta": "Start building",
+      "costPerGen": "~\u20ac0.005\u2013\u20ac0.020/gen",
       "features": {
         "generations": "100 generations/month",
-        "profiles": "All fleet profiles",
+        "profiles": "All fleet profiles (Budget, Balanced, Quality)",
+        "models": "Up to devstral-2 + magistral-small",
         "projects": "Unlimited projects",
         "preview": "30 min preview",
         "support": "Email support"
@@ -261,15 +265,18 @@
       "price": "\u20ac29",
       "period": "/month",
       "cta": "Contact us",
+      "costPerGen": "~\u20ac0.005\u2013\u20ac0.020/gen",
       "features": {
         "generations": "500 generations/month",
-        "profiles": "All fleet profiles",
+        "profiles": "All fleet profiles (Budget, Balanced, Quality)",
+        "models": "Up to devstral-2 + magistral-small",
         "projects": "Unlimited projects",
         "preview": "Persistent preview",
         "support": "Priority support",
         "seats": "5 team seats"
       }
     },
+    "modelNote": "Budget: ministral-3b + devstral-small \u00b7 Balanced: mistral-small + devstral-small \u00b7 Quality: mistral-small + devstral-2 + magistral-small",
     "cta": {
       "title": "Ready to build?",
       "description": "Start with the free plan. Upgrade when you need more.",

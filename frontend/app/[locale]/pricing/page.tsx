@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Check, X } from "lucide-react";
 
-const FEATURE_KEYS = ["generations", "profiles", "projects", "preview", "support"] as const;
+const FEATURE_KEYS = ["generations", "profiles", "models", "projects", "preview", "support"] as const;
 
 export default function PricingPage() {
   const t = useTranslations("pricing");
@@ -23,6 +23,7 @@ export default function PricingPage() {
             <span className="text-4xl font-extrabold text-[var(--text-primary)]">{t("free.price")}</span>
             <span className="text-sm text-[var(--text-muted)]">{t("free.period")}</span>
           </div>
+          <p className="mt-1 text-[10px] font-[var(--font-code)] text-[var(--text-muted)] tabular-nums">{t("free.costPerGen")}</p>
           <ul className="mt-6 flex-1 space-y-3 text-sm text-[var(--text-secondary)]">
             {FEATURE_KEYS.map((key) => (
               <li key={key} className="flex items-center gap-2">
@@ -49,6 +50,7 @@ export default function PricingPage() {
             <span className="text-4xl font-extrabold text-[var(--text-primary)]">{t("pro.price")}</span>
             <span className="text-sm text-[var(--text-muted)]">{t("pro.period")}</span>
           </div>
+          <p className="mt-1 text-[10px] font-[var(--font-code)] text-[var(--brand)] tabular-nums">{t("pro.costPerGen")}</p>
           <ul className="mt-6 flex-1 space-y-3 text-sm text-[var(--text-secondary)]">
             {FEATURE_KEYS.map((key) => (
               <li key={key} className="flex items-center gap-2">
@@ -72,6 +74,7 @@ export default function PricingPage() {
             <span className="text-4xl font-extrabold text-[var(--text-primary)]">{t("team.price")}</span>
             <span className="text-sm text-[var(--text-muted)]">{t("team.period")}</span>
           </div>
+          <p className="mt-1 text-[10px] font-[var(--font-code)] text-[var(--text-muted)] tabular-nums">{t("team.costPerGen")}</p>
           <ul className="mt-6 flex-1 space-y-3 text-sm text-[var(--text-secondary)]">
             {FEATURE_KEYS.map((key) => (
               <li key={key} className="flex items-center gap-2">
@@ -92,6 +95,11 @@ export default function PricingPage() {
           </Link>
         </div>
       </div>
+
+      {/* Model note */}
+      <p className="mt-6 text-center text-[10px] font-[var(--font-code)] text-[var(--text-muted)] max-w-3xl mx-auto leading-relaxed">
+        {t("modelNote")}
+      </p>
 
       {/* Bottom CTA */}
       <div className="mt-12 rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
