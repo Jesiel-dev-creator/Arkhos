@@ -1036,23 +1036,35 @@ async def run_pipeline_streaming_mcp(
         # ── Sandbox: scaffold + dev server BEFORE Builder ─────────
         # Lovable-style: start the preview first, files hot-reload as they stream in
         sandbox_executor: SandboxExecutor | None = None
+        sandbox_port: int | None = None
         try:
+            from arkhos.app import port_manager
+            gen_name = f"gen-{int(start_time)}"
+            # user_id comes from request context — fallback to gen_name for now
+            user_id = gen_name  # TODO: pass real user_id through pipeline
+            sandbox_port = port_manager.allocate(gen_name, user_id)
             sandbox_executor = SandboxExecutor()
             scaffold_result = await sandbox_executor.scaffold_project(
-                project_name=f"gen-{int(start_time)}",
+                project_name=gen_name,
+                port=sandbox_port,
             )
             if scaffold_result.get("success"):
                 yield format_sse(SSEEventType.SANDBOX_START, {
                     "message": "Live preview ready — files will appear as they generate",
-                    "preview_url": scaffold_result.get("preview_url"),
+                    "preview_url": f"/api/preview/{gen_name}/",
                 })
                 logger.info("Sandbox scaffold OK (%.2fs) — live streaming enabled",
                             scaffold_result.get("duration_s", 0))
             else:
                 logger.warning("Sandbox scaffold failed: %s", scaffold_result.get("error"))
+                if sandbox_port:
+                    port_manager.release(gen_name)
                 sandbox_executor = None
         except Exception as e:
             logger.warning("Sandbox unavailable, falling back to batch: %s", e)
+            if sandbox_port:
+                from arkhos.app import port_manager
+                port_manager.release(f"gen-{int(start_time)}")
             sandbox_executor = None
 
         # ── Phase 3: Builder (streaming) ──────────────────────────
@@ -1229,7 +1241,7 @@ async def run_pipeline_streaming_mcp(
         if sandbox_executor:
             yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
                 "success": True,
-                "preview_url": sandbox_executor.preview_url,
+                "preview_url": f"/api/preview/gen-{int(start_time)}/",
                 "stage": "running",
                 "duration_s": round(time.monotonic() - start_time, 2),
             })
