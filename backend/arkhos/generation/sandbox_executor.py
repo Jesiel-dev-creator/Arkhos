@@ -60,23 +60,7 @@ SCAFFOLD_FILES: dict[str, str] = {
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>""",
-    "vite.config.ts": """import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: '0.0.0.0',
-    port: 3000,
-    watch: {
-      usePolling: true,
-      interval: 100,
-    },
-    hmr: {
-      port: 3000,
-    },
-  },
-})""",
+    "vite.config.ts": "",  # overridden with dynamic port in scaffold_project()
     "src/main.tsx": """import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
@@ -135,11 +119,15 @@ class SandboxExecutor:
         self.workspace: str | None = None
         self._server_running = False
 
-    async def scaffold_project(self, project_name: str = "arkhos-app") -> dict:
+    async def scaffold_project(self, project_name: str = "arkhos-app", port: int = 3000) -> dict:
         """Phase 1: Create scaffold, install deps, start dev server.
 
         Call this BEFORE the Builder starts. Returns immediately with preview URL.
         Files can then be streamed in via write_file().
+        
+        Args:
+            project_name: Name of the project (e.g., gen-1234567890)
+            port: Dynamic port allocated by PortManager for this generation
         """
         self.workspace = f"{WORKSPACE_ROOT}/{shlex.quote(project_name)}"
         t0 = time.monotonic()
@@ -158,8 +146,30 @@ class SandboxExecutor:
             await self.sandbox.execute(f"rm -rf {shlex.quote(self.workspace)}")
             await self.sandbox.execute(f"mkdir -p {shlex.quote(self.workspace)}/src/sections")
 
+            # Generate Vite config with dynamic port
+            dynamic_vite_config = f"""import {{ defineConfig }} from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({{
+  plugins: [react()],
+  server: {{
+    host: '0.0.0.0',
+    port: {port},
+    watch: {{
+      usePolling: true,
+      interval: 100,
+    }},
+    hmr: {{
+      port: {port},
+    }},
+  }},
+}})"""
+
             # Write scaffold files
             for filepath, content in SCAFFOLD_FILES.items():
+                # Use dynamic Vite config instead of static one
+                if filepath == "vite.config.ts":
+                    content = dynamic_vite_config
                 full_path = f"{self.workspace}/{filepath}"
                 result = await self.sandbox.write_file(path=full_path, content=content)
                 if not result.success:
@@ -197,6 +207,7 @@ class SandboxExecutor:
             return {
                 "success": True,
                 "preview_url": self.preview_url,
+                "port": port,
                 "stage": "running",
                 "duration_s": elapsed,
             }
