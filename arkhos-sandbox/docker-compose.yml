@@ -1,0 +1,21 @@
+services:
+  sandbox:
+    build: .
+    container_name: arkhos-sandbox
+    runtime: nvidia
+    gpus: all
+    ports:
+      - "8001:8001"   # API
+      - "3010-3060:3010-3060"   # Vite dev server preview (per-generation isolation)
+    volumes:
+      - sandbox-data:/workspace
+    restart: unless-stopped
+    mem_limit: 2g
+    cpus: "2.0"
+    environment:
+      # Force Vite/chokidar to use polling for file watching over Docker volumes
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+
+volumes:
+  sandbox-data:
