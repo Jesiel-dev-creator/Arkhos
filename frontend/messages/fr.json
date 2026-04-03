@@ -1,4 +1,14 @@
 {
+  "dashboard": {
+    "kicker": "Tableau de bord",
+    "title": "Vos projets",
+    "newProject": "Nouveau projet",
+    "empty": {
+      "title": "Aucun projet",
+      "description": "Cr\u00e9ez votre premier projet. D\u00e9crivez ce que vous voulez et nos agents IA le construiront.",
+      "cta": "Cr\u00e9er votre premier projet"
+    }
+  },
   "nav": {
     "home": "Accueil",
     "generate": "Générer",

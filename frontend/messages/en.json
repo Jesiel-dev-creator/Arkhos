@@ -1,4 +1,14 @@
 {
+  "dashboard": {
+    "kicker": "Dashboard",
+    "title": "Your projects",
+    "newProject": "New project",
+    "empty": {
+      "title": "No projects yet",
+      "description": "Create your first project to get started. Describe what you want and our AI agents will build it.",
+      "cta": "Create your first project"
+    }
+  },
   "nav": {
     "home": "Home",
     "generate": "Generate",
