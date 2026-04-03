@@ -49,7 +49,7 @@ export default function NewProjectPage() {
 
     try {
       const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const res = await fetch(`${apiBase}/api/generate`, {
+      const res = await fetch(`${apiBase}/api/generate-mcp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

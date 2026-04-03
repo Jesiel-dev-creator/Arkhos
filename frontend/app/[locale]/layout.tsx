@@ -36,6 +36,9 @@ export const metadata: Metadata = {
   title: "ArkhosAI — AI Website Generator",
   description:
     "Build beautiful websites with AI. EU sovereign, open source, powered by Mistral.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default async function LocaleLayout({

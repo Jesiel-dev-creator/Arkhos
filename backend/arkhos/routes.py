@@ -146,14 +146,33 @@ async def _run_pipeline_mcp(
         return
 
     generation.status = GenerationStatus.RUNNING
+    total_cost = 0.0
 
     try:
-        async for event_str in run_pipeline_streaming_mcp(
+        async for sse_event in run_pipeline_streaming_mcp(
             prompt, locale, profile
         ):
-            await generation.event_queue.put(event_str)
+            await generation.event_queue.put(sse_event)
+
+            # Parse SSE data to capture metadata for result endpoint
+            for line in sse_event.split("\n"):
+                if not line.startswith("data: "):
+                    continue
+                try:
+                    data = json.loads(line[6:])
+                except (json.JSONDecodeError, KeyError):
+                    continue
+                if "total_cost_eur" in data:
+                    total_cost = data["total_cost_eur"]
+                if data.get("stage") == "final" and "html" in data:
+                    generation.html = data["html"]
+                if "files" in data and "file_count" in data:
+                    generation.metadata["files"] = data["files"]
+                if "plan" in data:
+                    generation.plan = data["plan"]
 
         generation.status = GenerationStatus.COMPLETE
+        generation.metadata["total_cost_eur"] = total_cost
 
     except Exception as exc:
         logger.exception("MCP pipeline failed: %s", exc)
@@ -167,6 +186,7 @@ async def _run_pipeline_mcp(
         )
 
     await generation.event_queue.put(None)
+    rate_limiter.record_generation(client_ip, total_cost)
 
 
 async def _run_planner(
