@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  ArrowLeft,
   Code2,
   Eye,
   Download,
@@ -32,6 +31,8 @@ import { StatusBar } from "@/components/generate/status-bar";
 import { CodeBlock } from "@/components/generate/code-block";
 import { FileTree } from "@/components/generate/file-tree";
 import { ErrorPanel } from "@/components/generate/error-panel";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/components/auth/auth-provider";
 import { cn } from "@/lib/utils";
 import type { AgentState } from "@/hooks/use-sse";
 
@@ -42,6 +43,8 @@ export default function GenerationWorkspacePage() {
   const params = useParams<{ id: string }>();
   const generationId = params.id;
   const t = useTranslations("generate");
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuthContext();
 
   const [files, setFiles] = useState<Record<string, string>>({});
   const [mainView, setMainView] = useState<MainView>("preview");
@@ -57,26 +60,30 @@ export default function GenerationWorkspacePage() {
   const { state: iterateState, iterate } = useIterate(handleFileChunk);
 
   const isComplete = state.status === "complete";
-  const isBuilding = ["starting", "planning", "building"].includes(state.status);
+  const isBuilding = ["starting", "planning", "building", "sandbox"].includes(state.status);
   const isPlanReady = state.status === "plan_ready";
   const isIdle = state.status === "idle";
   const isError = state.status === "error";
+  const isSandboxing = state.status === "sandbox";
+  const sandboxReady = state.sandbox.status === "running" && state.sandbox.previewUrl;
 
   useEffect(() => {
     if (generationId && isIdle) connectTo(generationId);
   }, [generationId, isIdle, connectTo]);
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace(`/login?next=/generate/${generationId}`);
+    }
+  }, [authLoading, user, generationId, router]);
+
   const fileList = useMemo(() => Object.keys(files).sort(), [files]);
 
-  useEffect(() => {
-    if (!activeFile && fileList.length > 0) setActiveFile(fileList[0]);
-  }, [activeFile, fileList]);
+  // Auto-select first file (derived, not effect)
+  const effectiveActiveFile = activeFile ?? (fileList.length > 0 ? fileList[0] : null);
 
-  useEffect(() => {
-    if (fileList.length > 0 && mainView === "preview" && !state.previewHtml && isComplete) {
-      setMainView("code");
-    }
-  }, [fileList.length, mainView, state.previewHtml, isComplete]);
+  // Auto-switch to code when files arrive without preview
+  const effectiveView = (fileList.length > 0 && mainView === "preview" && !state.previewHtml && isComplete) ? "code" : mainView;
 
   const handleIterate = useCallback(
     (modification: string) => {
@@ -107,7 +114,7 @@ export default function GenerationWorkspacePage() {
     <div data-workspace className="h-screen flex flex-col overflow-hidden bg-[var(--void)]">
       {/* ═══ Top toolbar ═══ */}
       <div className="flex items-center gap-2 h-11 px-3 border-b border-[var(--border)] bg-[var(--deep)] shrink-0">
-        <Link href="/" className="flex items-center gap-2 shrink-0 mr-1 focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none rounded-lg px-1">
+        <Link href="/dashboard" className="flex items-center gap-2 shrink-0 mr-1 focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none rounded-lg px-1">
           <div className="w-6 h-6 rounded-md bg-[var(--brand)] flex items-center justify-center">
             <Cpu className="w-3 h-3 text-white" />
           </div>
@@ -121,7 +128,7 @@ export default function GenerationWorkspacePage() {
           {(["preview", "code"] as const).map((view) => (
             <button key={view} type="button" onClick={() => setMainView(view)} className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none",
-              mainView === view ? "bg-[var(--surface)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface)]/50",
+              effectiveView === view ? "bg-[var(--surface)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface)]/50",
             )}>
               {view === "preview" ? <Eye className="w-3.5 h-3.5" /> : <Code2 className="w-3.5 h-3.5" />}
               <span className="hidden sm:inline">{view === "preview" ? t("tabs.preview") : t("tabs.code")}</span>
@@ -130,7 +137,7 @@ export default function GenerationWorkspacePage() {
         </div>
 
         {/* Device picker (preview only) */}
-        {mainView === "preview" && state.previewHtml && (
+        {effectiveView === "preview" && state.previewHtml && (
           <>
             <div className="w-px h-5 bg-[var(--border)] ml-1" />
             <div className="flex items-center gap-0.5 ml-1">
@@ -200,7 +207,7 @@ export default function GenerationWorkspacePage() {
               )}
 
               {/* Agent list */}
-              <AgentList agents={state.agents} currentAgent={state.currentAgent} status={state.status} />
+              <AgentList agents={state.agents} status={state.status} sandbox={state.sandbox} />
 
               {/* Plan review */}
               {isPlanReady && state.plan && (
@@ -213,7 +220,7 @@ export default function GenerationWorkspacePage() {
             {/* Tips during generation */}
             {isBuilding && (
               <div className="px-4 pb-4">
-                <GenerationTips agent={state.currentAgent} />
+                <GenerationTips />
               </div>
             )}
 
@@ -238,7 +245,7 @@ export default function GenerationWorkspacePage() {
                     <p className="text-xs font-medium text-[var(--text-primary)]">Generation complete</p>
                   </div>
                   <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
-                    Your site is ready. Use the chat below to refine it — try "make the hero bigger" or "change the color scheme to blue".
+                    Your site is ready. Use the chat below to refine it.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {["Make the hero bigger", "Add dark mode", "Change colors to blue"].map((suggestion) => (
@@ -302,19 +309,19 @@ export default function GenerationWorkspacePage() {
         {/* ── Right: main content ── */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* File tree + code (code view) */}
-          {mainView === "code" ? (
+          {effectiveView === "code" ? (
             <div className="flex-1 flex min-h-0 overflow-hidden">
               {fileList.length > 0 && (
                 <div className="w-56 shrink-0 border-r border-[var(--border)] bg-[var(--deep)] overflow-y-auto">
                   <div className="px-3 py-2.5 border-b border-[var(--border)]">
                     <p className="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wider">{t("workspace.files", { count: fileList.length })}</p>
                   </div>
-                  <FileTree files={fileList} activeFile={activeFile} onSelect={setActiveFile} />
+                  <FileTree files={fileList} activeFile={effectiveActiveFile} onSelect={setActiveFile} />
                 </div>
               )}
               <div className="flex-1 overflow-auto bg-[var(--void)]">
-                {activeFile && files[activeFile] ? (
-                  <CodeBlock code={files[activeFile]} filename={activeFile} />
+                {effectiveActiveFile && files[effectiveActiveFile] ? (
+                  <CodeBlock code={files[effectiveActiveFile]} filename={effectiveActiveFile} />
                 ) : fileList.length === 0 && isBuilding ? (
                   <div className="flex flex-col items-center justify-center h-full gap-3">
                     <Loader2 className="w-5 h-5 text-[var(--brand)] animate-spin" />
@@ -330,7 +337,14 @@ export default function GenerationWorkspacePage() {
           ) : (
             /* Preview */
             <div className="flex-1 bg-[var(--void)] overflow-hidden flex items-center justify-center">
-              {state.previewHtml ? (
+              {sandboxReady ? (
+                <div className={cn(
+                  "h-full transition-all duration-300 bg-white",
+                  previewDevice === "desktop" ? "w-full" : previewDevice === "tablet" ? "w-[768px] rounded-lg border border-[var(--border)] my-4" : "w-[375px] rounded-xl border border-[var(--border)] my-4",
+                )}>
+                  <iframe src={state.sandbox.previewUrl!} className="w-full h-full border-0" sandbox="allow-scripts" title="Live sandbox preview" />
+                </div>
+              ) : state.previewHtml ? (
                 <div className={cn(
                   "h-full transition-all duration-300 bg-white",
                   previewDevice === "desktop" ? "w-full" : previewDevice === "tablet" ? "w-[768px] rounded-lg border border-[var(--border)] my-4" : "w-[375px] rounded-xl border border-[var(--border)] my-4",
@@ -368,8 +382,8 @@ export default function GenerationWorkspacePage() {
 
 /* ── Agent list (left panel) ── */
 
-function AgentList({ agents, currentAgent, status }: {
-  agents: AgentState[]; currentAgent: string | null; status: string;
+function AgentList({ agents, status, sandbox }: {
+  agents: AgentState[]; status: string; sandbox?: import("@/hooks/use-sse").SandboxState;
 }) {
   const isActive = !["idle", "complete", "error"].includes(status);
   const showSkeleton = agents.length === 0 && isActive;
@@ -395,6 +409,8 @@ function AgentList({ agents, currentAgent, status }: {
   if (agents.length === 0) {
     return <p className="text-xs text-[var(--text-muted)] text-center py-4">{status === "complete" ? "All agents finished" : status === "error" ? "Pipeline failed" : "Waiting..."}</p>;
   }
+
+  const showSandboxRow = sandbox && sandbox.status !== "idle";
 
   return (
     <div className="space-y-0.5">
@@ -429,9 +445,55 @@ function AgentList({ agents, currentAgent, status }: {
               <span className="text-[9px] font-medium text-[var(--brand)] animate-pulse shrink-0">live</span>
             )}
           </div>
-          {i < agents.length - 1 && <div className="ml-6 h-1 border-l border-[var(--border)]/50" />}
+          {(i < agents.length - 1 || showSandboxRow) && <div className="ml-6 h-1 border-l border-[var(--border)]/50" />}
         </div>
       ))}
+
+      {/* Sandbox step — appears after all agents */}
+      {showSandboxRow && (
+        <div>
+          <div className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200",
+            sandbox.status === "starting" && "bg-[var(--brand)]/5",
+          )}>
+            <div className={cn(
+              "w-6 h-6 rounded-full flex items-center justify-center shrink-0 border transition-all duration-300",
+              sandbox.status === "running" ? "bg-[var(--success)]/10 border-[var(--success)]/20" :
+              sandbox.status === "starting" ? "bg-[var(--brand)]/10 border-[var(--brand)]/30" :
+              sandbox.status === "failed" ? "bg-[var(--error)]/10 border-[var(--error)]/20" :
+              "bg-[var(--surface)] border-[var(--border)]",
+            )}>
+              {sandbox.status === "running" ? <Check className="w-3 h-3 text-[var(--success)]" /> :
+               sandbox.status === "starting" ? <Loader2 className="w-3 h-3 text-[var(--brand)] animate-spin" /> :
+               sandbox.status === "failed" ? <Circle className="w-2 h-2 text-[var(--error)]" /> :
+               <Circle className="w-2 h-2 text-[var(--text-muted)]/40" />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={cn("text-xs font-medium",
+                sandbox.status === "starting" ? "text-[var(--text-primary)]" :
+                sandbox.status === "running" ? "text-[var(--text-secondary)]" :
+                sandbox.status === "failed" ? "text-[var(--error)]" :
+                "text-[var(--text-muted)]",
+              )}>
+                Sandbox
+              </p>
+              <p className="text-[10px] font-[var(--font-code)] text-[var(--text-muted)] truncate">
+                {sandbox.status === "starting" ? "Installing dependencies..." :
+                 sandbox.status === "running" ? "Preview ready" :
+                 sandbox.status === "failed" ? (sandbox.error ?? "Failed") :
+                 sandbox.status === "skipped" ? "Unavailable" :
+                 "waiting..."}
+              </p>
+            </div>
+            {sandbox.durationS > 0 && (
+              <span className="text-[10px] font-[var(--font-code)] text-[var(--text-muted)] tabular-nums shrink-0">{sandbox.durationS.toFixed(1)}s</span>
+            )}
+            {sandbox.status === "starting" && (
+              <span className="text-[9px] font-medium text-[var(--brand)] animate-pulse shrink-0">live</span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -445,7 +507,7 @@ const TIPS = [
   { icon: Sparkles, text: "The smart router picks the optimal model for each agent based on past performance." },
 ];
 
-function GenerationTips({ agent }: { agent: string | null }) {
+function GenerationTips() {
   const [tipIndex, setTipIndex] = useState(0);
 
   useEffect(() => {
