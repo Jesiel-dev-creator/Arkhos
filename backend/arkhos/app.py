@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING
@@ -14,6 +15,7 @@ from tramontane import FleetTelemetry, MistralRouter, TramontaneMemory
 from arkhos import __version__
 from arkhos.intelligence import load_skills
 from arkhos.routes import router
+from arkhos.sandbox import PortManager
 from arkhos.user_routes import user_router
 
 load_dotenv()  # Load .env so MISTRAL_API_KEY is available to Tramontane
@@ -37,6 +39,9 @@ memory = TramontaneMemory(db_path="arkhos_memory.db")
 # get_relevant_skills() uses .matches() for smart injection.
 skill_registry = load_skills()
 
+# PortManager — allocates ports 3010-3060 for per-generation Vite servers
+port_manager = PortManager()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -46,8 +51,31 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         "ArkhosAI v%s starting (telemetry: %d outcomes, skills: %d, memory: %s)",
         __version__, telemetry.total_outcomes, skill_count, memory.stats(),
     )
+
+    # Start port cleanup background task
+    cleanup_task = asyncio.create_task(_port_cleanup_loop())
+
     yield
+
+    cleanup_task.cancel()
     logger.info("ArkhosAI shutting down")
+
+
+async def _port_cleanup_loop() -> None:
+    """Kill Vite servers idle past TTL every 60 seconds."""
+    from arkhos.sandbox import SandboxClient
+
+    sandbox = SandboxClient()
+    while True:
+        await asyncio.sleep(60)
+        expired = port_manager.get_expired()
+        for gen_id, port in expired:
+            try:
+                await sandbox.execute(f"kill $(lsof -t -i:{port}) 2>/dev/null || true")
+                port_manager.release(gen_id)
+                logger.info("Cleanup: killed idle Vite on port %d (gen %s)", port, gen_id)
+            except Exception as e:
+                logger.warning("Cleanup failed for port %d: %s", port, e)
 
 
 app = FastAPI(
