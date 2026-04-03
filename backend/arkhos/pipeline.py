@@ -199,19 +199,23 @@ class PipelineResult:
     error: str | None = None
 
 
-async def _run_parallel_agents_mcp(
-    agents: dict[str, Agent],
-    tasks: list[dict[str, Any]],
-    sse_yield: Any,
-    step_offset: int = 1,
-) -> tuple[list[AgentStepResult], float]:
-    """Run multiple agents in parallel using MCP coordination.
-
-    TODO: MCP parallel execution not yet implemented. This stub exists
-    so run_pipeline_streaming_mcp can be imported without SyntaxError.
-    Use run_build_streaming (sequential with ParallelGroup) instead.
-    """
-    raise NotImplementedError("MCP parallel pipeline not yet implemented")
+async def _run_agent_task(
+    agent: Agent,
+    agent_name: str,
+    input_text: str,
+    router: MistralRouter,
+    run_ctx: RunContext,
+) -> AgentStepResult:
+    """Run a single agent and return its result. Used by asyncio.gather."""
+    t0 = time.monotonic()
+    response = await agent.run(input_text, router=router, run_context=run_ctx)
+    return AgentStepResult(
+        agent_name=agent_name,
+        model_used=response.model_used,
+        output=response.output,
+        cost_eur=response.cost_eur,
+        duration_s=round(time.monotonic() - t0, 2),
+    )
 
 
 def _create_agents(
@@ -849,16 +853,410 @@ async def run_pipeline_streaming_mcp(
     locale: str = "en",
     profile: FleetProfile = FleetProfile.BALANCED,
 ) -> AsyncGenerator[str, None]:
-    """MCP parallel pipeline — not yet implemented.
+    """Full pipeline with parallel agent execution — no approval pause.
 
-    Use run_planner_streaming + run_build_streaming instead.
-    This stub exists so the import in routes.py doesn't break.
+    Flow:
+      Phase 1: Planner (sequential — needs prompt)
+      Phase 2: Designer + Architect + MCP inspiration fetch (parallel)
+      Phase 3: Builder with streaming file output (sequential — needs phase 2)
+      Phase 4: Reviewer (sequential — needs builder output)
+      Phase 5: Sandbox preview (optional)
+
+    Yields SSE events for real-time frontend updates.
     """
-    yield format_sse(SSEEventType.ERROR, {
-        "error": "MCP parallel pipeline not yet implemented. Use sequential pipeline.",
-        "error_type": "not_implemented",
-        "agent": "system",
-    })
+    cfg = PROFILES[profile]
+    budget_mgr = AdaptiveBudgetManager(total=cfg.total_budget_eur)
+    start_time = time.monotonic()
+    agents = _create_agents(cfg, budget_mgr, prompt)
+    agent_results: list[AgentStepResult] = []
+    cumulative_cost = 0.0
+    total_steps = 5
+
+    try:
+        yield format_sse("pipeline_start", {
+            "profile": profile.value,
+            "label": cfg.label,
+            "est_cost": cfg.est_cost,
+            "est_time": cfg.est_time,
+            "total_budget": cfg.total_budget_eur,
+            "parallel_mode": True,
+        })
+
+        run_ctx = RunContext(budget_eur=cfg.total_budget_eur, reallocation="adaptive")
+        mem = _get_memory()
+        router = _get_router()
+        registry = _get_skills()
+
+        # ── Phase 1: Planner ──────────────────────────────────────
+        yield format_sse(SSEEventType.AGENT_START, {
+            "agent": "planner", "model": agents["planner"].model,
+            "step": 1, "total_steps": total_steps,
+        })
+
+        t0 = time.monotonic()
+        planner_skills = get_relevant_skills(registry, "planner", prompt)
+        memory_ctx = await recall_context(mem, "planner", prompt)
+        planner_input = (
+            format_planner_msg(prompt, locale)
+            + "\n\n## PLANNING SKILLS\n" + planner_skills
+        )
+        if memory_ctx:
+            planner_input += "\n\n" + memory_ctx
+
+        planner_response = await agents["planner"].run(
+            planner_input, router=router, run_context=run_ctx,
+        )
+        planner_step = AgentStepResult(
+            agent_name="planner",
+            model_used=planner_response.model_used,
+            output=planner_response.output,
+            cost_eur=planner_response.cost_eur,
+            duration_s=round(time.monotonic() - t0, 2),
+        )
+        agent_results.append(planner_step)
+        cumulative_cost += planner_step.cost_eur
+        budget_mgr.record_spend("planner", planner_step.cost_eur)
+
+        yield format_sse(SSEEventType.AGENT_COMPLETE, {
+            "agent": "planner", "model": planner_step.model_used,
+            "cost_eur": planner_step.cost_eur,
+            "duration_s": planner_step.duration_s,
+            "cumulative_cost_eur": round(cumulative_cost, 6),
+        })
+        await record_agent_experience(
+            mem, "planner", prompt[:100], planner_step.output[:200],
+            planner_step.model_used, planner_step.cost_eur,
+        )
+
+        planner_output = planner_step.output
+
+        # ── Phase 2: Designer + Architect + MCP inspiration (PARALLEL) ──
+        yield format_sse(SSEEventType.AGENT_START, {
+            "agent": "designer", "model": agents["designer"].model,
+            "step": 2, "total_steps": total_steps,
+        })
+        yield format_sse(SSEEventType.AGENT_START, {
+            "agent": "architect", "model": agents["architect"].model,
+            "step": 3, "total_steps": total_steps,
+        })
+
+        t0 = time.monotonic()
+        design_intel = get_design_for_industry(planner_output)
+        designer_memory = await recall_context(mem, "designer", planner_output)
+        builder_memory = await recall_context(mem, "builder", planner_output)
+
+        designer_input = (
+            format_designer_msg(planner_output, design_intel)
+            + ("\n\n" + designer_memory if designer_memory else "")
+        )
+        architect_input = format_architect_msg(planner_output, planner_output)
+
+        # Fetch 21st.dev MCP inspiration in parallel with agents
+        async def _fetch_mcp_inspiration() -> str:
+            try:
+                from arkhos.integrations.magic_mcp import fetch_inspiration
+                result = await fetch_inspiration(planner_output[:200])
+                if result:
+                    logger.info("MCP: fetched design inspiration (%d chars)", len(result))
+                return result
+            except Exception as e:
+                logger.debug("MCP inspiration unavailable: %s", e)
+                return ""
+
+        # Run all three in parallel
+        designer_result, architect_result, mcp_inspiration = await asyncio.gather(
+            _run_agent_task(agents["designer"], "designer", designer_input, router, run_ctx),
+            _run_agent_task(agents["architect"], "architect", architect_input, router, run_ctx),
+            _fetch_mcp_inspiration(),
+        )
+
+        parallel_duration = round(time.monotonic() - t0, 2)
+        designer_step = AgentStepResult(
+            agent_name="designer",
+            model_used=designer_result.model_used,
+            output=designer_result.output,
+            cost_eur=designer_result.cost_eur,
+            duration_s=parallel_duration,
+        )
+        architect_step = AgentStepResult(
+            agent_name="architect",
+            model_used=architect_result.model_used,
+            output=architect_result.output,
+            cost_eur=architect_result.cost_eur,
+            duration_s=parallel_duration,
+        )
+        agent_results.extend([designer_step, architect_step])
+        cumulative_cost += designer_step.cost_eur + architect_step.cost_eur
+        budget_mgr.record_spend("designer", designer_step.cost_eur)
+        budget_mgr.record_spend("architect", architect_step.cost_eur)
+
+        yield format_sse(SSEEventType.AGENT_COMPLETE, {
+            "agent": "designer", "model": designer_step.model_used,
+            "cost_eur": designer_step.cost_eur,
+            "duration_s": designer_step.duration_s,
+            "cumulative_cost_eur": round(cumulative_cost, 6),
+        })
+        yield format_sse(SSEEventType.AGENT_COMPLETE, {
+            "agent": "architect", "model": architect_step.model_used,
+            "cost_eur": architect_step.cost_eur,
+            "duration_s": architect_step.duration_s,
+            "cumulative_cost_eur": round(cumulative_cost, 6),
+        })
+
+        await record_agent_experience(
+            mem, "designer", planner_output[:100], designer_step.output[:200],
+            designer_step.model_used, designer_step.cost_eur,
+        )
+        await record_agent_experience(
+            mem, "architect", planner_output[:100], architect_step.output[:200],
+            architect_step.model_used, architect_step.cost_eur,
+        )
+
+        logger.info(
+            "Phase 2 complete (parallel): designer=%.1fs architect=%.1fs total=%.1fs mcp=%s",
+            designer_step.duration_s, architect_step.duration_s,
+            parallel_duration, "yes" if mcp_inspiration else "no",
+        )
+
+        # Extract section order from architect for App.tsx generation
+        section_order: list[str] = []
+        template_refs = ""
+        try:
+            arch_data = json.loads(architect_step.output)
+            section_names = [s["name"] for s in arch_data.get("sections", [])]
+            section_order = section_names
+            template_refs = get_builder_context(section_names, max_templates=5)
+        except (json.JSONDecodeError, KeyError, TypeError):
+            pass
+
+        # Inject MCP inspiration into builder context if available
+        if mcp_inspiration:
+            template_refs = (template_refs or "") + "\n\n## 21st.dev Inspiration\n" + mcp_inspiration
+
+        # ── Phase 3: Builder (streaming) ──────────────────────────
+        builder_base = cfg.total_budget_eur * 0.40
+        effective_builder_budget = budget_mgr.builder_budget(builder_base)
+        agents["builder"].budget_eur = effective_builder_budget
+
+        yield format_sse(SSEEventType.AGENT_START, {
+            "agent": "builder", "model": agents["builder"].model,
+            "step": 4, "total_steps": total_steps,
+        })
+        t0 = time.monotonic()
+
+        builder_input = format_builder_msg(
+            planner_output, designer_step.output,
+            architect_step.output, template_refs,
+        )
+        if builder_memory:
+            builder_input += "\n\n" + builder_memory
+
+        # Stream tokens, extract files as </file> tags close
+        full_output = ""
+        streamed_files: dict[str, str] = {}
+        last_emit_pos = 0
+        builder_result = None
+
+        async for event in agents["builder"].run_stream(
+            builder_input, router=router, run_context=run_ctx,
+        ):
+            if event.type == "token":
+                full_output += event.token
+                new_region = full_output[last_emit_pos:]
+                for match in _FILE_TAG_RE.finditer(new_region):
+                    path = match.group(1).strip()
+                    content = match.group(2)
+                    if content.startswith("\n"):
+                        content = content[1:]
+                    if content.endswith("\n"):
+                        content = content[:-1]
+                    if path not in streamed_files:
+                        if path.endswith(".tsx"):
+                            content = _sanitize_icons(content)
+                            content = _sanitize_iframes(content)
+                            content = _fix_missing_imports(content)
+                        streamed_files[path] = content
+                        yield format_sse("file_chunk", {
+                            "path": path, "content": content,
+                        })
+                        if path == "src/index.css":
+                            await asyncio.sleep(0.05)
+                if new_region:
+                    last_closed = new_region.rfind("</file>")
+                    if last_closed >= 0:
+                        last_emit_pos += last_closed + len("</file>")
+            elif event.type == "complete" and event.result:
+                builder_result = event.result
+            elif event.type == "error":
+                raise RuntimeError(f"Builder streaming error: {event.error}")
+
+        final_output = builder_result.output if builder_result else full_output
+        all_files = _parse_file_tags(final_output)
+
+        for path, content in all_files.items():
+            if path not in streamed_files:
+                if path.endswith(".tsx"):
+                    content = _sanitize_icons(content)
+                streamed_files[path] = content
+                yield format_sse("file_chunk", {"path": path, "content": content})
+
+        files = {**all_files, **streamed_files}
+
+        builder_cost = builder_result.cost_eur if builder_result else 0.0
+        builder_model = builder_result.model_used if builder_result else agents["builder"].model
+        builder_step = AgentStepResult(
+            agent_name="builder",
+            model_used=builder_model,
+            output=full_output,
+            cost_eur=builder_cost,
+            duration_s=round(time.monotonic() - t0, 2),
+        )
+        agent_results.append(builder_step)
+        cumulative_cost += builder_step.cost_eur
+        budget_mgr.record_spend("builder", builder_step.cost_eur)
+
+        yield format_sse(SSEEventType.AGENT_COMPLETE, {
+            "agent": "builder", "model": builder_step.model_used,
+            "cost_eur": builder_step.cost_eur,
+            "duration_s": builder_step.duration_s,
+            "cumulative_cost_eur": round(cumulative_cost, 6),
+        })
+        await record_agent_experience(
+            mem, "builder", planner_output[:100],
+            f"{len(files)} files generated",
+            builder_step.model_used, builder_step.cost_eur,
+        )
+
+        if files:
+            app_tsx = _build_app_tsx(files, section_order)
+            files["src/App.tsx"] = app_tsx
+            yield format_sse("file_chunk", {"path": "src/App.tsx", "content": app_tsx})
+
+            files["ARKHOS.md"] = _build_arkhos_md(
+                prompt=planner_output,
+                planner_output=planner_output,
+                designer_output=designer_step.output,
+                architect_output=architect_step.output,
+            )
+
+            yield format_sse("files_ready", {
+                "files": files, "file_count": len(files),
+            })
+
+            index_css = files.get("src/index.css", "")
+            index_html = files.get("index.html", "")
+            if index_css or index_html:
+                fallback_html = (
+                    "<!DOCTYPE html><html><head>"
+                    "<meta charset='UTF-8'>"
+                    "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+                    f"<style>{index_css}</style>"
+                    "</head><body style='background:#020408;color:#fff;font-family:sans-serif;'>"
+                    "<div style='text-align:center;padding:20vh 2rem'>"
+                    "<p style='font-size:1.25rem;opacity:0.8'>Building your site...</p>"
+                    "</div></body></html>"
+                )
+                yield format_sse(SSEEventType.PREVIEW_READY, {
+                    "html": fallback_html, "stage": "pre_review",
+                })
+
+        # ── Phase 4: Reviewer ─────────────────────────────────────
+        yield format_sse(SSEEventType.AGENT_START, {
+            "agent": "reviewer", "model": agents["reviewer"].model,
+            "step": 5, "total_steps": total_steps,
+        })
+        t0 = time.monotonic()
+        reviewer_response = await agents["reviewer"].run(
+            format_reviewer_msg(builder_step.output, planner_output),
+            router=router, run_context=run_ctx,
+        )
+        reviewer_step = AgentStepResult(
+            agent_name="reviewer",
+            model_used=reviewer_response.model_used,
+            output=reviewer_response.output,
+            cost_eur=reviewer_response.cost_eur,
+            duration_s=round(time.monotonic() - t0, 2),
+        )
+        agent_results.append(reviewer_step)
+        cumulative_cost += reviewer_step.cost_eur
+        budget_mgr.record_spend("reviewer", reviewer_step.cost_eur)
+
+        yield format_sse(SSEEventType.AGENT_COMPLETE, {
+            "agent": "reviewer", "model": reviewer_step.model_used,
+            "cost_eur": reviewer_step.cost_eur,
+            "duration_s": reviewer_step.duration_s,
+            "cumulative_cost_eur": round(cumulative_cost, 6),
+        })
+
+        # Apply reviewer fixes
+        reviewer_files = _parse_file_tags(reviewer_step.output)
+        if reviewer_files:
+            for path, content in reviewer_files.items():
+                files[path] = content
+                yield format_sse("file_chunk", {"path": path, "content": content})
+
+        # ── Phase 5: Sandbox Preview ──────────────────────────────
+        sandbox_result: dict | None = None
+        if files:
+            sandbox_t0 = time.monotonic()
+            try:
+                async with SandboxExecutor() as executor:
+                    yield format_sse(SSEEventType.SANDBOX_START, {
+                        "message": "Starting sandbox preview...",
+                    })
+                    sandbox_result = await executor.execute_generated_project(
+                        project_files=files,
+                        project_name=f"gen-{int(start_time)}",
+                    )
+                    yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
+                        "success": sandbox_result.get("success", False),
+                        "preview_url": sandbox_result.get("preview_url"),
+                        "stage": sandbox_result.get("stage"),
+                        "duration_s": round(time.monotonic() - sandbox_t0, 2),
+                    })
+            except Exception as sandbox_exc:
+                logger.warning("Sandbox unavailable: %s", sandbox_exc)
+                yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
+                    "success": False, "error": "Sandbox not available",
+                    "stage": "skipped",
+                    "duration_s": round(time.monotonic() - sandbox_t0, 2),
+                })
+
+        # ── Complete ──────────────────────────────────────────────
+        total_duration = round(time.monotonic() - start_time, 2)
+        yield format_sse(SSEEventType.GENERATION_COMPLETE, {
+            "total_cost_eur": round(cumulative_cost, 6),
+            "total_duration_s": total_duration,
+            "models_used": [r.model_used for r in agent_results],
+            "success": True,
+            "parallel_mode": True,
+            "sandbox_preview": sandbox_result.get("preview_url") if sandbox_result else None,
+        })
+
+        await record_generation_experience(
+            mem,
+            prompt=planner_output[:200],
+            profile=profile.value,
+            total_cost=cumulative_cost,
+            models_used=[r.model_used for r in agent_results],
+            success=True,
+            file_count=len(files) if files else 0,
+            reviewer_summary=reviewer_step.output[:200],
+        )
+
+        logger.info(
+            "MCP pipeline complete: cost=EUR%.4f duration=%.1fs (parallel phases)",
+            cumulative_cost, total_duration,
+        )
+
+    except Exception as exc:
+        logger.exception("MCP pipeline failed: %s", exc)
+        error_type, error_msg = _classify_error(exc)
+        yield format_sse(SSEEventType.ERROR, {
+            "error": error_msg,
+            "error_type": error_type,
+            "agent": agent_results[-1].agent_name if agent_results else "unknown",
+        })
 
 
 def _classify_error(exc: Exception) -> tuple[str, str]:
