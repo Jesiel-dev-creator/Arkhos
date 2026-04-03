@@ -8,7 +8,11 @@
     "docs": "Documentation",
     "blog": "Blog",
     "signIn": "Se connecter",
-    "signUp": "S'inscrire"
+    "signUp": "S'inscrire",
+    "dashboard": "Tableau de bord",
+    "startBuilding": "Commencer",
+    "settings": "Paramètres",
+    "signOut": "Se déconnecter"
   },
   "hero": {
     "title": "Créez de beaux sites web avec l'IA",
