@@ -1,4 +1,11 @@
 {
+  "newProject": {
+    "title": "What do you want to build?",
+    "subtitle": "Describe your website and our AI agents will build it live.",
+    "generate": "Generate",
+    "generating": "Generating...",
+    "templates": "Or start from a template"
+  },
   "dashboard": {
     "kicker": "Dashboard",
     "title": "Your projects",

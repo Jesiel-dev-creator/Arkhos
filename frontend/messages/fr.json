@@ -1,4 +1,11 @@
 {
+  "newProject": {
+    "title": "Que voulez-vous créer\u00a0?",
+    "subtitle": "Décrivez votre site et nos agents IA le construiront en direct.",
+    "generate": "Générer",
+    "generating": "Génération...",
+    "templates": "Ou commencer avec un modèle"
+  },
   "dashboard": {
     "kicker": "Tableau de bord",
     "title": "Vos projets",
