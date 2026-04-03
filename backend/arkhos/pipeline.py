@@ -1051,7 +1051,7 @@ async def run_pipeline_streaming_mcp(
             if scaffold_result.get("success"):
                 yield format_sse(SSEEventType.SANDBOX_START, {
                     "message": "Live preview ready — files will appear as they generate",
-                    "preview_url": f"/api/preview/{gen_name}/",
+                    "preview_url": f"/api/preview/{gen_name}",
                 })
                 logger.info("Sandbox scaffold OK (%.2fs) — live streaming enabled",
                             scaffold_result.get("duration_s", 0))
@@ -1241,7 +1241,7 @@ async def run_pipeline_streaming_mcp(
         if sandbox_executor:
             yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
                 "success": True,
-                "preview_url": f"/api/preview/gen-{int(start_time)}/",
+                "preview_url": f"/api/preview/gen-{int(start_time)}",
                 "stage": "running",
                 "duration_s": round(time.monotonic() - start_time, 2),
             })
@@ -1255,7 +1255,7 @@ async def run_pipeline_streaming_mcp(
             "models_used": [r.model_used for r in agent_results],
             "success": True,
             "parallel_mode": True,
-            "sandbox_preview": sandbox_result.get("preview_url") if sandbox_result else None,
+            "sandbox_preview": f"/api/preview/gen-{int(start_time)}" if sandbox_executor else None,
         })
 
         await record_generation_experience(

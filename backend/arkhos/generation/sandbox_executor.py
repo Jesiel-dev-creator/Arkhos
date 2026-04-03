@@ -136,11 +136,12 @@ class SandboxExecutor:
             if not await self.sandbox.health_check():
                 return {"success": False, "error": "Sandbox not reachable", "stage": "connection"}
 
-            # Kill stale dev servers + clean old projects (keep 1 most recent)
-            await self.sandbox.execute("pkill -f 'vite' 2>/dev/null || true")
+            # Clean old projects (keep 1 most recent)
             await self.sandbox.execute(
                 "cd /workspace && ls -dt gen-* 2>/dev/null | tail -n +2 | xargs rm -rf 2>/dev/null || true"
             )
+            # Note: pkill removed as it's not available in the sandbox container
+            # Vite processes will be managed by the port allocation system
 
             # Create fresh workspace
             await self.sandbox.execute(f"rm -rf {shlex.quote(self.workspace)}")
@@ -192,8 +193,7 @@ export default defineConfig({{
             install_elapsed = round(time.monotonic() - t0, 2)
             logger.info("Sandbox: pnpm install OK (%.2fs)", install_elapsed)
 
-            # Kill any existing dev server and start fresh
-            await self.sandbox.execute("pkill -f 'vite' 2>/dev/null || true")
+            # Start Vite dev server
             await self.sandbox.execute(
                 "nohup pnpm dev > /tmp/dev-server.log 2>&1 &",
                 cwd=self.workspace,

@@ -16,6 +16,11 @@ class Settings(BaseSettings):
     global_daily_budget_eur: float = 25.00
     max_prompt_length: int = 1000
     database_path: str = "arkhos.db"
+    sandbox_url: str = "http://localhost:8001"
+    sandbox_preview_url: str = "http://localhost:3001"
+    supabase_url: str = ""
+    supabase_service_key: str = ""
+    supabase_jwt_secret: str = ""
 
     model_config = {
         "env_prefix": "ARKHOS_",

@@ -41,8 +41,11 @@ class PortManager:
             # Kill-on-new-generation
             if user_id in self._user_to_gen:
                 old_gen = self._user_to_gen[user_id]
-                self._release_locked(old_gen)
-                logger.info("Killed previous gen %s for user %s", old_gen, user_id)
+                old_port = self._gen_to_port.pop(old_gen, None)
+                if old_port is not None:
+                    self._pool.append(old_port)
+                    logger.info("Killed previous gen %s for user %s", old_gen, user_id)
+                self._last_access.pop(old_gen, None)
 
             if not self._pool:
                 raise RuntimeError("No free ports available")
@@ -59,7 +62,7 @@ class PortManager:
         with self._lock:
             self._release_locked(gen_id)
 
-    def _release_locked(self, gen_id: str) -> None:
+    def _release_locked(self, gen_id: str, user_id: str | None = None) -> None:
         """Internal release — caller must hold lock."""
         port = self._gen_to_port.pop(gen_id, None)
         if port is not None:

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Loader2, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -16,24 +16,23 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchProjects = useCallback(async () => {
+  useEffect(() => {
     if (!user) return;
-    setLoading(true);
-    const { data } = await supabase
+    let cancelled = false;
+    supabase
       .from("projects")
       .select("id, name, status, created_at, total_cost_eur, thumbnail_url")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-
-    if (data) {
-      setProjects(data as Project[]);
-    }
-    setLoading(false);
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (cancelled) return;
+        if (data) setProjects(data as Project[]);
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
 
   async function handleDelete(id: string) {
     await supabase.from("projects").delete().eq("id", id);

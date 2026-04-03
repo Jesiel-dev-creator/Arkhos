@@ -37,6 +37,7 @@ def get_planner_skills(industry: str = "default") -> str:
         _read_skill(base / "marketing.md"),
         _read_skill(base / "seo.md"),
         _read_skill(shared / "mistral-prompting.md"),
+        _read_skill(shared / "parallel-processing.md"),
     ]
 
     # Industry-specific skill
@@ -68,6 +69,7 @@ def get_builder_skills() -> str:
         _read_skill(base / "framer-motion.md"),
         _read_skill(base / "accessibility.md"),
         _read_skill(base / "performance.md"),
+        _read_skill(base / "mcp-integration.md"),
     ]
     return "\n\n".join(p for p in parts if p)
 

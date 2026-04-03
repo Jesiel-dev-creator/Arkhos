@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="flex flex-col items-center gap-4 text-center max-w-md">
         <p className="text-6xl font-[var(--font-display)] font-extrabold text-[var(--brand)]">404</p>
         <p className="text-sm text-[var(--text-secondary)]">
-          This page doesn't exist or has been moved.
+          This page does not exist or has been moved.
         </p>
         <Link
           href="/"

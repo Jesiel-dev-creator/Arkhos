@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Cpu, Clock, FileCode2, Layers } from "lucide-react";
+import { Cpu, Clock, FileCode2, Layers, Container } from "lucide-react";
 import type { GenerationState } from "@/hooks/use-sse";
 
 interface StatusBarProps {
@@ -17,6 +17,7 @@ export function StatusBar({ state }: StatusBarProps) {
     planning: t("status.planning"),
     plan_ready: t("status.planReady"),
     building: t("status.building"),
+    sandbox: t("status.sandbox"),
     complete: t("status.complete"),
     error: t("status.error"),
   }[state.status];
@@ -56,6 +57,20 @@ export function StatusBar({ state }: StatusBarProps) {
         <div className="flex items-center gap-1">
           <FileCode2 className="w-3 h-3" />
           <span>{t("workspace.filesGenerated", { count: state.fileCount })}</span>
+        </div>
+      )}
+
+      {state.sandbox.status === "running" && (
+        <div className="flex items-center gap-1 text-[var(--success)]">
+          <Container className="w-3 h-3" />
+          <span>{t("sandbox.live")}</span>
+        </div>
+      )}
+
+      {state.sandbox.status === "starting" && (
+        <div className="flex items-center gap-1 text-[var(--brand)]">
+          <Container className="w-3 h-3 animate-pulse" />
+          <span>{t("sandbox.starting")}</span>
         </div>
       )}
 

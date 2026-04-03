@@ -17,7 +17,7 @@ interface PipelinePanelProps {
 // These are NOT hardcoded agent names — just anonymous placeholder shapes.
 const SKELETON_COUNT = 5;
 
-export function PipelinePanel({ agents, currentAgent, totalCostEur, status }: PipelinePanelProps) {
+export function PipelinePanel({ agents, totalCostEur, status }: PipelinePanelProps) {
   const t = useTranslations("generate");
 
   const showSkeleton = agents.length === 0 && status !== "idle" && status !== "complete" && status !== "error";

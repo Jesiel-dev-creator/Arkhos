@@ -396,6 +396,7 @@ async def stream(generation_id: str) -> StreamingResponse:
 
 @router.get("/preview/{generation_id}/{path:path}")
 @router.get("/preview/{generation_id}")
+@router.get("/preview/{generation_id}/")  # Handle trailing slash for HTTP
 async def preview_proxy(generation_id: str, path: str = "") -> Response:
     """Reverse proxy to the generation's Vite dev server."""
     from arkhos.app import port_manager

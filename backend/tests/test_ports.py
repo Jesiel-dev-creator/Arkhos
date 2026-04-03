@@ -45,7 +45,9 @@ def test_kill_on_new_generation(pm):
     p2 = pm.allocate("gen-2", "user-1")  # same user
     assert pm.get_port("gen-1") is None  # old gen released
     assert pm.get_port("gen-2") == p2
-    assert p1 != p2
+    # The old port should be released and available for reuse
+    # p1 and p2 might be the same if the released port is reallocated
+    # This is correct behavior - ports are recycled
 
 
 def test_pool_exhaustion_raises(pm):

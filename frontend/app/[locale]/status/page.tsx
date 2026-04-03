@@ -7,7 +7,6 @@ import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 export default function StatusPage() {
   const t = useTranslations("pages.status");
   const [health, setHealth] = useState<{ status: string; version: string } | null>(null);
-  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,7 +14,7 @@ export default function StatusPage() {
     fetch(`${base}/health`)
       .then((r) => r.json())
       .then((data) => { setHealth(data); setLoading(false); })
-      .catch(() => { setError(true); setLoading(false); });
+      .catch(() => { setLoading(false); });
   }, []);
 
   return (

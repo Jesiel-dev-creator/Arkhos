@@ -19,7 +19,11 @@ class SSEEventType(StrEnum):
     PREVIEW_READY = "preview_ready"
     GENERATION_COMPLETE = "generation_complete"
     PLAN_READY = "plan_ready"
+    SANDBOX_START = "sandbox_start"
+    SANDBOX_COMPLETE = "sandbox_complete"
     ERROR = "error"
+    PHASE_START = "phase_start"
+    PHASE_COMPLETE = "phase_complete"
 
 
 def format_sse(event: SSEEventType | str, data: dict[str, Any]) -> str:

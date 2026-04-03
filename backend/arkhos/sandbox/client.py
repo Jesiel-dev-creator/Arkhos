@@ -53,7 +53,7 @@ class SandboxClient:
         if self._client is None or self._client.is_closed:
             self._client = httpx.AsyncClient(
                 timeout=self.timeout,
-                limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
+                limits=httpx.Limits(max_connections=50, max_keepalive_connections=20),
             )
         return self._client
 

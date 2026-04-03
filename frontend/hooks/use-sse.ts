@@ -11,6 +11,7 @@ export type GenerationStatus =
   | "planning"
   | "plan_ready"
   | "building"
+  | "sandbox"
   | "complete"
   | "error";
 
@@ -20,6 +21,13 @@ export interface AgentState {
   model?: string;
   costEur?: number;
   durationS?: number;
+}
+
+export interface SandboxState {
+  status: "idle" | "starting" | "running" | "failed" | "skipped";
+  previewUrl: string | null;
+  durationS: number;
+  error: string | null;
 }
 
 export interface GenerationState {
@@ -37,10 +45,18 @@ export interface GenerationState {
   estCost: string | null;
   estTime: string | null;
   fileCount: number;
+  sandbox: SandboxState;
 }
 
 // No hardcoded agent list — agents are discovered from SSE agent_start events.
 // This supports future pipeline expansions without frontend changes.
+
+const INITIAL_SANDBOX: SandboxState = {
+  status: "idle",
+  previewUrl: null,
+  durationS: 0,
+  error: null,
+};
 
 const INITIAL_STATE: GenerationState = {
   status: "idle",
@@ -57,6 +73,7 @@ const INITIAL_STATE: GenerationState = {
   estCost: null,
   estTime: null,
   fileCount: 0,
+  sandbox: { ...INITIAL_SANDBOX },
 };
 
 const MAX_RECONNECT_ATTEMPTS = 3;
@@ -158,6 +175,27 @@ export function useSSE(
           case "files_ready":
             return { ...prev, fileCount: (data.file_count as number) || prev.fileCount };
 
+          case "sandbox_start":
+            return {
+              ...prev,
+              status: "sandbox",
+              currentAgent: null,
+              sandbox: { ...prev.sandbox, status: "starting" },
+            };
+
+          case "sandbox_complete": {
+            const success = data.success as boolean;
+            return {
+              ...prev,
+              sandbox: {
+                status: success ? "running" : data.stage === "skipped" ? "skipped" : "failed",
+                previewUrl: (data.preview_url as string) || null,
+                durationS: (data.duration_s as number) || 0,
+                error: success ? null : (data.error as string) || null,
+              },
+            };
+          }
+
           case "generation_complete":
             return {
               ...prev,
@@ -184,6 +222,7 @@ export function useSSE(
     const EVENTS = [
       "pipeline_start", "agent_start", "agent_complete",
       "plan_ready", "preview_ready", "files_ready",
+      "sandbox_start", "sandbox_complete",
       "generation_complete", "error",
     ];
 
@@ -265,6 +304,13 @@ export function useSSE(
           `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/result/${generationId}`,
         );
 
+        if (res.status === 202) {
+          // Still in progress — connect to SSE stream
+          setState((prev) => ({ ...prev, status: "building" }));
+          connectToStream(generationId);
+          return;
+        }
+
         if (res.ok) {
           // Generation already completed — load result
           const data = await res.json();
@@ -286,7 +332,7 @@ export function useSSE(
           return;
         }
 
-        // 202 = still in progress — connect to stream
+        // Other error — try stream anyway
         setState((prev) => ({ ...prev, status: "building" }));
         connectToStream(generationId);
       } catch {

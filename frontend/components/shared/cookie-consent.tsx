@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Settings2, X } from "lucide-react";
@@ -44,23 +44,19 @@ const CATEGORIES: ConsentCategory[] = ["analytics", "marketing"];
 
 export function CookieConsent() {
   const t = useTranslations("cookieConsent");
-  const [visible, setVisible] = useState(false);
+  // Lazy initializer: runs only on client, returns true (hidden) on SSR.
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const stored = getStoredPreferences();
+    if (stored || navigator.doNotTrack === "1") return true;
+    return false;
+  });
   const [showDetails, setShowDetails] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
     ...DEFAULT_PREFERENCES,
   });
 
-  useEffect(() => {
-    // Respect Do Not Track
-    if (navigator.doNotTrack === "1") return;
-
-    const stored = getStoredPreferences();
-    if (!stored) {
-      setVisible(true);
-    } else {
-      setPreferences(stored);
-    }
-  }, []);
+  const visible = !dismissed;
 
   const acceptAll = useCallback(() => {
     const prefs: CookiePreferences = {
@@ -71,19 +67,19 @@ export function CookieConsent() {
     };
     storePreferences(prefs);
     setPreferences(prefs);
-    setVisible(false);
+    setDismissed(true);
   }, []);
 
   const rejectAll = useCallback(() => {
     const prefs: CookiePreferences = { ...DEFAULT_PREFERENCES };
     storePreferences(prefs);
     setPreferences(prefs);
-    setVisible(false);
+    setDismissed(true);
   }, []);
 
   const savePreferences = useCallback(() => {
     storePreferences(preferences);
-    setVisible(false);
+    setDismissed(true);
   }, [preferences]);
 
   const toggleCategory = useCallback((category: ConsentCategory) => {
