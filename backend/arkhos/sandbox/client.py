@@ -62,12 +62,7 @@ class SandboxClient:
         client = await self._get_client()
         for attempt in range(self.connect_retries + 1):
             try:
-                # Sandbox has no /health — probe with a simple execute
-                resp = await client.post(
-                    f"{self.base_url}/execute",
-                    json={"command": "echo ok"},
-                    timeout=5.0,
-                )
+                resp = await client.get(f"{self.base_url}/health", timeout=5.0)
                 if resp.status_code == 200:
                     return True
             except (httpx.ConnectError, httpx.TimeoutException):

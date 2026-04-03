@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import base64
 import logging
 import shlex
 import time
@@ -13,9 +12,7 @@ from arkhos.sandbox import SandboxClient
 
 logger = logging.getLogger(__name__)
 
-# Sandbox runs as user 'sandbox', /workspace is root-owned.
-# Use /home/sandbox as writable workspace root.
-WORKSPACE_ROOT = "/home/sandbox"
+WORKSPACE_ROOT = "/workspace"
 
 
 class SandboxExecutor:
@@ -59,13 +56,10 @@ class SandboxExecutor:
             # Step 1: Create workspace directory
             await self.sandbox.execute(f"mkdir -p {shlex.quote(workspace)}")
 
-            # Step 2: Write all files via base64 (avoids shell injection + /write-file bugs)
+            # Step 2: Write all files via /write-file JSON API (no shell injection)
             for filepath, content in project_files.items():
-                safe_path = shlex.quote(f"{workspace}/{filepath}")
-                b64 = base64.b64encode(content.encode()).decode()
-                result = await self.sandbox.execute(
-                    f"mkdir -p $(dirname {safe_path}) && echo {b64} | base64 -d > {safe_path}"
-                )
+                full_path = f"{workspace}/{filepath}"
+                result = await self.sandbox.write_file(path=full_path, content=content)
                 if not result.success:
                     elapsed = round(time.monotonic() - t0, 2)
                     logger.error("Failed to write %s: %s", filepath, result.stderr[:200])

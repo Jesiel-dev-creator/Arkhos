@@ -123,12 +123,12 @@ from arkhos.integrations.magic_mcp import (
 - **Status:** RUNNING on localhost:8001 (WSL2 Ubuntu)
 - Container: Node 22 + pnpm, FastAPI, runs as user `sandbox` (uid 1000)
 - **API endpoints:**
+  - `GET /health` → `{status: "ok"}`
   - `POST /execute` — `{command, cwd?}` → `{stdout, stderr, success, returncode}`
-  - `POST /write-file` — `{path, content}` → ⚠️ has bug (cwd attr error), use base64 via /execute instead
-  - No `/health` endpoint — health check uses `POST /execute {command: "echo ok"}`
-- **Workspace:** `/home/sandbox/` (writable). `/workspace` is root-owned, NOT writable.
-- `SandboxClient` (arkhos/sandbox/client.py): async httpx, retries, health check via execute
-- `SandboxExecutor` (arkhos/generation/sandbox_executor.py): base64 file writing → pnpm install → dev server
+  - `POST /write-file` — `{path, content}` → `{success, path}`
+- **Workspace:** `/workspace` (writable, Docker named volume)
+- `SandboxClient` (arkhos/sandbox/client.py): async httpx, retries, health check via /health
+- `SandboxExecutor` (arkhos/generation/sandbox_executor.py): /write-file → pnpm install → dev server
 - Config via env: `ARKHOS_SANDBOX_URL` (default http://localhost:8001), `ARKHOS_SANDBOX_PREVIEW_URL` (default http://localhost:3001)
 - Pipeline integration: runs after Reviewer, emits `sandbox_start`/`sandbox_complete` SSE
 - Graceful degradation: if sandbox unreachable, generation still succeeds with HTML fallback preview
