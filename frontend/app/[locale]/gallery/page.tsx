@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { apiGet } from "@/lib/api";
 
 interface GalleryItem {
@@ -13,6 +13,12 @@ interface GalleryItem {
 }
 
 const SHOWCASE_KEYS = ["saas", "restaurant", "portfolio"] as const;
+
+const SHOWCASE_GRADIENTS: Record<(typeof SHOWCASE_KEYS)[number], string> = {
+  saas: "bg-[linear-gradient(135deg,rgba(99,102,241,0.30),rgba(79,70,229,0.12),rgba(15,23,42,0.2))]",
+  restaurant: "bg-[linear-gradient(135deg,rgba(245,158,11,0.28),rgba(217,119,6,0.12),rgba(15,23,42,0.2))]",
+  portfolio: "bg-[linear-gradient(135deg,rgba(100,116,139,0.28),rgba(51,65,85,0.16),rgba(15,23,42,0.2))]",
+};
 
 export default function GalleryPage() {
   const t = useTranslations("pages.gallery");
@@ -50,8 +56,18 @@ export default function GalleryPage() {
       {/* Showcase (static examples — always visible) */}
       <div className="mt-12 grid gap-5 lg:grid-cols-3">
         {SHOWCASE_KEYS.map((item) => (
-          <article key={item} className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--deep)]">
-            <div className="h-48 bg-[linear-gradient(135deg,rgba(99,102,241,0.24),rgba(15,23,42,0.2))] border-b border-[var(--border)]" />
+          <Link
+            key={item}
+            href="/login"
+            className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--deep)] transition-colors duration-150 hover:border-[var(--brand)]/30 focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
+          >
+            <div className={`relative h-48 ${SHOWCASE_GRADIENTS[item]} border-b border-[var(--border)]`}>
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100 bg-[var(--void)]/60">
+                <span className="flex items-center gap-2 text-sm font-medium text-[var(--text-primary)]">
+                  Build something like this <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </div>
             <div className="p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--brand)]">{t(`items.${item}.tag`)}</p>
               <h2 className="mt-3 text-xl font-[var(--font-display)] text-[var(--text-primary)]">
@@ -61,7 +77,7 @@ export default function GalleryPage() {
                 {t(`items.${item}.description`)}
               </p>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
 
