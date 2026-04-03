@@ -17,7 +17,7 @@ export function Breadcrumbs({ generationId }: BreadcrumbsProps) {
         {t("home")}
       </Link>
       <ChevronRight className="w-3 h-3" />
-      <Link href="/generate" className="hover:text-[var(--text-secondary)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none rounded">
+      <Link href="/" className="hover:text-[var(--text-secondary)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none rounded">
         {t("generate")}
       </Link>
       {generationId && (

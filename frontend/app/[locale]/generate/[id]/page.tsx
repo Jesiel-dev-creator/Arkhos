@@ -158,7 +158,7 @@ export default function GenerationWorkspacePage() {
 
           <div className="mt-1">
             <Link
-              href="/generate"
+              href="/"
               aria-label="Back"
               className="flex items-center justify-center w-8 h-8 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface)] transition-colors duration-150 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
             >

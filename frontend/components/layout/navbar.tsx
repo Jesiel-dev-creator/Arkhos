@@ -71,7 +71,7 @@ export function Navbar() {
           <ThemeToggle />
           <LocaleSwitcher />
           <Link
-            href="/generate"
+            href="/#generate"
             className="inline-flex items-center px-3.5 py-1.5 rounded-lg text-sm font-medium
                        bg-[var(--brand)] text-white
                        hover:brightness-110 transition-all duration-150 cursor-pointer
@@ -84,7 +84,7 @@ export function Navbar() {
         {/* Mobile */}
         <div className="flex lg:hidden items-center gap-2">
           <Link
-            href="/generate"
+            href="/#generate"
             className="inline-flex items-center px-3.5 py-1.5 rounded-lg text-sm font-medium
                        bg-[var(--brand)] text-white
                        hover:brightness-110 transition-all duration-150 cursor-pointer

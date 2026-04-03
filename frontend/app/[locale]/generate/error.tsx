@@ -30,7 +30,7 @@ export default function GenerateError({
             Try again
           </button>
           <Link
-            href="/generate"
+            href="/"
             className="px-5 py-3 rounded-xl text-sm font-medium border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--surface)] focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none transition-all duration-150"
           >
             New generation

@@ -97,7 +97,7 @@ export default function GalleryPage() {
       <div className="mt-12 rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-6 text-center">
         <p className="text-sm text-[var(--text-secondary)]">{t("ctaBody")}</p>
         <Link
-          href="/generate"
+          href="/#generate"
           className="mt-4 inline-flex items-center justify-center rounded-xl bg-[var(--brand)] px-5 py-3 text-sm font-medium text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none transition-all duration-150"
         >
           {t("ctaAction")}
