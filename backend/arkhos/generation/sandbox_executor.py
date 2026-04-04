@@ -19,6 +19,8 @@ from arkhos.sandbox import SandboxClient
 logger = logging.getLogger(__name__)
 
 WORKSPACE_ROOT = "/workspace"
+PREVIEW_PORT_MIN = 3010
+PREVIEW_PORT_MAX = 3060
 
 # Minimal React + Vite scaffold — enough to boot a dev server
 # Generated component files get dropped into src/ and Vite HMR picks them up
@@ -29,13 +31,16 @@ SCAFFOLD_FILES: dict[str, str] = {
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 3000",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build"
   },
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "lucide-react": "^0.511.0"
+    "lucide-react": "^0.511.0",
+    "framer-motion": "^12.12.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.5.2",
@@ -43,7 +48,7 @@ SCAFFOLD_FILES: dict[str, str] = {
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
     "typescript": "^5.8.3",
-    "autoprefixer": "^10.4.21",
+    "@tailwindcss/postcss": "^4.1.8",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8"
   }
@@ -84,16 +89,26 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "strict": true
+    "strict": true,
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src"]
 }""",
     "postcss.config.js": """export default {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+    '@tailwindcss/postcss': {},
   },
 }""",
+    "src/lib/utils.ts": """import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+""",
+    "src/index.css": """@import "tailwindcss";
+""",
 }
 
 
@@ -119,7 +134,9 @@ class SandboxExecutor:
         self.workspace: str | None = None
         self._server_running = False
 
-    async def scaffold_project(self, project_name: str = "arkhos-app", port: int = 3000) -> dict:
+    async def scaffold_project(
+        self, project_name: str = "arkhos-app", port: int = 3010
+    ) -> dict[str, str | int | float | bool]:
         """Phase 1: Create scaffold, install deps, start dev server.
 
         Call this BEFORE the Builder starts. Returns immediately with preview URL.
@@ -127,10 +144,13 @@ class SandboxExecutor:
         
         Args:
             project_name: Name of the project (e.g., gen-1234567890)
-            port: Dynamic port allocated by PortManager for this generation
+            port: Dynamic port allocated for this generation (3010-3060 range)
         """
         self.workspace = f"{WORKSPACE_ROOT}/{shlex.quote(project_name)}"
         t0 = time.monotonic()
+        
+        # Build preview URL with the allocated port
+        preview_url_with_port = f"http://localhost:{port}"
 
         try:
             if not await self.sandbox.health_check():
@@ -138,7 +158,8 @@ class SandboxExecutor:
 
             # Clean old projects (keep 1 most recent)
             await self.sandbox.execute(
-                "cd /workspace && ls -dt gen-* 2>/dev/null | tail -n +2 | xargs rm -rf 2>/dev/null || true"
+                "cd /workspace && ls -dt gen-* 2>/dev/null | tail -n +2 | "
+                "xargs rm -rf 2>/dev/null || true"
             )
             # Note: pkill removed as it's not available in the sandbox container
             # Vite processes will be managed by the port allocation system
@@ -147,12 +168,18 @@ class SandboxExecutor:
             await self.sandbox.execute(f"rm -rf {shlex.quote(self.workspace)}")
             await self.sandbox.execute(f"mkdir -p {shlex.quote(self.workspace)}/src/sections")
 
-            # Generate Vite config with dynamic port
+            # Generate Vite config with dynamic port + @ alias
             dynamic_vite_config = f"""import {{ defineConfig }} from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({{
   plugins: [react()],
+  resolve: {{
+    alias: {{
+      '@': path.resolve(__dirname, './src'),
+    }},
+  }},
   server: {{
     host: '0.0.0.0',
     port: {port},
@@ -175,7 +202,12 @@ export default defineConfig({{
                 result = await self.sandbox.write_file(path=full_path, content=content)
                 if not result.success:
                     logger.error("Scaffold write failed: %s — %s", filepath, result.error)
-                    return {"success": False, "error": f"Scaffold failed: {filepath}", "stage": "scaffold"}
+                    msg = f"Scaffold failed: {filepath}"
+                    return {
+                        "success": False,
+                        "error": msg,
+                        "stage": "scaffold",
+                    }
 
             scaffold_elapsed = round(time.monotonic() - t0, 2)
             logger.info("Sandbox: scaffold written (%.2fs)", scaffold_elapsed)
@@ -202,11 +234,14 @@ export default defineConfig({{
             self._server_running = True
 
             elapsed = round(time.monotonic() - t0, 2)
-            logger.info("Sandbox: dev server started, total %.2fs — preview at %s", elapsed, self.preview_url)
+            logger.info(
+                "Sandbox: dev server started on port %d, total %.2fs — preview at %s",
+                port, elapsed, preview_url_with_port
+            )
 
             return {
                 "success": True,
-                "preview_url": self.preview_url,
+                "preview_url": preview_url_with_port,
                 "port": port,
                 "stage": "running",
                 "duration_s": elapsed,
@@ -240,14 +275,16 @@ export default defineConfig({{
         self,
         project_files: dict[str, str],
         project_name: str = "arkhos-generated-app",
-    ) -> dict:
-        """Legacy: write all files at once. Used when streaming isn't available.
+        port: int = 3010,
+    ) -> dict[str, str | int | float | bool | None]:
+        """Batch mode: write all files at once after build completes.
 
         For live streaming, use scaffold_project() + write_file() instead.
+        The port should be allocated by PortManager to avoid collisions.
         """
-        result = await self.scaffold_project(project_name)
+        result = await self.scaffold_project(project_name, port=port)
         if not result.get("success"):
-            return result
+            return result  # type: ignore[return-value]
 
         t0 = time.monotonic()
         for filepath, content in project_files.items():
@@ -256,11 +293,17 @@ export default defineConfig({{
         elapsed = round(time.monotonic() - t0, 2)
         logger.info("Sandbox: %d files written (%.2fs)", len(project_files), elapsed)
 
+        scaffold_duration = result.get("duration_s", 0)
+        if not isinstance(scaffold_duration, (int, float)):
+            scaffold_duration = 0
+        total_duration: float = float(scaffold_duration) + elapsed
+
         return {
             "success": True,
-            "preview_url": self.preview_url,
+            "preview_url": result.get("preview_url"),
+            "port": port,
             "stage": "running",
-            "duration_s": result.get("duration_s", 0) + elapsed,
+            "duration_s": total_duration,
         }
 
     async def close(self) -> None:
@@ -269,5 +312,9 @@ export default defineConfig({{
     async def __aenter__(self) -> SandboxExecutor:
         return self
 
-    async def __aexit__(self, *args) -> None:
+    async def __aexit__(
+        self, exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: object
+    ) -> None:
         await self.close()

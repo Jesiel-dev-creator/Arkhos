@@ -1760,32 +1760,50 @@ async def run_build_streaming(
             })
 
         # ── Sandbox Preview (cloud on Scaleway or local GPU) ──
-        sandbox_result: dict | None = None
+        sandbox_preview_url: str | None = None
         if files:
             sandbox_t0 = time.monotonic()
+            gen_name = f"gen-{int(start_time)}"
             try:
+                from arkhos.app import port_manager
+                user_id = gen_name
+                sandbox_port = port_manager.allocate(gen_name, user_id)
+                sandbox_preview_url = f"/api/preview/{gen_name}"
+
                 async with SandboxExecutor() as executor:
                     yield format_sse(SSEEventType.SANDBOX_START, {
                         "message": "Starting sandbox preview...",
+                        "preview_url": sandbox_preview_url,
                     })
                     sandbox_result = await executor.execute_generated_project(
                         project_files=files,
-                        project_name=f"gen-{int(start_time)}",
+                        project_name=gen_name,
+                        port=sandbox_port,
                     )
                     sandbox_elapsed = round(time.monotonic() - sandbox_t0, 2)
+                    success = sandbox_result.get("success", False)
                     yield format_sse(SSEEventType.SANDBOX_COMPLETE, {
-                        "success": sandbox_result.get("success", False),
-                        "preview_url": sandbox_result.get("preview_url"),
+                        "success": success,
+                        "preview_url": sandbox_preview_url if success else None,
                         "stage": sandbox_result.get("stage"),
                         "duration_s": sandbox_elapsed,
                     })
+                    if not success:
+                        port_manager.release(gen_name)
+                        sandbox_preview_url = None
                     logger.info(
-                        "Sandbox step: success=%s duration=%.2fs",
-                        sandbox_result.get("success"), sandbox_elapsed,
+                        "Sandbox step: success=%s duration=%.2fs preview=%s",
+                        success, sandbox_elapsed, sandbox_preview_url,
                     )
             except Exception as sandbox_exc:
                 sandbox_elapsed = round(time.monotonic() - sandbox_t0, 2)
                 logger.warning("Sandbox unavailable (%.2fs): %s", sandbox_elapsed, sandbox_exc)
+                try:
+                    from arkhos.app import port_manager
+                    port_manager.release(gen_name)
+                except Exception:
+                    pass
+                sandbox_preview_url = None
                 yield format_sse("sandbox_complete", {
                     "success": False,
                     "error": "Sandbox container not available",
@@ -1799,7 +1817,7 @@ async def run_build_streaming(
             "total_duration_s": total_duration,
             "models_used": [r.model_used for r in agent_results],
             "success": True,
-            "sandbox_preview": sandbox_result.get("preview_url") if sandbox_result else None,
+            "sandbox_preview": sandbox_preview_url,
         })
         logger.info(
             "Build complete: cost=EUR%.4f duration=%.1fs",

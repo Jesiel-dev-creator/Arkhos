@@ -312,12 +312,18 @@ export function useSSE(
         }
 
         if (res.ok) {
-          // Generation already completed — load result
+          // Generation already completed — load result + restore sandbox state
           const data = await res.json();
+          const sandboxPreview = data.metadata?.preview_url ?? data.metadata?.sandbox_preview ?? null;
           setState((prev) => ({
             ...prev,
             status: "complete",
             previewHtml: data.html ?? null,
+            fileCount: data.metadata?.files ? Object.keys(data.metadata.files).length : prev.fileCount,
+            totalCostEur: data.metadata?.total_cost_eur ?? prev.totalCostEur,
+            sandbox: sandboxPreview
+              ? { status: "running", previewUrl: sandboxPreview, durationS: 0, error: null }
+              : prev.sandbox,
           }));
           return;
         }

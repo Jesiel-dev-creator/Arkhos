@@ -142,7 +142,14 @@ async def recall_context(
     Returns formatted context string, or empty string if no memories.
     """
     query = f"{role} {prompt[:200]}"
-    results = await memory.recall(query, top_k=top_k)
+    try:
+        results = await memory.recall(query, top_k=top_k)
+    except Exception as exc:
+        # Embeddings API may be unavailable (401, quota, network)
+        # Degrade gracefully — generation still works without memory context
+        import logging
+        logging.getLogger(__name__).debug("Memory recall unavailable: %s", exc)
+        return ""
 
     if not results:
         return ""
