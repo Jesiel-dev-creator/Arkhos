@@ -20,6 +20,8 @@ const PRODUCT_LINKS = [
 const COMPANY_LINKS = [
   { key: "about", href: "/about" },
   { key: "blog", href: "/blog" },
+  { key: "changelog", href: "/changelog" },
+  { key: "roadmap", href: "/roadmap" },
 ] as const;
 
 const LEGAL_LINKS = [
