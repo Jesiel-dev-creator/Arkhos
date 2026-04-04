@@ -256,6 +256,7 @@
     "legal": "Legal",
     "privacy": "Privacy",
     "terms": "Terms",
+    "sales": "Terms of Sale",
     "cookies": "Cookies",
     "imprint": "Imprint"
   },
@@ -543,49 +544,205 @@
     "backHome": "Back to home"
   },
   "legal": {
+    "toc": "Table of contents",
+    "contact": "For any questions regarding these legal documents, contact us at:",
     "privacy": {
-      "kicker": "Legal",
-      "title": "Privacy policy",
-      "description": "This page outlines how ArkhosAI handles product, generation, and operational data.",
-      "section1Title": "What we collect",
-      "section1Body": "We collect the information needed to operate the product, secure the platform, and understand generation usage patterns.",
-      "section2Title": "How we use it",
-      "section2Body": "Usage data helps improve reliability, rate limiting, debugging, and the overall generation experience.",
-      "section3Title": "Your controls",
-      "section3Body": "Hosted and self-hosted deployments can apply different retention and access policies depending on the environment."
+      "kicker": "Privacy",
+      "title": "Privacy Policy",
+      "description": "How ArkhosAI collects, uses, and protects your personal data. We are committed to transparency and full compliance with the General Data Protection Regulation (EU 2016/679).",
+      "lastUpdated": "Last updated: April 4, 2026",
+      "s1": {
+        "title": "Identity and Contact Details of the Controller",
+        "body": "The data controller responsible for processing your personal data is Bleucommerce SAS, a company registered under French law, with its registered office in Orléans, France.\n\nYou can reach us at any time regarding data protection matters by writing to privacy@arkhos.ai. For general inquiries, contact hello@arkhos.ai.\n\nAs a small and medium-sized enterprise, Bleucommerce SAS is not legally required to appoint a Data Protection Officer under Article 37 of the GDPR. However, we take data protection seriously and handle all requests directly through the email address above."
+      },
+      "s2": {
+        "title": "Data We Collect",
+        "body": "We collect and process the following categories of personal data when you use ArkhosAI:\n\nAccount data: your email address, provided during registration via Supabase authentication. This is required to create and manage your account.\n\nGeneration data: the text prompts you submit to generate websites, and the resulting generated code. Prompts are processed by our AI pipeline to deliver the service you requested.\n\nUsage data: technical information such as your IP address, browser type, operating system, pages visited, generation counts, fleet profile selections, and timestamps. This data is collected automatically to ensure service reliability and security.\n\nPreference data: your theme choice (dark, light, or GPU mode), language preference (EN/FR), and cookie consent status. These are stored locally in your browser.\n\nPayment data: if you subscribe to a paid plan, payment processing is handled by Stripe. We do not store your credit card details. We receive only a transaction reference and subscription status from Stripe."
+      },
+      "s3": {
+        "title": "Legal Basis for Processing",
+        "body": "We process your personal data based on the following legal grounds, pursuant to Article 6(1) of the GDPR:\n\nContract performance (Art. 6(1)(b)): processing your account data, prompts, and generated code is necessary to deliver the ArkhosAI service you signed up for. Without this processing, we cannot provide the website generation functionality.\n\nLegitimate interest (Art. 6(1)(f)): we process usage data and technical logs to maintain platform security, prevent abuse, enforce rate limits, debug errors, and improve the quality of our service. We have assessed that these interests do not override your fundamental rights, particularly given the minimal and non-sensitive nature of the data involved.\n\nConsent (Art. 6(1)(a)): where we rely on your consent, such as for any future optional analytics or marketing cookies, you may withdraw that consent at any time without affecting the lawfulness of processing carried out before withdrawal.\n\nLegal obligation (Art. 6(1)(c)): we may process certain data to comply with applicable French and EU legal requirements, including tax and accounting obligations."
+      },
+      "s4": {
+        "title": "How We Use Your Data",
+        "body": "We use your data for the following purposes:\n\nService delivery: your prompts are sent through our multi-agent AI pipeline (Planner, Designer, Architect, Builder, Reviewer) to generate website code. The generated code is made available to you for preview and download.\n\nAccount management: your email address is used to authenticate you, manage your subscription, and communicate essential service updates such as changes to terms or pricing.\n\nService improvement: aggregated and anonymized usage patterns help us improve the generation pipeline, optimize model routing, and enhance the overall user experience. We do not build individual user profiles for advertising purposes.\n\nSecurity and abuse prevention: we monitor usage patterns and enforce rate limits (e.g., 10 generations per month on the free tier) to protect the platform from abuse and ensure fair access for all users.\n\nWe do not sell your personal data. We do not use your data for third-party advertising. We do not engage in behavioral profiling for marketing purposes."
+      },
+      "s5": {
+        "title": "Data Sharing and Third Parties",
+        "body": "We share your data only with the following service providers, all of which are established in the European Union:\n\nMistral AI (Paris, France): your prompts are sent to Mistral AI's API for AI-powered website generation. Mistral AI processes prompts as a data processor on our behalf. Mistral AI does not use your prompts to train their models when accessed via their API.\n\nSupabase (EU region): handles user authentication and account management. Your email address and authentication tokens are processed by Supabase.\n\nScaleway SAS (Paris, France): hosts our backend infrastructure, sandbox preview containers, and databases. All data is stored in Scaleway's Paris data centers.\n\nStripe (with EU processing): if you subscribe to a paid plan, Stripe processes your payment information. Stripe is certified under the EU-US Data Privacy Framework.\n\nWe do not share your data with advertising networks, data brokers, or any other third parties. We do not embed third-party tracking scripts or analytics tools on our platform."
+      },
+      "s6": {
+        "title": "International Data Transfers",
+        "body": "All your data is processed and stored within the European Union. This is a core architectural decision of ArkhosAI.\n\nOur backend and sandbox infrastructure runs on Scaleway in Paris, France. Our AI provider, Mistral AI, is headquartered in Paris and processes data within the EU. Supabase authentication runs in an EU region.\n\nWe do not transfer your personal data to countries outside the European Economic Area (EEA). If this changes in the future, we will ensure appropriate safeguards are in place pursuant to Chapter V of the GDPR (such as Standard Contractual Clauses or an adequacy decision) and will update this policy accordingly."
+      },
+      "s7": {
+        "title": "Data Retention",
+        "body": "We retain your data only as long as necessary for the purposes described in this policy:\n\nAccount data (email, authentication): retained for as long as your account is active. Deleted within 30 days of account deletion.\n\nGeneration data (prompts and generated code): retained for 30 days after generation to allow you to access, download, and iterate on your projects. After 30 days, generation data is permanently deleted.\n\nUsage logs (IP addresses, request logs, error logs): retained for 90 days for security monitoring and debugging, then permanently deleted.\n\nPreference data (theme, locale, cookie consent): stored locally in your browser. Cleared when you clear your browser data or revoke consent.\n\nPayment records: retained as required by French tax and accounting law (Articles L. 123-22 et seq. of the Code de commerce), typically 10 years for accounting documents."
+      },
+      "s8": {
+        "title": "Your Rights Under GDPR",
+        "body": "Under the GDPR, you have the following rights regarding your personal data:\n\nRight of access (Art. 15): you can request a copy of all personal data we hold about you, along with information about how it is processed.\n\nRight to rectification (Art. 16): you can request correction of inaccurate personal data.\n\nRight to erasure (Art. 17): you can request deletion of your personal data, subject to legal retention obligations.\n\nRight to data portability (Art. 20): you can request your data in a structured, commonly used, machine-readable format and have it transmitted to another controller.\n\nRight to restriction of processing (Art. 18): you can request that we limit the processing of your data in certain circumstances.\n\nRight to object (Art. 21): you can object to processing based on legitimate interest at any time. We will cease processing unless we demonstrate compelling legitimate grounds.\n\nRight to withdraw consent (Art. 7(3)): where processing is based on consent, you may withdraw it at any time without affecting the lawfulness of prior processing.\n\nThese rights apply without discrimination and free of charge."
+      },
+      "s9": {
+        "title": "How to Exercise Your Rights",
+        "body": "To exercise any of the rights described above, send an email to privacy@arkhos.ai with the subject line \"GDPR Request\" and a description of your request. Please include enough information for us to verify your identity (typically, the email address associated with your account).\n\nWe will acknowledge your request within 7 days and provide a substantive response within 30 days, as required by Article 12(3) of the GDPR. If your request is complex, we may extend this period by an additional 60 days, and we will inform you of the extension and the reasons for it.\n\nIf you are unsatisfied with our response, you have the right to lodge a complaint with the French data protection authority: Commission Nationale de l'Informatique et des Libertés (CNIL), 3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, France. Website: www.cnil.fr."
+      },
+      "s10": {
+        "title": "Automated Decision-Making",
+        "body": "ArkhosAI uses artificial intelligence to generate website code based on your text prompts. This involves automated processing through our multi-agent pipeline (powered by Mistral AI models), which plans, designs, and builds websites.\n\nThis automated processing does not constitute automated decision-making that produces legal effects or similarly significant effects concerning you within the meaning of Article 22 of the GDPR. The AI generates creative output (website code) based on your instructions, and you retain full control over whether to use, modify, or discard the result.\n\nWe do not use automated profiling to make decisions about service access, pricing, or content eligibility. Fleet profile selection (Budget, Balanced, Quality) is chosen by you, not determined automatically based on your personal data."
+      },
+      "s11": {
+        "title": "Children's Privacy",
+        "body": "ArkhosAI is not directed at children under the age of 16. We do not knowingly collect personal data from children under 16 years of age.\n\nIf we become aware that we have collected personal data from a child under 16 without verified parental consent, we will take steps to delete that data as quickly as possible. If you believe a child under 16 has provided us with personal data, please contact us at privacy@arkhos.ai."
+      },
+      "s12": {
+        "title": "Changes to This Policy",
+        "body": "We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements, or other factors. When we make material changes, we will notify you by posting the updated policy on this page with a revised \"Last updated\" date.\n\nFor significant changes that affect your rights, we will provide additional notice through the email address associated with your account, at least 30 days before the changes take effect.\n\nWe encourage you to review this policy periodically. Your continued use of ArkhosAI after the effective date of any changes constitutes your acknowledgment of the updated policy."
+      }
     },
     "terms": {
-      "kicker": "Legal",
-      "title": "Terms of service",
-      "description": "These terms describe the general rules for using ArkhosAI and its hosted or self-hosted variants.",
-      "section1Title": "Acceptable use",
-      "section1Body": "Use the product lawfully, respect infrastructure limits, and avoid abusive generation or scraping behavior.",
-      "section2Title": "Service scope",
-      "section2Body": "Feature availability may differ between local, hosted, and future enterprise versions of ArkhosAI.",
-      "section3Title": "Changes",
-      "section3Body": "As the product evolves, these terms may be updated to reflect new capabilities, pricing, or deployment models."
+      "kicker": "Terms",
+      "title": "Terms of Service",
+      "description": "The rules and conditions that apply when you use ArkhosAI. Please read these terms carefully before using the platform.",
+      "lastUpdated": "Last updated: April 4, 2026",
+      "s1": {
+        "title": "Acceptance of Terms",
+        "body": "By accessing or using ArkhosAI (available at arkhos.ai), you agree to be bound by these Terms of Service. If you do not agree, you must not use the service.\n\nThese terms constitute a legally binding agreement between you and Bleucommerce SAS, the company that operates ArkhosAI. They apply to all users, whether on the free tier or a paid subscription.\n\nIf you are using ArkhosAI on behalf of an organization, you represent that you have the authority to bind that organization to these terms."
+      },
+      "s2": {
+        "title": "Description of Service",
+        "body": "ArkhosAI is an AI-powered website generator. You provide a text description of the website you want, and our multi-agent pipeline (Planner, Designer, Architect, Builder, Reviewer) generates production-ready React code using Mistral AI models.\n\nThe service includes: text-to-website generation via AI agents, real-time streaming of the generation pipeline via Server-Sent Events (SSE), sandbox preview of generated websites in isolated Docker containers, code download as a production-ready React project, and iteration on generated results.\n\nThe service is provided as a Software-as-a-Service (SaaS) platform. Self-hosting is also available under the MIT license for the open-source components."
+      },
+      "s3": {
+        "title": "Account Registration",
+        "body": "To use ArkhosAI, you must create an account using a valid email address. Authentication is handled by Supabase.\n\nYou agree to provide accurate and complete information during registration and to keep your account credentials secure. You are responsible for all activity that occurs under your account.\n\nIf you suspect unauthorized access to your account, notify us immediately at hello@arkhos.ai. We are not liable for losses resulting from unauthorized use of your account where you have failed to maintain the security of your credentials."
+      },
+      "s4": {
+        "title": "Acceptable Use",
+        "body": "You agree to use ArkhosAI only for lawful purposes. Specifically, you must not use the service to:\n\nGenerate websites containing illegal content, including but not limited to content that violates intellectual property rights, promotes violence or terrorism, constitutes hate speech or discrimination, or contains child sexual abuse material (CSAM).\n\nGenerate malware, phishing pages, scam websites, or any content designed to deceive or harm others.\n\nAttempt to circumvent rate limits, abuse the API, or interfere with the operation of the platform.\n\nReverse-engineer, decompile, or attempt to extract the proprietary components of the ArkhosAI platform (the open-source components are available under MIT license).\n\nWe reserve the right to suspend or terminate accounts that violate these rules, with or without prior notice depending on the severity of the violation."
+      },
+      "s5": {
+        "title": "Intellectual Property",
+        "body": "Generated code: all website code generated by ArkhosAI from your prompts belongs to you. Generated code is provided under the MIT license, meaning you are free to use, modify, distribute, and commercialize it without restriction.\n\nYour prompts: you retain ownership of the text prompts you submit. We process prompts solely to deliver the service and do not claim any intellectual property rights over them.\n\nThe ArkhosAI platform: the ArkhosAI platform, including its user interface, design system, backend pipeline, and proprietary algorithms, is owned by Bleucommerce SAS and protected by applicable intellectual property laws. Your use of the service does not grant you any rights to the platform itself.\n\nTramontane: the Tramontane agent orchestration framework used by ArkhosAI is open-source software released under the MIT license.\n\nshadcn/ui components and other open-source dependencies used in generated code retain their respective licenses."
+      },
+      "s6": {
+        "title": "Service Availability and SLA",
+        "body": "We strive to maintain high availability of ArkhosAI, but the service is provided on a best-effort basis. We do not guarantee uninterrupted or error-free operation.\n\nWe may perform scheduled maintenance that temporarily affects availability. Where possible, we will provide advance notice of planned maintenance.\n\nGeneration times and costs are estimates. Actual performance may vary depending on model availability, prompt complexity, server load, and the fleet profile selected. The cost estimates shown during generation are approximations based on token pricing from Mistral AI.\n\nSandbox previews run in isolated Docker containers with limited lifetimes. Preview URLs are temporary and not intended for production hosting."
+      },
+      "s7": {
+        "title": "Limitation of Liability",
+        "body": "To the fullest extent permitted by French law, Bleucommerce SAS shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of ArkhosAI.\n\nOur total aggregate liability for any claims arising from your use of the service shall not exceed the total fees you have paid to us in the 12 months preceding the claim.\n\nThis limitation applies to all causes of action, whether based on contract, tort, strict liability, or any other legal theory. Nothing in these terms excludes liability for fraud, gross negligence, or any liability that cannot be excluded under applicable law.\n\nGenerated code is provided as-is. While our Reviewer agent checks for common issues, we do not guarantee that generated code is free from bugs, security vulnerabilities, or errors. You are responsible for reviewing and testing any generated code before deploying it to production."
+      },
+      "s8": {
+        "title": "Termination",
+        "body": "You may delete your account at any time by contacting us at hello@arkhos.ai. Upon deletion, we will remove your personal data in accordance with our Privacy Policy.\n\nWe may suspend or terminate your account if you violate these Terms of Service, engage in abusive behavior, or fail to pay applicable subscription fees. For non-urgent violations, we will provide 14 days' notice and an opportunity to remedy the issue.\n\nUpon termination, your right to access the service ceases immediately. Any generated code you have already downloaded remains yours under the MIT license. Data associated with your account will be deleted according to the retention periods in our Privacy Policy."
+      },
+      "s9": {
+        "title": "Governing Law and Disputes",
+        "body": "These Terms of Service are governed by and construed in accordance with the laws of France, without regard to conflict of law provisions.\n\nAny disputes arising from these terms or your use of ArkhosAI shall be subject to the exclusive jurisdiction of the courts of Orléans, France.\n\nIf you are a consumer within the EU, you also have the right to submit disputes to the Online Dispute Resolution platform provided by the European Commission at https://ec.europa.eu/consumers/odr. Additionally, pursuant to Articles L. 611-1 et seq. of the French Consumer Code, you may refer any unresolved consumer dispute to a certified mediator before bringing it to court."
+      },
+      "s10": {
+        "title": "Contact",
+        "body": "For questions about these Terms of Service, contact us at:\n\nBleucommerce SAS\nOrléans, France\nEmail: hello@arkhos.ai\n\nFor data protection inquiries specifically, write to privacy@arkhos.ai."
+      }
     },
     "cookies": {
-      "kicker": "Legal",
-      "title": "Cookie policy",
-      "description": "Cookies and local storage are used sparingly for product preferences and session-level behavior.",
-      "section1Title": "Preference storage",
-      "section1Body": "Theme, locale, and similar UI settings may be persisted locally to keep the interface consistent between visits.",
-      "section2Title": "Operational cookies",
-      "section2Body": "Hosted environments may use essential cookies required for authentication, session continuity, and platform security.",
-      "section3Title": "Control",
-      "section3Body": "You can manage browser storage directly, and self-hosted deployments can define their own cookie posture."
+      "kicker": "Cookies",
+      "title": "Cookie Policy",
+      "description": "How ArkhosAI uses cookies and local storage. We keep it minimal — only what is necessary to make the product work.",
+      "lastUpdated": "Last updated: April 4, 2026",
+      "s1": {
+        "title": "What Are Cookies",
+        "body": "Cookies are small text files stored on your device by your web browser when you visit a website. They serve various purposes, from remembering your preferences to maintaining your login session.\n\nLocal storage is a similar browser technology that allows websites to store data on your device. Unlike cookies, local storage data is not sent to the server with every request.\n\nArkhosAI uses both cookies and local storage, but only for essential product functionality. We do not use cookies for advertising, behavioral tracking, or cross-site profiling."
+      },
+      "s2": {
+        "title": "Cookies We Use",
+        "body": "ArkhosAI uses only two categories of cookies: essential cookies that are required for the platform to function, and preference cookies that remember your settings. We currently do not use any analytics or marketing cookies.\n\nThis is a deliberate product decision. We believe in privacy by default, and we have chosen not to implement third-party tracking or analytics services. If this changes in the future, we will update this policy and request your consent before setting any non-essential cookies."
+      },
+      "s3": {
+        "title": "Essential Cookies",
+        "body": "The following cookies and local storage items are essential for ArkhosAI to function. They cannot be disabled without breaking core product functionality:\n\nsupabase-auth-token: manages your authentication session. Set by Supabase when you sign in. Expires when you sign out or after the session timeout.\n\narkhos-theme: stores your selected theme (dark, light, or GPU mode). Stored in local storage. Persists until you change it or clear your browser data.\n\narkhos-locale: stores your selected language (en or fr). Stored in local storage. Persists until you change it or clear your browser data.\n\narkhos-cookie-consent: records your cookie consent preferences. Stored in local storage. Persists for 12 months, after which you will be prompted again.\n\nThese cookies do not track you across websites, do not contain advertising identifiers, and are not shared with any third party."
+      },
+      "s4": {
+        "title": "How to Manage Cookies",
+        "body": "You can manage cookies through your browser settings. Most browsers allow you to block or delete cookies, view what cookies are stored, and set preferences for specific websites.\n\nOn ArkhosAI, we display a cookie consent banner on your first visit. You can accept all cookies, accept only essential cookies, or customize your preferences. You can change your preferences at any time through the cookie settings accessible from the footer of every page.\n\nPlease note that blocking essential cookies will prevent you from signing in and using the generation features of ArkhosAI."
+      },
+      "s5": {
+        "title": "Third-Party Cookies",
+        "body": "ArkhosAI does not currently set any third-party cookies. We do not use Google Analytics, Facebook Pixel, or any other third-party tracking service.\n\nSupabase authentication may set its own cookies for session management, which are classified as essential and covered in Section 3 above.\n\nIf we add analytics or other services in the future that require third-party cookies, we will update this policy, clearly disclose the purpose, and obtain your consent before any non-essential third-party cookies are set, in compliance with the ePrivacy Directive and French CNIL guidelines."
+      },
+      "s6": {
+        "title": "Changes to This Policy",
+        "body": "We may update this Cookie Policy to reflect changes in our practices or applicable regulations. When we make changes, we will update the \"Last updated\" date at the top of this page.\n\nIf we introduce new categories of cookies (such as analytics), we will notify you through the cookie consent banner and request fresh consent as required by Article 5(3) of the ePrivacy Directive (2002/58/EC) and CNIL recommendations.\n\nFor questions about this Cookie Policy, contact us at privacy@arkhos.ai."
+      }
     },
     "imprint": {
-      "kicker": "Legal",
-      "title": "Imprint",
-      "description": "Company and publishing information for ArkhosAI and its operator.",
-      "section1Title": "Company",
-      "section1Body": "ArkhosAI is developed under Bleucommerce SAS, based in Orléans, France.",
-      "section2Title": "Project",
-      "section2Body": "The product focuses on AI-assisted website generation with an EU-first infrastructure and product strategy.",
-      "section3Title": "Contact",
-      "section3Body": "For legal or business inquiries, use the official project and company channels associated with ArkhosAI."
+      "kicker": "Imprint",
+      "title": "Legal Notice",
+      "description": "Publisher identification and legal information as required by French law (Loi pour la Confiance dans l'Économie Numérique, LCEN).",
+      "lastUpdated": "Last updated: April 4, 2026",
+      "s1": {
+        "title": "Publisher",
+        "body": "This website is published by:\n\nBleucommerce SAS\nOrléans, France\nSIRET: pending registration\n\nDirector of publication: Jesiel\nEmail: hello@arkhos.ai\nWebsite: https://arkhos.ai\n\nIn accordance with Article 6 of the Loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), this information is made available to all users of the website."
+      },
+      "s2": {
+        "title": "Hosting Provider",
+        "body": "The ArkhosAI platform is hosted by:\n\nScaleway SAS\n8 rue de la Ville l'Évêque, 75008 Paris, France\nWebsite: https://www.scaleway.com\n\nAll data is hosted in Scaleway's Paris (fr-par) data centers within the European Union. Scaleway is a French cloud provider and a subsidiary of the Iliad Group."
+      },
+      "s3": {
+        "title": "Intellectual Property",
+        "body": "The ArkhosAI platform, including its name, logo, user interface, design system (Electric Indigo), and proprietary backend pipeline, is the intellectual property of Bleucommerce SAS. All rights reserved.\n\nThe Tramontane orchestration framework is released under the MIT license and is available as open-source software.\n\nWebsite code generated by ArkhosAI for users is owned by the respective user and provided under the MIT license. Users are free to use, modify, and distribute their generated code without restriction.\n\nAll trademarks, logos, and brand names referenced on this site belong to their respective owners. Mistral AI, Scaleway, Supabase, NVIDIA, and other third-party names are trademarks of their respective companies."
+      },
+      "s4": {
+        "title": "Liability",
+        "body": "Bleucommerce SAS makes every effort to ensure the accuracy and reliability of the information published on arkhos.ai. However, the information is provided on an as-is basis, and Bleucommerce SAS cannot guarantee that it is complete, accurate, or up to date at all times.\n\nBleucommerce SAS shall not be held liable for any direct or indirect damages resulting from access to or use of the website, including the use of generated code in production environments.\n\nThis website may contain links to external websites. Bleucommerce SAS has no control over the content of these external sites and accepts no responsibility for their content or practices. The presence of a link does not imply endorsement."
+      },
+      "s5": {
+        "title": "Applicable Law",
+        "body": "This website and its legal notice are governed by French law, in particular:\n\nLoi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), which establishes obligations for online publishers and hosting providers.\n\nRegulation (EU) 2016/679 (General Data Protection Regulation — GDPR), which governs the processing of personal data.\n\nCode de commerce, Articles L. 123-22 et seq., governing commercial record-keeping obligations.\n\nAny disputes relating to this website shall be subject to the exclusive jurisdiction of the competent courts of Orléans, France."
+      }
+    },
+    "sales": {
+      "kicker": "Terms of Sale",
+      "title": "General Terms of Sale",
+      "description": "The terms and conditions that apply to paid subscriptions on ArkhosAI (Conditions Générales de Vente). Required under French consumer law.",
+      "lastUpdated": "Last updated: April 4, 2026",
+      "s1": {
+        "title": "Scope",
+        "body": "These General Terms of Sale (Conditions Générales de Vente, or CGV) apply to all paid subscriptions purchased on ArkhosAI (arkhos.ai), operated by Bleucommerce SAS, Orléans, France.\n\nBy subscribing to a paid plan, you accept these terms in full. These terms complement the Terms of Service and Privacy Policy, which also apply to your use of the platform.\n\nThese terms apply to both individual consumers and professional users. Where specific rights apply only to consumers (as defined by Article liminaire of the French Consumer Code), this is stated explicitly."
+      },
+      "s2": {
+        "title": "Services and Pricing",
+        "body": "ArkhosAI offers the following subscription plans:\n\nFree: no charge, includes 10 generations per month with the Budget fleet profile.\n\nPro: €12.00 per month (including applicable VAT), includes 100 generations per month with access to all fleet profiles (Budget, Balanced, Quality) and models up to devstral-2 and magistral-small.\n\nTeam: €29.00 per month (including applicable VAT), includes 500 generations per month, all fleet profiles, 5 team seats, and priority support.\n\nAll prices are displayed in euros (EUR) and include applicable VAT. Bleucommerce SAS reserves the right to modify pricing with 30 days' advance notice. Existing subscribers will be notified by email before any price change takes effect on their next billing cycle."
+      },
+      "s3": {
+        "title": "Subscription and Payment",
+        "body": "Subscriptions are billed monthly in advance. Payment is processed securely by Stripe, our payment processor.\n\nAccepted payment methods include credit and debit cards (Visa, Mastercard, and other methods supported by Stripe in your region).\n\nSubscriptions automatically renew at the end of each billing period unless cancelled before the renewal date. You will receive a receipt by email for each payment.\n\nIf a payment fails, we will attempt to process it again over the following days. If payment continues to fail, your account may be downgraded to the Free tier until a valid payment method is provided."
+      },
+      "s4": {
+        "title": "Right of Withdrawal",
+        "body": "If you are a consumer within the European Union, you have the right to withdraw from your subscription within 14 days of purchase without giving any reason, pursuant to Articles L. 221-18 et seq. of the French Consumer Code and the EU Consumer Rights Directive (2011/83/EU).\n\nTo exercise this right, send a clear statement of your decision to withdraw to hello@arkhos.ai within the 14-day period. You may use the model withdrawal form provided in Annex I of the Consumer Rights Directive, though this is not mandatory.\n\nHowever, if you have accessed and used the generation service during the withdrawal period, you acknowledge that the performance of the digital content has begun with your prior express consent, and you accept that this may result in the loss of your right of withdrawal for the portion of the service already consumed, in accordance with Article L. 221-28 13° of the Consumer Code.\n\nRefunds for valid withdrawals will be processed within 14 days of receiving your withdrawal request, using the same payment method you used for the original purchase."
+      },
+      "s5": {
+        "title": "Service Delivery",
+        "body": "Upon successful payment, access to your subscribed plan is activated immediately. You can begin using the additional generation capacity and features right away.\n\nGenerations are delivered digitally through the ArkhosAI platform. Each generation produces a set of React source files that you can preview in the sandbox and download as a zip archive.\n\nGeneration capacity is measured per calendar month and does not roll over to the following month. Unused generations expire at the end of each billing period."
+      },
+      "s6": {
+        "title": "Warranty and Conformity",
+        "body": "As a provider of digital content and services, Bleucommerce SAS guarantees that ArkhosAI conforms to the description provided and meets the reasonable expectations of the consumer, in accordance with Articles L. 224-25-12 et seq. of the French Consumer Code.\n\nThe legal guarantee of conformity for digital content applies for a period of 2 years from the date of supply, as required by the EU Digital Content Directive (2019/770) as transposed into French law.\n\nIf a lack of conformity is identified, you are entitled to request that the service be brought into conformity, or, if that is not possible or disproportionate, to a price reduction or contract termination, in accordance with Articles L. 224-25-17 et seq. of the Consumer Code.\n\nGenerated code is provided as a creative AI output. While we strive for quality through our multi-agent pipeline and Reviewer agent, we cannot guarantee that every generation will be free from errors or perfectly match your expectations."
+      },
+      "s7": {
+        "title": "Limitation of Liability",
+        "body": "To the fullest extent permitted by applicable law, Bleucommerce SAS's total liability for claims arising under these General Terms of Sale shall not exceed the total subscription fees paid by you during the 12 months preceding the event giving rise to the claim.\n\nBleucommerce SAS shall not be liable for indirect, incidental, or consequential damages, including loss of profits, data loss, or business interruption.\n\nThis limitation does not apply to liability arising from intentional misconduct or gross negligence, nor does it affect the statutory rights of consumers under French and EU law, including the legal guarantees described in Section 6."
+      },
+      "s8": {
+        "title": "Cancellation and Refunds",
+        "body": "You may cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. You will retain access to your plan's features until the end of the period you have already paid for.\n\nTo cancel, contact us at hello@arkhos.ai or use the account settings page when available.\n\nIf you cancel within the 14-day withdrawal period described in Section 4, and you have not yet used any generations, you are entitled to a full refund.\n\nOutside the withdrawal period, no pro-rata refunds are provided for partial months. The subscription simply will not renew at the end of the current period.\n\nBleucommerce SAS may terminate your subscription in cases of serious or repeated violations of the Terms of Service, with prior notice where reasonably possible."
+      },
+      "s9": {
+        "title": "Governing Law and Dispute Resolution",
+        "body": "These General Terms of Sale are governed by and construed in accordance with French law.\n\nAny disputes arising from these terms shall be subject to the exclusive jurisdiction of the competent courts of Orléans, France, without prejudice to mandatory consumer protection rules that may grant jurisdiction to the courts of the consumer's place of residence.\n\nPursuant to Articles L. 611-1 et seq. of the French Consumer Code, if a dispute cannot be resolved through our customer service, you may refer the matter to a certified consumer mediator. The list of certified mediators is available at https://www.economie.gouv.fr/mediation-conso.\n\nYou may also use the European Commission's Online Dispute Resolution (ODR) platform at https://ec.europa.eu/consumers/odr.\n\nFor disputes relating to personal data, you may lodge a complaint with the Commission Nationale de l'Informatique et des Libertés (CNIL) at www.cnil.fr."
+      }
     }
   }
 }

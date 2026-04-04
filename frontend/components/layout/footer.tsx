@@ -25,6 +25,7 @@ const COMPANY_LINKS = [
 const LEGAL_LINKS = [
   { key: "privacy", href: "/legal/privacy" },
   { key: "terms", href: "/legal/terms" },
+  { key: "sales", href: "/legal/sales" },
   { key: "cookies", href: "/legal/cookies" },
   { key: "imprint", href: "/legal/imprint" },
 ] as const;

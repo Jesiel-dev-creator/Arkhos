@@ -255,9 +255,10 @@
     "companySection": "Entreprise",
     "legal": "Mentions légales",
     "privacy": "Confidentialité",
-    "terms": "Conditions",
+    "terms": "CGU",
+    "sales": "CGV",
     "cookies": "Cookies",
-    "imprint": "Éditeur"
+    "imprint": "Mentions légales"
   },
   "theme": {
     "dark": "Sombre",
@@ -543,49 +544,205 @@
     "backHome": "Retour à l'accueil"
   },
   "legal": {
+    "toc": "Sommaire",
+    "contact": "Pour toute question concernant ces documents juridiques, contactez-nous \u00e0\u00a0:",
     "privacy": {
-      "kicker": "Mentions légales",
-      "title": "Politique de confidentialité",
-      "description": "Cette page décrit la manière dont ArkhosAI gère les données produit, génération et opérationnelles.",
-      "section1Title": "Ce que nous collectons",
-      "section1Body": "Nous collectons les informations nécessaires au fonctionnement du produit, à la sécurité de la plateforme et à la compréhension des usages de génération.",
-      "section2Title": "Comment elles sont utilisées",
-      "section2Body": "Les données d'usage servent à améliorer la fiabilité, le rate limiting, le débogage et l'expérience globale de génération.",
-      "section3Title": "Vos contrôles",
-      "section3Body": "Les déploiements hébergés et auto-hébergés peuvent appliquer des politiques de rétention et d'accès différentes selon l'environnement."
+      "kicker": "Confidentialit\u00e9",
+      "title": "Politique de confidentialit\u00e9",
+      "description": "Cette politique d\u00e9crit comment Bleucommerce SAS, \u00e9ditrice de ArkhosAI, collecte, utilise et prot\u00e8ge vos donn\u00e9es personnelles conform\u00e9ment au R\u00e8glement g\u00e9n\u00e9ral sur la protection des donn\u00e9es (RGPD \u2014 R\u00e8glement UE 2016/679).",
+      "lastUpdated": "Derni\u00e8re mise \u00e0 jour\u00a0: 4 avril 2026",
+      "s1": {
+        "title": "Identit\u00e9 et coordonn\u00e9es du responsable de traitement",
+        "body": "Le responsable du traitement de vos donn\u00e9es personnelles est\u00a0:\n\nBleucommerce SAS\nSi\u00e8ge social\u00a0: Orl\u00e9ans, France\nDirigeant\u00a0: Jesiel\nE-mail\u00a0: privacy@arkhos.ai\nSite\u00a0: https://arkhos.ai\n\nBleucommerce SAS d\u00e9veloppe et op\u00e8re ArkhosAI, un g\u00e9n\u00e9rateur de sites web propuls\u00e9 par intelligence artificielle."
+      },
+      "s2": {
+        "title": "Donn\u00e9es que nous collectons",
+        "body": "Nous collectons uniquement les donn\u00e9es n\u00e9cessaires au fonctionnement du service\u00a0:\n\n\u2022 Donn\u00e9es d\u2019inscription\u00a0: adresse e-mail (via Supabase Auth, r\u00e9gion UE).\n\u2022 Donn\u00e9es de g\u00e9n\u00e9ration\u00a0: prompts saisis par l\u2019utilisateur, code g\u00e9n\u00e9r\u00e9, profil de flotte choisi (Budget, \u00c9quilibr\u00e9, Qualit\u00e9), co\u00fbt de g\u00e9n\u00e9ration en euros.\n\u2022 Donn\u00e9es techniques\u00a0: adresse IP (pour le rate limiting uniquement), pr\u00e9f\u00e9rences de th\u00e8me et de langue, identifiant de session.\n\u2022 Donn\u00e9es de t\u00e9l\u00e9m\u00e9trie\u00a0: m\u00e9triques anonymis\u00e9es de performance du pipeline (dur\u00e9e, co\u00fbt, mod\u00e8le utilis\u00e9 par agent).\n\nNous ne collectons aucune donn\u00e9e sensible au sens de l\u2019article 9 du RGPD."
+      },
+      "s3": {
+        "title": "Base juridique du traitement",
+        "body": "Conform\u00e9ment \u00e0 l\u2019article 6 du RGPD, nous traitons vos donn\u00e9es sur les bases suivantes\u00a0:\n\n\u2022 Ex\u00e9cution du contrat (art. 6.1.b)\u00a0: traitement de votre prompt, g\u00e9n\u00e9ration du code, gestion de votre compte.\n\u2022 Int\u00e9r\u00eat l\u00e9gitime (art. 6.1.f)\u00a0: s\u00e9curit\u00e9 de la plateforme, rate limiting, am\u00e9lioration du routage de mod\u00e8les via FleetTelemetry.\n\u2022 Obligation l\u00e9gale (art. 6.1.c)\u00a0: conservation des donn\u00e9es de facturation conform\u00e9ment au Code de commerce fran\u00e7ais.\n\u2022 Consentement (art. 6.1.a)\u00a0: cookies non essentiels (analytique), si activ\u00e9s par l\u2019utilisateur."
+      },
+      "s4": {
+        "title": "Utilisation de vos donn\u00e9es",
+        "body": "Vos donn\u00e9es sont utilis\u00e9es exclusivement pour\u00a0:\n\n\u2022 Fournir le service de g\u00e9n\u00e9ration de sites web (envoi de votre prompt \u00e0 l\u2019IA, g\u00e9n\u00e9ration et stockage du code produit).\n\u2022 G\u00e9rer votre compte utilisateur et vos pr\u00e9f\u00e9rences.\n\u2022 Am\u00e9liorer le routage intelligent des mod\u00e8les (donn\u00e9es de t\u00e9l\u00e9m\u00e9trie anonymis\u00e9es).\n\u2022 Appliquer les limites d\u2019utilisation (rate limiting) et prot\u00e9ger la plateforme.\n\u2022 R\u00e9pondre \u00e0 vos demandes de support.\n\nNous ne revendons jamais vos donn\u00e9es. Nous n\u2019utilisons aucun outil de tracking tiers. Vos prompts ne sont pas utilis\u00e9s pour entra\u00eener des mod\u00e8les tiers."
+      },
+      "s5": {
+        "title": "Partage et sous-traitants",
+        "body": "Vos donn\u00e9es sont trait\u00e9es exclusivement par des sous-traitants situ\u00e9s dans l\u2019Union europ\u00e9enne\u00a0:\n\n\u2022 Mistral AI (Paris, France)\u00a0: traitement des prompts par les mod\u00e8les d\u2019IA (ministral, devstral, magistral). Vos prompts sont envoy\u00e9s \u00e0 l\u2019API Mistral pour la g\u00e9n\u00e9ration uniquement.\n\u2022 Scaleway (Paris, France)\u00a0: h\u00e9bergement de l\u2019infrastructure serveur et des containers sandbox.\n\u2022 Supabase (r\u00e9gion UE)\u00a0: authentification utilisateur et gestion des sessions.\n\nChaque sous-traitant est li\u00e9 par un accord de traitement des donn\u00e9es (DPA) conforme \u00e0 l\u2019article 28 du RGPD."
+      },
+      "s6": {
+        "title": "Transferts internationaux",
+        "body": "Toutes vos donn\u00e9es restent dans l\u2019Union europ\u00e9enne. Nos serveurs sont h\u00e9berg\u00e9s chez Scaleway \u00e0 Paris (France), les mod\u00e8les IA sont fournis par Mistral AI \u00e0 Paris, et l\u2019authentification est g\u00e9r\u00e9e par Supabase en r\u00e9gion UE.\n\nAucun transfert de donn\u00e9es personnelles vers des pays tiers n\u2019est effectu\u00e9. En cas d\u2019\u00e9volution de cette pratique, nous appliquerons les garanties appropri\u00e9es pr\u00e9vues aux articles 46 \u00e0 49 du RGPD (clauses contractuelles types, d\u00e9cision d\u2019ad\u00e9quation)."
+      },
+      "s7": {
+        "title": "Dur\u00e9e de conservation",
+        "body": "Nous conservons vos donn\u00e9es pendant les dur\u00e9es suivantes\u00a0:\n\n\u2022 Donn\u00e9es de compte\u00a0: pendant toute la dur\u00e9e de votre inscription, puis 30 jours apr\u00e8s suppression du compte.\n\u2022 G\u00e9n\u00e9rations (prompts et code)\u00a0: 90 jours apr\u00e8s la g\u00e9n\u00e9ration, sauf t\u00e9l\u00e9chargement par l\u2019utilisateur.\n\u2022 Donn\u00e9es de t\u00e9l\u00e9m\u00e9trie anonymis\u00e9es\u00a0: 12 mois (am\u00e9lioration du routage de mod\u00e8les).\n\u2022 Logs techniques (adresse IP)\u00a0: 7 jours maximum.\n\u2022 Donn\u00e9es de facturation\u00a0: 10 ans conform\u00e9ment au Code de commerce fran\u00e7ais (art. L123-22).\n\nApr\u00e8s expiration de ces d\u00e9lais, les donn\u00e9es sont supprim\u00e9es ou irr\u00e9versiblement anonymis\u00e9es."
+      },
+      "s8": {
+        "title": "Vos droits au titre du RGPD",
+        "body": "Conform\u00e9ment aux articles 15 \u00e0 22 du RGPD, vous disposez des droits suivants\u00a0:\n\n\u2022 Droit d\u2019acc\u00e8s (art. 15)\u00a0: obtenir une copie de vos donn\u00e9es personnelles.\n\u2022 Droit de rectification (art. 16)\u00a0: corriger des donn\u00e9es inexactes ou incompl\u00e8tes.\n\u2022 Droit \u00e0 l\u2019effacement (art. 17)\u00a0: demander la suppression de vos donn\u00e9es.\n\u2022 Droit \u00e0 la portabilit\u00e9 (art. 20)\u00a0: recevoir vos donn\u00e9es dans un format structur\u00e9 et lisible par machine.\n\u2022 Droit \u00e0 la limitation du traitement (art. 18)\u00a0: restreindre temporairement le traitement.\n\u2022 Droit d\u2019opposition (art. 21)\u00a0: vous opposer au traitement fond\u00e9 sur l\u2019int\u00e9r\u00eat l\u00e9gitime.\n\u2022 Droit de retrait du consentement\u00a0: retirer \u00e0 tout moment un consentement pr\u00e9c\u00e9demment donn\u00e9 (sans affecter la l\u00e9galit\u00e9 du traitement ant\u00e9rieur)."
+      },
+      "s9": {
+        "title": "Exercice de vos droits",
+        "body": "Pour exercer vos droits, envoyez un e-mail \u00e0\u00a0: privacy@arkhos.ai\n\nNous traiterons votre demande dans un d\u00e9lai maximum de 30 jours \u00e0 compter de sa r\u00e9ception, conform\u00e9ment \u00e0 l\u2019article 12.3 du RGPD. Ce d\u00e9lai peut \u00eatre prolong\u00e9 de deux mois suppl\u00e9mentaires en cas de complexit\u00e9, auquel cas vous en serez inform\u00e9.\n\nSi vous estimez que vos droits ne sont pas respect\u00e9s, vous pouvez introduire une r\u00e9clamation aupr\u00e8s de la Commission nationale de l\u2019informatique et des libert\u00e9s (CNIL)\u00a0:\n\nCNIL \u2014 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07\nhttps://www.cnil.fr"
+      },
+      "s10": {
+        "title": "D\u00e9cisions automatis\u00e9es",
+        "body": "ArkhosAI utilise l\u2019intelligence artificielle pour g\u00e9n\u00e9rer du code de sites web \u00e0 partir de vos prompts. Ce traitement est purement technique et ne produit aucun effet juridique ni aucun profilage vous concernant au sens de l\u2019article 22 du RGPD.\n\nLe routage intelligent de mod\u00e8les (FleetTelemetry) s\u00e9lectionne le mod\u00e8le d\u2019IA optimal par agent pour chaque g\u00e9n\u00e9ration. Cette d\u00e9cision porte sur l\u2019allocation de ressources techniques et non sur une \u00e9valuation de la personne."
+      },
+      "s11": {
+        "title": "Protection des mineurs",
+        "body": "ArkhosAI n\u2019est pas destin\u00e9 aux personnes de moins de 16 ans. Nous ne collectons pas sciemment de donn\u00e9es personnelles de mineurs.\n\nSi nous d\u00e9couvrons qu\u2019un utilisateur a moins de 16 ans, nous supprimerons ses donn\u00e9es dans les meilleurs d\u00e9lais. Si vous \u00eates parent ou tuteur et pensez que votre enfant a utilis\u00e9 le service, contactez-nous \u00e0\u00a0: privacy@arkhos.ai"
+      },
+      "s12": {
+        "title": "Modifications de cette politique",
+        "body": "Nous pouvons mettre \u00e0 jour cette politique de confidentialit\u00e9 pour refl\u00e9ter des \u00e9volutions du service, de la l\u00e9gislation ou de nos pratiques. En cas de modification substantielle, nous vous informerons par e-mail ou par une notification visible sur la plateforme.\n\nLa date de derni\u00e8re mise \u00e0 jour figure en haut de cette page. Nous vous encourageons \u00e0 consulter cette politique r\u00e9guli\u00e8rement."
+      }
     },
     "terms": {
-      "kicker": "Mentions légales",
-      "title": "Conditions d'utilisation",
-      "description": "Ces conditions décrivent les règles générales d'utilisation de ArkhosAI et de ses variantes hébergées ou auto-hébergées.",
-      "section1Title": "Usage acceptable",
-      "section1Body": "Utilisez le produit de manière légale, respectez les limites d'infrastructure et évitez les comportements abusifs de génération ou de scraping.",
-      "section2Title": "Périmètre du service",
-      "section2Body": "La disponibilité des fonctionnalités peut varier entre les versions locales, hébergées et les futures offres entreprises de ArkhosAI.",
-      "section3Title": "Évolutions",
-      "section3Body": "À mesure que le produit évolue, ces conditions peuvent être mises à jour pour refléter de nouvelles capacités, une nouvelle tarification ou de nouveaux modes de déploiement."
+      "kicker": "Conditions",
+      "title": "Conditions g\u00e9n\u00e9rales d\u2019utilisation",
+      "description": "Les pr\u00e9sentes conditions r\u00e9gissent l\u2019acc\u00e8s et l\u2019utilisation de la plateforme ArkhosAI, \u00e9dit\u00e9e par Bleucommerce SAS. En utilisant le service, vous acceptez ces conditions dans leur int\u00e9gralit\u00e9.",
+      "lastUpdated": "Derni\u00e8re mise \u00e0 jour\u00a0: 4 avril 2026",
+      "s1": {
+        "title": "Acceptation des conditions",
+        "body": "L\u2019acc\u00e8s \u00e0 ArkhosAI et son utilisation impliquent l\u2019acceptation sans r\u00e9serve des pr\u00e9sentes conditions g\u00e9n\u00e9rales d\u2019utilisation. Si vous n\u2019acceptez pas ces conditions, vous ne devez pas utiliser le service.\n\nBleucommerce SAS se r\u00e9serve le droit de modifier ces conditions \u00e0 tout moment. Les modifications prennent effet d\u00e8s leur publication sur le site. L\u2019utilisation continue du service apr\u00e8s modification vaut acceptation des nouvelles conditions."
+      },
+      "s2": {
+        "title": "Description du service",
+        "body": "ArkhosAI est un g\u00e9n\u00e9rateur de sites web propuls\u00e9 par intelligence artificielle. Le service permet de\u00a0:\n\n\u2022 D\u00e9crire un site web en langage naturel (prompt).\n\u2022 G\u00e9n\u00e9rer automatiquement le code source React via un pipeline multi-agents.\n\u2022 Pr\u00e9visualiser le r\u00e9sultat en temps r\u00e9el.\n\u2022 T\u00e9l\u00e9charger le code g\u00e9n\u00e9r\u00e9 sous forme de projet pr\u00eat pour la production.\n\nLe service est propos\u00e9 en mode SaaS h\u00e9berg\u00e9 (Scaleway, Paris) et en mode auto-h\u00e9berg\u00e9 (open source, licence MIT)."
+      },
+      "s3": {
+        "title": "Inscription et compte utilisateur",
+        "body": "L\u2019utilisation de ArkhosAI n\u00e9cessite la cr\u00e9ation d\u2019un compte avec une adresse e-mail valide. L\u2019authentification est g\u00e9r\u00e9e par Supabase (r\u00e9gion UE).\n\nVous \u00eates responsable de la confidentialit\u00e9 de vos identifiants et de toute activit\u00e9 effectu\u00e9e depuis votre compte. Vous vous engagez \u00e0 fournir des informations exactes et \u00e0 nous informer de tout acc\u00e8s non autoris\u00e9 \u00e0 votre compte."
+      },
+      "s4": {
+        "title": "Utilisation acceptable",
+        "body": "Vous vous engagez \u00e0 utiliser ArkhosAI de mani\u00e8re conforme aux lois en vigueur. Il est strictement interdit de\u00a0:\n\n\u2022 G\u00e9n\u00e9rer du contenu ill\u00e9gal, diffamatoire, pornographique, incitant \u00e0 la haine ou \u00e0 la violence.\n\u2022 G\u00e9n\u00e9rer du code malveillant (malware, phishing, scripts d\u2019exploitation).\n\u2022 Contourner les limites de d\u00e9bit (rate limiting) ou abuser de l\u2019infrastructure.\n\u2022 Tenter un acc\u00e8s non autoris\u00e9 aux serveurs, API ou comptes tiers.\n\u2022 Proc\u00e9der au scraping automatique ou \u00e0 la g\u00e9n\u00e9ration en masse \u00e0 des fins de revente.\n\nTout manquement peut entra\u00eener la suspension ou la suppression de votre compte sans pr\u00e9avis."
+      },
+      "s5": {
+        "title": "Propri\u00e9t\u00e9 intellectuelle",
+        "body": "Code g\u00e9n\u00e9r\u00e9\u00a0: le code produit par ArkhosAI \u00e0 partir de vos prompts vous appartient. Il vous est conc\u00e9d\u00e9 sous licence MIT, ce qui vous permet de l\u2019utiliser, le modifier et le distribuer librement, y compris \u00e0 des fins commerciales.\n\nPlateforme ArkhosAI\u00a0: le code source, le design, les marques et l\u2019identit\u00e9 visuelle de la plateforme ArkhosAI sont la propri\u00e9t\u00e9 de Bleucommerce SAS. Leur reproduction sans autorisation est interdite.\n\nTramontane\u00a0: le framework d\u2019orchestration Tramontane est distribu\u00e9 sous licence MIT.\n\nVos prompts\u00a0: vous conservez la propri\u00e9t\u00e9 de vos prompts. Nous ne les utilisons pas pour entra\u00eener des mod\u00e8les tiers."
+      },
+      "s6": {
+        "title": "Disponibilit\u00e9 du service",
+        "body": "Bleucommerce SAS s\u2019efforce d\u2019assurer la disponibilit\u00e9 de ArkhosAI 24 heures sur 24, 7 jours sur 7. Toutefois, le service peut \u00eatre temporairement interrompu pour des raisons de maintenance, de mise \u00e0 jour ou en cas de force majeure.\n\nNous ne garantissons pas un taux de disponibilit\u00e9 sp\u00e9cifique en version gratuite. Les forfaits payants (Pro et \u00c9quipe) b\u00e9n\u00e9ficient d\u2019un engagement de disponibilit\u00e9 raisonnable.\n\nLa version auto-h\u00e9berg\u00e9e (open source) est sous la responsabilit\u00e9 exclusive de l\u2019op\u00e9rateur."
+      },
+      "s7": {
+        "title": "Limitation de responsabilit\u00e9",
+        "body": "ArkhosAI est fourni \u00ab\u00a0tel quel\u00a0\u00bb. Bleucommerce SAS ne peut \u00eatre tenue responsable de\u00a0:\n\n\u2022 La qualit\u00e9, l\u2019exactitude ou l\u2019ad\u00e9quation du code g\u00e9n\u00e9r\u00e9 \u00e0 un besoin particulier.\n\u2022 Les dommages directs ou indirects r\u00e9sultant de l\u2019utilisation du code g\u00e9n\u00e9r\u00e9.\n\u2022 Les interruptions de service, pertes de donn\u00e9es ou indisponibilit\u00e9 temporaire.\n\u2022 Les actions ou omissions de sous-traitants techniques (Mistral AI, Scaleway, Supabase).\n\nEn tout \u00e9tat de cause, la responsabilit\u00e9 de Bleucommerce SAS est limit\u00e9e au montant total pay\u00e9 par l\u2019utilisateur au cours des 12 derniers mois."
+      },
+      "s8": {
+        "title": "R\u00e9siliation",
+        "body": "Vous pouvez supprimer votre compte \u00e0 tout moment depuis les param\u00e8tres de votre espace utilisateur ou en contactant hello@arkhos.ai.\n\nBleucommerce SAS se r\u00e9serve le droit de suspendre ou supprimer un compte en cas de violation des pr\u00e9sentes conditions, sans obligation de remboursement.\n\nEn cas de r\u00e9siliation, vos donn\u00e9es seront supprim\u00e9es conform\u00e9ment \u00e0 la politique de confidentialit\u00e9 (d\u00e9lai de 30 jours)."
+      },
+      "s9": {
+        "title": "Droit applicable et litiges",
+        "body": "Les pr\u00e9sentes conditions sont r\u00e9gies par le droit fran\u00e7ais.\n\nEn cas de litige, les parties s\u2019engagent \u00e0 rechercher une solution amiable. Conform\u00e9ment aux articles L611-1 et suivants du Code de la consommation, vous pouvez recourir gratuitement \u00e0 un m\u00e9diateur de la consommation. Vous pouvez \u00e9galement utiliser la plateforme de r\u00e8glement en ligne des litiges de l\u2019UE\u00a0: https://ec.europa.eu/consumers/odr\n\n\u00c0 d\u00e9faut de r\u00e9solution amiable, les tribunaux comp\u00e9tents d\u2019Orl\u00e9ans auront juridiction exclusive."
+      },
+      "s10": {
+        "title": "Contact",
+        "body": "Pour toute question relative aux pr\u00e9sentes conditions\u00a0:\n\nBleucommerce SAS\nE-mail\u00a0: hello@arkhos.ai\nSite\u00a0: https://arkhos.ai\nSi\u00e8ge social\u00a0: Orl\u00e9ans, France"
+      }
     },
     "cookies": {
-      "kicker": "Mentions légales",
+      "kicker": "Cookies",
       "title": "Politique relative aux cookies",
-      "description": "Les cookies et le stockage local sont utilisés avec parcimonie pour les préférences produit et certains comportements de session.",
-      "section1Title": "Stockage des préférences",
-      "section1Body": "Le thème, la langue et d'autres réglages d'interface peuvent être conservés localement afin de garder une expérience cohérente entre les visites.",
-      "section2Title": "Cookies opérationnels",
-      "section2Body": "Les environnements hébergés peuvent utiliser des cookies essentiels pour l'authentification, la continuité de session et la sécurité de la plateforme.",
-      "section3Title": "Contrôle",
-      "section3Body": "Vous pouvez gérer le stockage navigateur directement, et les déploiements auto-hébergés peuvent définir leur propre posture cookies."
+      "description": "Cette politique explique comment ArkhosAI utilise les cookies et technologies similaires, conform\u00e9ment \u00e0 la directive ePrivacy (2002/58/CE) et aux recommandations de la CNIL.",
+      "lastUpdated": "Derni\u00e8re mise \u00e0 jour\u00a0: 4 avril 2026",
+      "s1": {
+        "title": "Qu\u2019est-ce qu\u2019un cookie\u00a0?",
+        "body": "Un cookie est un petit fichier texte d\u00e9pos\u00e9 sur votre terminal (ordinateur, t\u00e9l\u00e9phone, tablette) lorsque vous consultez un site web. Il permet au site de m\u00e9moriser des informations sur votre visite, comme vos pr\u00e9f\u00e9rences de langue ou de th\u00e8me.\n\nArkhosAI utilise \u00e9galement le localStorage du navigateur pour certaines pr\u00e9f\u00e9rences. Les r\u00e8gles d\u00e9crites ici s\u2019appliquent de la m\u00eame mani\u00e8re \u00e0 ces technologies."
+      },
+      "s2": {
+        "title": "Cookies que nous utilisons",
+        "body": "ArkhosAI utilise un nombre tr\u00e8s limit\u00e9 de cookies, tous strictement n\u00e9cessaires au fonctionnement du service. Nous ne d\u00e9posons aucun cookie de tracking publicitaire ou de profilage.\n\nLes cookies utilis\u00e9s se r\u00e9partissent en deux cat\u00e9gories\u00a0: les cookies essentiels (toujours actifs) et les cookies analytiques (soumis \u00e0 votre consentement)."
+      },
+      "s3": {
+        "title": "Cookies essentiels",
+        "body": "Ces cookies sont indispensables au fonctionnement du service et ne n\u00e9cessitent pas votre consentement\u00a0:\n\n\u2022 Session Supabase\u00a0: authentification et maintien de votre session utilisateur. Dur\u00e9e\u00a0: dur\u00e9e de la session.\n\u2022 Pr\u00e9f\u00e9rence de th\u00e8me\u00a0: sauvegarde de votre choix (Sombre, Clair ou GPU). Dur\u00e9e\u00a0: 1 an. Stockage\u00a0: localStorage.\n\u2022 Pr\u00e9f\u00e9rence de langue\u00a0: sauvegarde de votre choix (FR/EN). Dur\u00e9e\u00a0: 1 an. Stockage\u00a0: localStorage.\n\u2022 Consentement cookies\u00a0: enregistrement de vos choix concernant les cookies. Dur\u00e9e\u00a0: 13 mois conform\u00e9ment aux recommandations de la CNIL."
+      },
+      "s4": {
+        "title": "Gestion des cookies",
+        "body": "Lors de votre premi\u00e8re visite, une banni\u00e8re de consentement vous permet d\u2019accepter ou de refuser les cookies non essentiels. Vous pouvez modifier vos choix \u00e0 tout moment via le lien \u00ab\u00a0Cookies\u00a0\u00bb en pied de page.\n\nVous pouvez \u00e9galement configurer votre navigateur pour bloquer ou supprimer les cookies. Voici les guides des principaux navigateurs\u00a0:\n\n\u2022 Chrome\u00a0: chrome://settings/cookies\n\u2022 Firefox\u00a0: about:preferences#privacy\n\u2022 Safari\u00a0: Pr\u00e9f\u00e9rences > Confidentialit\u00e9\n\nLa suppression des cookies essentiels peut alt\u00e9rer le fonctionnement du service."
+      },
+      "s5": {
+        "title": "Cookies tiers",
+        "body": "ArkhosAI n\u2019utilise actuellement aucun cookie tiers. Nous n\u2019int\u00e9grons aucun service de tracking, r\u00e9seau publicitaire ni pixel de suivi.\n\nSi cette situation \u00e9volue, cette politique sera mise \u00e0 jour et votre consentement explicite sera demand\u00e9 avant tout d\u00e9p\u00f4t de cookie tiers."
+      },
+      "s6": {
+        "title": "Modifications",
+        "body": "Cette politique de cookies peut \u00eatre mise \u00e0 jour pour refl\u00e9ter des \u00e9volutions techniques ou r\u00e9glementaires. La date de derni\u00e8re mise \u00e0 jour figure en haut de cette page.\n\nEn cas d\u2019ajout de nouveaux types de cookies, votre consentement sera \u00e0 nouveau sollicit\u00e9."
+      }
     },
     "imprint": {
-      "kicker": "Mentions légales",
-      "title": "Éditeur",
-      "description": "Informations de société et de publication pour ArkhosAI et son opérateur.",
-      "section1Title": "Société",
-      "section1Body": "ArkhosAI est développé sous Bleucommerce SAS, basée à Orléans, France.",
-      "section2Title": "Projet",
-      "section2Body": "Le produit se concentre sur la génération assistée de sites web avec une stratégie infrastructure et produit pensée pour l'Europe.",
-      "section3Title": "Contact",
-      "section3Body": "Pour les demandes légales ou commerciales, utilisez les canaux officiels du projet et de la société associés à ArkhosAI."
+      "kicker": "Mentions l\u00e9gales",
+      "title": "Mentions l\u00e9gales",
+      "description": "Informations l\u00e9gales obligatoires conform\u00e9ment \u00e0 la loi n\u00b0\u00a02004-575 du 21 juin 2004 pour la confiance dans l\u2019\u00e9conomie num\u00e9rique (LCEN).",
+      "lastUpdated": "Derni\u00e8re mise \u00e0 jour\u00a0: 4 avril 2026",
+      "s1": {
+        "title": "\u00c9diteur du site",
+        "body": "Le site arkhos.ai est \u00e9dit\u00e9 par\u00a0:\n\nBleucommerce SAS\nSi\u00e8ge social\u00a0: Orl\u00e9ans, France\nSIRET\u00a0: en cours d\u2019immatriculation\nDirigeant\u00a0: Jesiel\nE-mail\u00a0: hello@arkhos.ai\nSite\u00a0: https://arkhos.ai\nNum\u00e9ro TVA intracommunautaire\u00a0: en cours d\u2019attribution"
+      },
+      "s2": {
+        "title": "H\u00e9bergeur",
+        "body": "Le site et l\u2019infrastructure de ArkhosAI sont h\u00e9berg\u00e9s par\u00a0:\n\nScaleway SAS\n8 rue de la Ville l\u2019\u00c9v\u00eaque, 75008 Paris, France\nSite\u00a0: https://www.scaleway.com\n\nLes donn\u00e9es sont stock\u00e9es dans les datacenters Scaleway de Paris (r\u00e9gion fr-par), garantissant la souverainet\u00e9 des donn\u00e9es sur le territoire de l\u2019Union europ\u00e9enne."
+      },
+      "s3": {
+        "title": "Propri\u00e9t\u00e9 intellectuelle",
+        "body": "L\u2019ensemble du site arkhos.ai (structure, design, textes, logos, code source de la plateforme) est la propri\u00e9t\u00e9 de Bleucommerce SAS, sauf mention contraire.\n\nToute reproduction, repr\u00e9sentation ou diffusion, en tout ou partie, du contenu de ce site sans autorisation pr\u00e9alable est interdite conform\u00e9ment aux articles L335-2 et suivants du Code de la propri\u00e9t\u00e9 intellectuelle.\n\nLe code g\u00e9n\u00e9r\u00e9 par ArkhosAI pour les utilisateurs est la propri\u00e9t\u00e9 de l\u2019utilisateur et est conc\u00e9d\u00e9 sous licence MIT."
+      },
+      "s4": {
+        "title": "Responsabilit\u00e9",
+        "body": "Bleucommerce SAS s\u2019efforce d\u2019assurer l\u2019exactitude des informations publi\u00e9es sur arkhos.ai, mais ne saurait garantir leur exhaustivit\u00e9 ni l\u2019absence d\u2019erreur.\n\nBleucommerce SAS ne peut \u00eatre tenue responsable de l\u2019utilisation faite du code g\u00e9n\u00e9r\u00e9 par ArkhosAI, ni de l\u2019indisponibilit\u00e9 temporaire du service pour des raisons techniques, de maintenance ou de force majeure.\n\nLes liens hypertextes vers des sites tiers sont fournis \u00e0 titre informatif et n\u2019engagent pas la responsabilit\u00e9 de Bleucommerce SAS."
+      },
+      "s5": {
+        "title": "Droit applicable",
+        "body": "Les pr\u00e9sentes mentions l\u00e9gales sont r\u00e9gies par le droit fran\u00e7ais, et notamment par\u00a0:\n\n\u2022 Loi n\u00b0\u00a02004-575 du 21 juin 2004 pour la confiance dans l\u2019\u00e9conomie num\u00e9rique (LCEN).\n\u2022 R\u00e8glement g\u00e9n\u00e9ral sur la protection des donn\u00e9es (RGPD \u2014 R\u00e8glement UE 2016/679).\n\u2022 Code de la propri\u00e9t\u00e9 intellectuelle.\n\u2022 Code de commerce.\n\nTout litige sera soumis \u00e0 la comp\u00e9tence exclusive des tribunaux d\u2019Orl\u00e9ans."
+      }
+    },
+    "sales": {
+      "kicker": "Ventes",
+      "title": "Conditions g\u00e9n\u00e9rales de vente",
+      "description": "Les pr\u00e9sentes conditions g\u00e9n\u00e9rales de vente r\u00e9gissent les relations contractuelles entre Bleucommerce SAS et tout utilisateur souscrivant \u00e0 un forfait payant de ArkhosAI.",
+      "lastUpdated": "Derni\u00e8re mise \u00e0 jour\u00a0: 4 avril 2026",
+      "s1": {
+        "title": "Objet et champ d\u2019application",
+        "body": "Les pr\u00e9sentes conditions g\u00e9n\u00e9rales de vente (CGV) s\u2019appliquent \u00e0 toute souscription aux services payants de ArkhosAI propos\u00e9s par Bleucommerce SAS.\n\nElles compl\u00e8tent les conditions g\u00e9n\u00e9rales d\u2019utilisation (CGU). En cas de contradiction, les CGV pr\u00e9valent pour les aspects commerciaux.\n\nLe client d\u00e9clare avoir pris connaissance des pr\u00e9sentes CGV et les accepter sans r\u00e9serve avant toute souscription."
+      },
+      "s2": {
+        "title": "Services et tarifs",
+        "body": "ArkhosAI propose les forfaits suivants (prix TTC en euros)\u00a0:\n\n\u2022 Gratuit\u00a0: 0\u00a0\u20ac \u2014 10 g\u00e9n\u00e9rations/mois, profil Budget, 3 projets.\n\u2022 Pro\u00a0: 12\u00a0\u20ac/mois \u2014 100 g\u00e9n\u00e9rations/mois, tous les profils (Budget, \u00c9quilibr\u00e9, Qualit\u00e9), projets illimit\u00e9s, aper\u00e7u 30 min.\n\u2022 \u00c9quipe\u00a0: 29\u00a0\u20ac/mois \u2014 500 g\u00e9n\u00e9rations/mois, tous les profils, projets illimit\u00e9s, aper\u00e7u persistant, 5 membres.\n\nLe co\u00fbt par g\u00e9n\u00e9ration (entre ~0,004\u00a0\u20ac et ~0,020\u00a0\u20ac) est affich\u00e9 en temps r\u00e9el pendant la g\u00e9n\u00e9ration. Bleucommerce SAS se r\u00e9serve le droit de modifier les tarifs avec un pr\u00e9avis de 30 jours."
+      },
+      "s3": {
+        "title": "Souscription et paiement",
+        "body": "La souscription \u00e0 un forfait payant s\u2019effectue en ligne depuis votre compte ArkhosAI. Le paiement est trait\u00e9 par Stripe, en conformit\u00e9 avec les normes PCI DSS.\n\nLa facturation est mensuelle, pr\u00e9lev\u00e9e le m\u00eame jour que la souscription initiale. Le renouvellement est automatique sauf r\u00e9siliation pr\u00e9alable.\n\nUne facture est disponible dans votre espace utilisateur apr\u00e8s chaque paiement. Tous les prix sont indiqu\u00e9s en euros, toutes taxes comprises (TTC)."
+      },
+      "s4": {
+        "title": "Droit de r\u00e9tractation",
+        "body": "Conform\u00e9ment aux articles L221-18 et suivants du Code de la consommation et \u00e0 la Directive europ\u00e9enne 2011/83/UE, vous disposez d\u2019un d\u00e9lai de 14 jours \u00e0 compter de la souscription pour exercer votre droit de r\u00e9tractation, sans avoir \u00e0 justifier de motif.\n\nPour exercer ce droit, envoyez un e-mail \u00e0\u00a0: hello@arkhos.ai\n\nException\u00a0: conform\u00e9ment \u00e0 l\u2019article L221-28-13\u00b0 du Code de la consommation, le droit de r\u00e9tractation ne peut \u00eatre exerc\u00e9 pour la fourniture de contenu num\u00e9rique non fourni sur un support mat\u00e9riel dont l\u2019ex\u00e9cution a commenc\u00e9 avec votre accord expr\u00e8s et renoncement au droit de r\u00e9tractation. Les g\u00e9n\u00e9rations d\u00e9j\u00e0 effectu\u00e9es ne sont donc pas remboursables."
+      },
+      "s5": {
+        "title": "Fourniture du service",
+        "body": "L\u2019acc\u00e8s au service payant est activ\u00e9 imm\u00e9diatement apr\u00e8s confirmation du paiement. Le service est accessible 24h/24, 7j/7, sous r\u00e9serve des p\u00e9riodes de maintenance.\n\nLe code g\u00e9n\u00e9r\u00e9 est disponible en t\u00e9l\u00e9chargement pendant 90 jours apr\u00e8s la g\u00e9n\u00e9ration. Au-del\u00e0, il est recommand\u00e9 de le t\u00e9l\u00e9charger et de le sauvegarder localement.\n\nLa pr\u00e9visualisation en direct (sandbox) est disponible selon les limites de votre forfait."
+      },
+      "s6": {
+        "title": "Garantie et conformit\u00e9",
+        "body": "Conform\u00e9ment aux articles L217-3 et suivants du Code de la consommation relatifs \u00e0 la garantie l\u00e9gale de conformit\u00e9 des contenus et services num\u00e9riques, Bleucommerce SAS garantit que ArkhosAI est conforme \u00e0 sa description et \u00e0 l\u2019usage attendu d\u2019un g\u00e9n\u00e9rateur de sites web par IA.\n\nCette garantie s\u2019applique pendant une dur\u00e9e de 2 ans \u00e0 compter de la fourniture du service (ou pendant toute la dur\u00e9e de l\u2019abonnement si celui-ci est continu).\n\nEn cas de d\u00e9faut de conformit\u00e9, vous avez droit \u00e0 la mise en conformit\u00e9 du service ou, \u00e0 d\u00e9faut, \u00e0 une r\u00e9duction de prix ou \u00e0 la r\u00e9siliation du contrat."
+      },
+      "s7": {
+        "title": "Limitation de responsabilit\u00e9",
+        "body": "Bleucommerce SAS ne peut \u00eatre tenue responsable des dommages indirects li\u00e9s \u00e0 l\u2019utilisation du service, notamment le manque \u00e0 gagner, la perte de donn\u00e9es ou l\u2019atteinte \u00e0 l\u2019image.\n\nLa responsabilit\u00e9 totale de Bleucommerce SAS au titre des pr\u00e9sentes CGV est limit\u00e9e au montant total des sommes vers\u00e9es par le client au cours des 12 mois pr\u00e9c\u00e9dant le fait g\u00e9n\u00e9rateur.\n\nCette limitation ne s\u2019applique pas en cas de faute lourde, de dol ou d\u2019atteinte aux donn\u00e9es personnelles."
+      },
+      "s8": {
+        "title": "R\u00e9siliation et remboursement",
+        "body": "Vous pouvez r\u00e9silier votre forfait \u00e0 tout moment depuis vos param\u00e8tres ou en contactant hello@arkhos.ai. La r\u00e9siliation prend effet \u00e0 la fin de la p\u00e9riode de facturation en cours.\n\nAucun remboursement au prorata n\u2019est effectu\u00e9, sauf\u00a0:\n\u2022 Exercice du droit de r\u00e9tractation dans les 14 jours.\n\u2022 D\u00e9faut de conformit\u00e9 av\u00e9r\u00e9 du service.\n\nApr\u00e8s r\u00e9siliation, votre compte repasse sur le forfait Gratuit. Vos g\u00e9n\u00e9rations existantes restent t\u00e9l\u00e9chargeables pendant 90 jours."
+      },
+      "s9": {
+        "title": "Droit applicable et r\u00e8glement des litiges",
+        "body": "Les pr\u00e9sentes CGV sont soumises au droit fran\u00e7ais.\n\nEn cas de litige, les parties s\u2019engagent \u00e0 rechercher une r\u00e9solution amiable. Conform\u00e9ment aux articles L611-1 et suivants du Code de la consommation, vous pouvez saisir gratuitement un m\u00e9diateur de la consommation.\n\nVous pouvez \u00e9galement d\u00e9poser une r\u00e9clamation sur la plateforme europ\u00e9enne de r\u00e8glement en ligne des litiges (RLL)\u00a0: https://ec.europa.eu/consumers/odr\n\nPour toute question relative \u00e0 vos donn\u00e9es personnelles, vous pouvez \u00e9galement contacter la CNIL\u00a0: https://www.cnil.fr\n\n\u00c0 d\u00e9faut de r\u00e9solution amiable, le Tribunal judiciaire d\u2019Orl\u00e9ans est seul comp\u00e9tent."
+      }
     }
   }
 }
