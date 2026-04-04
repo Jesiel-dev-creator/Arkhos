@@ -360,68 +360,122 @@
       "title": "How ArkhosAI works, from prompt to production output.",
       "description": "The generator is built around a transparent pipeline, typed frontend surfaces, and a backend designed for streaming and reviewability.",
       "learnMore": "Learn more",
+      "quickstart": {
+        "title": "Get started in 3 steps",
+        "step1": "Create your account",
+        "step1Body": "Sign up with email or OAuth. The free tier includes 10 generations per month with the Budget fleet profile — no credit card required.",
+        "step2": "Describe your website",
+        "step2Body": "Write a prompt describing what you want, select a fleet profile (Budget, Balanced, or Quality), and hit Generate. The 5-agent pipeline streams every step in real time.",
+        "step3": "Download your project",
+        "step3Body": "Get a production-ready React project with Tailwind CSS, proper file structure, and SEO meta tags. Preview it live in the sandbox, iterate if needed, then download the zip."
+      },
       "sections": {
         "start": {
-          "title": "Start with a prompt",
-          "body": "Describe the site you want, choose a quality profile, and launch the generation pipeline with locale-aware routing."
+          "title": "Getting Started",
+          "body": "Account setup, first generation, fleet profile selection, and prompt writing tips. Everything you need to go from zero to a generated website."
         },
         "pipeline": {
-          "title": "Review the live pipeline",
-          "body": "Watch each agent step stream in, inspect plan output, and follow cumulative cost and file generation in real time."
+          "title": "Agent Pipeline",
+          "body": "How the 5-agent system works: Planner analyzes your prompt, Designer and Architect run in parallel, Builder generates React code, and Reviewer checks quality. Each agent streams its output via SSE."
+        },
+        "profiles": {
+          "title": "Fleet Profiles",
+          "body": "Budget (~\u20ac0.004, ~25s), Balanced (~\u20ac0.006, ~40s), and Quality (~\u20ac0.020, ~90s). Each profile routes different Mistral models to each agent for the optimal cost-quality tradeoff."
+        },
+        "sandbox": {
+          "title": "Sandbox Preview",
+          "body": "Live preview runs in an isolated Docker container with Node 22 and pnpm. The sandbox installs dependencies, starts a dev server, and serves your generated site — all within seconds of generation."
+        },
+        "api": {
+          "title": "API Reference",
+          "body": "REST endpoints for generation, streaming, results, gallery, and telemetry. SSE events for real-time pipeline progress including agent_start, file_chunk, preview_ready, and generation_complete."
         },
         "deployment": {
-          "title": "Ship or iterate",
-          "body": "Download the result, keep iterating through the workspace, or connect the generated output to a larger product flow."
+          "title": "Deployment",
+          "body": "Self-host with Docker and docker-compose. Configure Scaleway for production, or run locally with NVIDIA NIM for free GPU inference. Same API, same pipeline, different infrastructure."
         }
+      },
+      "apiPreview": {
+        "title": "API at a glance",
+        "body": "Generate websites with a single POST request. Stream progress via SSE. Download production-ready React projects."
       }
     },
     "about": {
       "kicker": "About",
       "title": "ArkhosAI is building an EU-native answer to opaque website generation tools.",
       "description": "The goal is not just to generate pages quickly, but to make the underlying process understandable, sovereign, and extensible.",
+      "missionKicker": "Our Mission",
+      "mission": "Most AI website generators treat the generation process as a black box. You type a prompt, wait behind a spinner, and hope for the best. You have no idea what model ran, what it cost, or why it made the decisions it did.\n\nArkhosAI takes the opposite approach. Every agent in the pipeline streams its work in real time. Every model choice is visible. Every cent of cost is tracked and displayed as it happens. The entire system is open source under MIT, self-hostable, and runs on European infrastructure by default.\n\nWe believe the next generation of web development tools should be transparent, composable, and sovereign. Not locked behind proprietary APIs in a jurisdiction you did not choose.",
       "principles": {
         "sovereign": {
           "title": "European by default",
-          "body": "Infrastructure, model choices, and positioning are shaped around EU hosting and privacy expectations."
+          "body": "All infrastructure runs on Scaleway in Paris. All AI inference goes through Mistral AI, a French company. Your data never leaves the EU. This is not a feature toggle — it is an architectural decision baked into every layer of the stack."
         },
         "transparent": {
           "title": "Transparent generation",
-          "body": "The pipeline exposes planning, streaming, file output, and cost instead of hiding the whole process behind a spinner."
+          "body": "The pipeline exposes every step: planning, design, architecture, code generation, and review. You see which model runs each agent, what it costs in EUR, and how long it takes. No spinners hiding opaque API calls."
         },
         "open": {
           "title": "Open-core pragmatism",
-          "body": "Self-hosting and hosted product development can coexist when the architecture stays simple and composable."
+          "body": "The entire codebase is MIT-licensed. Self-host it on your own infrastructure, run it on a local GPU with NVIDIA NIM, or use the hosted version. Tramontane, our agent orchestration framework, is a standalone open-source project anyone can use."
         }
+      },
+      "stats": {
+        "telemetry": "57+",
+        "telemetryLabel": "Telemetry outcomes",
+        "memory": "37+",
+        "memoryLabel": "Memory facts",
+        "cost": "\u20ac0.005",
+        "costLabel": "Avg. cost per generation",
+        "speed": "<40s",
+        "speedLabel": "Average generation time"
+      },
+      "team": {
+        "title": "Built in France",
+        "body": "ArkhosAI is built by Jesiel at Bleucommerce SAS in Orl\u00e9ans, France. The project started as a conviction that AI-powered web development should not require sending your data to US infrastructure or paying opaque per-generation fees. Every design decision — from model selection to hosting — reflects this."
+      },
+      "opensource": {
+        "title": "Open source at heart",
+        "body": "ArkhosAI and Tramontane are both MIT-licensed. The agent pipeline, model routing, skill injection, and telemetry systems are all open. Self-host the full stack with Docker, contribute on GitHub, or build your own agents on top of Tramontane.",
+        "cta": "View on GitHub"
       }
     },
     "changelog": {
       "kicker": "Changelog",
       "title": "What's new in ArkhosAI",
       "description": "Release notes and feature updates.",
+      "types": {
+        "major": "Major",
+        "minor": "Minor",
+        "patch": "Patch"
+      },
       "entries": {
         "v030": {
+          "title": "Frontend Redesign + MCP Pipeline",
           "items": {
-            "0": "Next.js 16.2 frontend rebuild",
-            "1": "Electric Indigo design system",
-            "2": "WebContainer live preview",
-            "3": "Iteration chat",
-            "4": "Cost estimator"
+            "0": "Migrated to Next.js 16.2 with Electric Indigo design system",
+            "1": "MCP parallel pipeline \u2014 44% faster generation",
+            "2": "Docker sandbox with per-generation port isolation",
+            "3": "Complete FR/EN internationalization with next-intl",
+            "4": "Framer Motion scroll animations across all pages"
           }
         },
         "v020": {
+          "title": "Multi-File Generation",
           "items": {
-            "0": "Tramontane v0.2.3 integration",
-            "1": "Fleet profiles (Budget/Balanced/Quality)",
-            "2": "Parallel Designer + Architect",
-            "3": "Smart skill injection"
+            "0": "Multi-file React project output (was single HTML)",
+            "1": "Fleet profiles: Budget, Balanced, Quality",
+            "2": "Smart skill injection via MarkdownSkill.matches()",
+            "3": "Tramontane v0.2.3 with 10 exports"
           }
         },
         "v010": {
+          "title": "Initial Release",
           "items": {
-            "0": "Initial release",
-            "1": "5-agent pipeline",
-            "2": "SSE streaming",
-            "3": "Basic HTML generation"
+            "0": "Single-agent pipeline with Mistral AI",
+            "1": "HTML preview generation",
+            "2": "Basic SSE streaming",
+            "3": "Gallery with static showcase"
           }
         }
       }
@@ -431,29 +485,38 @@
       "title": "Where we're headed",
       "description": "Current priorities and what's coming next.",
       "phases": {
-        "now": { "label": "Now", "title": "In progress" },
-        "next": { "label": "Next", "title": "Up next" },
-        "later": { "label": "Later", "title": "On the horizon" }
+        "now": { "label": "Now", "title": "v0.3 \u2014 Current Release", "status": "In progress" },
+        "next": { "label": "Next", "title": "v0.4 \u2014 Coming Soon", "status": "Planned" },
+        "later": { "label": "Later", "title": "v1.0 \u2014 Vision", "status": "Exploring" }
       },
       "items": {
         "now": {
-          "0": "WebContainer live preview",
-          "1": "Iteration chat",
-          "2": "Cost estimator",
-          "3": "Gallery API connection"
+          "0": "Next.js 16 frontend redesign",
+          "1": "MCP parallel pipeline",
+          "2": "Docker sandbox preview",
+          "3": "Fleet profiles (Budget/Balanced/Quality)",
+          "4": "GDPR-compliant legal pages",
+          "5": "FR/EN internationalization"
         },
         "next": {
           "0": "NVIDIA NIM local GPU mode",
-          "1": "Docker deployment config",
-          "2": "User authentication",
-          "3": "Generation history"
+          "1": "Gallery API with real screenshots",
+          "2": "Iteration/edit mode",
+          "3": "shadcn/ui component library",
+          "4": "Loading/error boundaries"
         },
         "later": {
-          "0": "Team workspaces",
-          "1": "Custom model routing",
-          "2": "Plugin system",
-          "3": "Enterprise SSO"
+          "0": "Multi-page website generation",
+          "1": "Database integration (Supabase)",
+          "2": "One-click deploy to Vercel/Scaleway",
+          "3": "Team collaboration",
+          "4": "Custom domain support",
+          "5": "Plugin marketplace"
         }
+      },
+      "featureRequest": {
+        "title": "Have a feature request?",
+        "cta": "Tell us what you need"
       }
     },
     "status": {

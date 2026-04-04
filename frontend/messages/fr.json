@@ -358,102 +358,165 @@
     "docs": {
       "kicker": "Documentation",
       "title": "Comment ArkhosAI fonctionne, du prompt jusqu'au rendu final.",
-      "description": "Le générateur repose sur un pipeline transparent, des surfaces frontend typées et un backend conçu pour le streaming et la revue.",
+      "description": "Le g\u00e9n\u00e9rateur repose sur un pipeline transparent, des surfaces frontend typ\u00e9es et un backend con\u00e7u pour le streaming et la revue.",
       "learnMore": "En savoir plus",
+      "quickstart": {
+        "title": "D\u00e9marrez en 3 \u00e9tapes",
+        "step1": "Cr\u00e9ez votre compte",
+        "step1Body": "Inscrivez-vous par e-mail ou OAuth. Le plan gratuit inclut 10 g\u00e9n\u00e9rations par mois avec le profil \u00c9conomique \u2014 aucune carte bancaire requise.",
+        "step2": "D\u00e9crivez votre site",
+        "step2Body": "\u00c9crivez un prompt d\u00e9crivant ce que vous voulez, s\u00e9lectionnez un profil de flotte (\u00c9conomique, \u00c9quilibr\u00e9 ou Qualit\u00e9), et lancez la g\u00e9n\u00e9ration. Le pipeline \u00e0 5 agents diffuse chaque \u00e9tape en temps r\u00e9el.",
+        "step3": "T\u00e9l\u00e9chargez votre projet",
+        "step3Body": "Obtenez un projet React pr\u00eat pour la production avec Tailwind CSS, une structure de fichiers propre et des balises m\u00e9ta SEO. Pr\u00e9visualisez-le en direct dans le sandbox, it\u00e9rez si n\u00e9cessaire, puis t\u00e9l\u00e9chargez le zip."
+      },
       "sections": {
         "start": {
-          "title": "Commencer par un prompt",
-          "body": "Décrivez le site voulu, choisissez un profil de qualité, puis lancez le pipeline avec un routage sensible à la locale."
+          "title": "Premiers pas",
+          "body": "Cr\u00e9ation de compte, premi\u00e8re g\u00e9n\u00e9ration, s\u00e9lection du profil de flotte et conseils de r\u00e9daction de prompts. Tout ce qu'il faut pour passer de z\u00e9ro \u00e0 un site g\u00e9n\u00e9r\u00e9."
         },
         "pipeline": {
-          "title": "Suivre le pipeline en direct",
-          "body": "Regardez chaque étape agent s'afficher, inspectez le plan et suivez le coût cumulé ainsi que les fichiers générés en temps réel."
+          "title": "Pipeline d'agents",
+          "body": "Comment le syst\u00e8me \u00e0 5 agents fonctionne\u00a0: le Planificateur analyse votre prompt, le Designer et l'Architecte tournent en parall\u00e8le, le D\u00e9veloppeur g\u00e9n\u00e8re le code React, et le V\u00e9rificateur contr\u00f4le la qualit\u00e9. Chaque agent diffuse sa sortie via SSE."
+        },
+        "profiles": {
+          "title": "Profils de flotte",
+          "body": "\u00c9conomique (~0,004\u00a0\u20ac, ~25s), \u00c9quilibr\u00e9 (~0,006\u00a0\u20ac, ~40s), et Qualit\u00e9 (~0,020\u00a0\u20ac, ~90s). Chaque profil route diff\u00e9rents mod\u00e8les Mistral vers chaque agent pour le meilleur compromis co\u00fbt-qualit\u00e9."
+        },
+        "sandbox": {
+          "title": "Pr\u00e9visualisation Sandbox",
+          "body": "La pr\u00e9visualisation en direct tourne dans un conteneur Docker isol\u00e9 avec Node 22 et pnpm. Le sandbox installe les d\u00e9pendances, d\u00e9marre un serveur de d\u00e9veloppement et sert votre site g\u00e9n\u00e9r\u00e9 \u2014 le tout en quelques secondes apr\u00e8s la g\u00e9n\u00e9ration."
+        },
+        "api": {
+          "title": "R\u00e9f\u00e9rence API",
+          "body": "Endpoints REST pour la g\u00e9n\u00e9ration, le streaming, les r\u00e9sultats, la galerie et la t\u00e9l\u00e9m\u00e9trie. \u00c9v\u00e9nements SSE pour le suivi en temps r\u00e9el du pipeline\u00a0: agent_start, file_chunk, preview_ready et generation_complete."
         },
         "deployment": {
-          "title": "Livrer ou itérer",
-          "body": "Téléchargez le résultat, poursuivez l'itération dans l'espace de travail ou reliez la sortie générée à un flux produit plus large."
+          "title": "D\u00e9ploiement",
+          "body": "Auto-h\u00e9bergez avec Docker et docker-compose. Configurez Scaleway pour la production, ou lancez localement avec NVIDIA NIM pour une inf\u00e9rence GPU gratuite. M\u00eame API, m\u00eame pipeline, infrastructure diff\u00e9rente."
         }
+      },
+      "apiPreview": {
+        "title": "L'API en un coup d'\u0153il",
+        "body": "G\u00e9n\u00e9rez des sites avec une seule requ\u00eate POST. Suivez la progression via SSE. T\u00e9l\u00e9chargez des projets React pr\u00eats pour la production."
       }
     },
     "about": {
-      "kicker": "À propos",
-      "title": "ArkhosAI construit une réponse européenne aux outils opaques de génération de sites.",
-      "description": "L'objectif n'est pas seulement de générer des pages rapidement, mais de rendre le processus compréhensible, souverain et extensible.",
+      "kicker": "\u00c0 propos",
+      "title": "ArkhosAI construit une r\u00e9ponse europ\u00e9enne aux outils opaques de g\u00e9n\u00e9ration de sites.",
+      "description": "L'objectif n'est pas seulement de g\u00e9n\u00e9rer des pages rapidement, mais de rendre le processus compr\u00e9hensible, souverain et extensible.",
+      "missionKicker": "Notre Mission",
+      "mission": "La plupart des g\u00e9n\u00e9rateurs de sites par IA traitent le processus comme une bo\u00eete noire. Vous tapez un prompt, attendez derri\u00e8re un spinner, et esp\u00e9rez le meilleur. Vous ne savez pas quel mod\u00e8le a tourn\u00e9, combien cela a co\u00fbt\u00e9, ni pourquoi il a pris ces d\u00e9cisions.\n\nArkhosAI prend l'approche inverse. Chaque agent du pipeline diffuse son travail en temps r\u00e9el. Chaque choix de mod\u00e8le est visible. Chaque centime de co\u00fbt est suivi et affich\u00e9 au fur et \u00e0 mesure. Le syst\u00e8me entier est open source sous licence MIT, auto-h\u00e9bergeable, et fonctionne sur une infrastructure europ\u00e9enne par d\u00e9faut.\n\nNous croyons que la prochaine g\u00e9n\u00e9ration d'outils de d\u00e9veloppement web doit \u00eatre transparente, composable et souveraine. Pas enferm\u00e9e derri\u00e8re des API propri\u00e9taires dans une juridiction que vous n'avez pas choisie.",
       "principles": {
         "sovereign": {
-          "title": "Européen par défaut",
-          "body": "L'infrastructure, les choix de modèles et le positionnement sont pensés pour l'hébergement et les attentes de confidentialité en Europe."
+          "title": "Europ\u00e9en par d\u00e9faut",
+          "body": "Toute l'infrastructure tourne sur Scaleway \u00e0 Paris. Toute l'inf\u00e9rence IA passe par Mistral AI, une entreprise fran\u00e7aise. Vos donn\u00e9es ne quittent jamais l'UE. Ce n'est pas une option\u00a0\u2014 c'est une d\u00e9cision architecturale ancr\u00e9e dans chaque couche de la stack."
         },
         "transparent": {
-          "title": "Génération transparente",
-          "body": "Le pipeline expose la planification, le streaming, les fichiers produits et le coût au lieu de tout cacher derrière un simple spinner."
+          "title": "G\u00e9n\u00e9ration transparente",
+          "body": "Le pipeline expose chaque \u00e9tape\u00a0: planification, design, architecture, g\u00e9n\u00e9ration de code et revue. Vous voyez quel mod\u00e8le ex\u00e9cute chaque agent, ce qu'il co\u00fbte en EUR et combien de temps il prend. Aucun spinner cachant des appels API opaques."
         },
         "open": {
           "title": "Open-core pragmatique",
-          "body": "L'auto-hébergement et le produit hébergé peuvent coexister lorsque l'architecture reste simple et composable."
+          "body": "L'int\u00e9gralit\u00e9 du code est sous licence MIT. Auto-h\u00e9bergez-le sur votre propre infrastructure, ex\u00e9cutez-le sur un GPU local avec NVIDIA NIM, ou utilisez la version h\u00e9berg\u00e9e. Tramontane, notre framework d'orchestration d'agents, est un projet open source autonome que tout le monde peut utiliser."
         }
+      },
+      "stats": {
+        "telemetry": "57+",
+        "telemetryLabel": "R\u00e9sultats de t\u00e9l\u00e9m\u00e9trie",
+        "memory": "37+",
+        "memoryLabel": "Faits m\u00e9moris\u00e9s",
+        "cost": "0,005\u00a0\u20ac",
+        "costLabel": "Co\u00fbt moyen par g\u00e9n\u00e9ration",
+        "speed": "<40s",
+        "speedLabel": "Temps moyen de g\u00e9n\u00e9ration"
+      },
+      "team": {
+        "title": "Con\u00e7u en France",
+        "body": "ArkhosAI est d\u00e9velopp\u00e9 par Jesiel chez Bleucommerce SAS \u00e0 Orl\u00e9ans, France. Le projet est n\u00e9 d'une conviction\u00a0: le d\u00e9veloppement web par IA ne devrait pas n\u00e9cessiter d'envoyer ses donn\u00e9es vers une infrastructure am\u00e9ricaine ni de payer des frais opaques par g\u00e9n\u00e9ration. Chaque d\u00e9cision de design \u2014 du choix des mod\u00e8les \u00e0 l'h\u00e9bergement \u2014 refl\u00e8te cette vision."
+      },
+      "opensource": {
+        "title": "Open source au c\u0153ur",
+        "body": "ArkhosAI et Tramontane sont tous deux sous licence MIT. Le pipeline d'agents, le routage de mod\u00e8les, l'injection de comp\u00e9tences et les syst\u00e8mes de t\u00e9l\u00e9m\u00e9trie sont enti\u00e8rement ouverts. Auto-h\u00e9bergez la stack compl\u00e8te avec Docker, contribuez sur GitHub ou construisez vos propres agents avec Tramontane.",
+        "cta": "Voir sur GitHub"
       }
     },
     "changelog": {
       "kicker": "Journal des modifications",
-      "title": "Nouveautés de ArkhosAI",
-      "description": "Notes de version et mises à jour.",
+      "title": "Nouveaut\u00e9s d'ArkhosAI",
+      "description": "Notes de version et mises \u00e0 jour des fonctionnalit\u00e9s.",
+      "types": {
+        "major": "Majeure",
+        "minor": "Mineure",
+        "patch": "Correctif"
+      },
       "entries": {
         "v030": {
+          "title": "Refonte frontend + Pipeline MCP",
           "items": {
-            "0": "Refonte du frontend Next.js 16.2",
-            "1": "Design system Electric Indigo",
-            "2": "Prévisualisation live WebContainer",
-            "3": "Chat d'itération",
-            "4": "Estimateur de coûts"
+            "0": "Migration vers Next.js 16.2 avec le design system Electric Indigo",
+            "1": "Pipeline parall\u00e8le MCP \u2014 g\u00e9n\u00e9ration 44\u00a0% plus rapide",
+            "2": "Sandbox Docker avec isolation de port par g\u00e9n\u00e9ration",
+            "3": "Internationalisation FR/EN compl\u00e8te avec next-intl",
+            "4": "Animations au d\u00e9filement Framer Motion sur toutes les pages"
           }
         },
         "v020": {
+          "title": "G\u00e9n\u00e9ration multi-fichiers",
           "items": {
-            "0": "Intégration Tramontane v0.2.3",
-            "1": "Profils de flotte (Économique/Équilibré/Qualité)",
-            "2": "Designer + Architecte en parallèle",
-            "3": "Injection intelligente de compétences"
+            "0": "Sortie projet React multi-fichiers (ancien format HTML unique)",
+            "1": "Profils de flotte\u00a0: \u00c9conomique, \u00c9quilibr\u00e9, Qualit\u00e9",
+            "2": "Injection intelligente de comp\u00e9tences via MarkdownSkill.matches()",
+            "3": "Tramontane v0.2.3 avec 10 exports"
           }
         },
         "v010": {
+          "title": "Version initiale",
           "items": {
-            "0": "Version initiale",
-            "1": "Pipeline à 5 agents",
-            "2": "Streaming SSE",
-            "3": "Génération HTML de base"
+            "0": "Pipeline mono-agent avec Mistral AI",
+            "1": "G\u00e9n\u00e9ration de pr\u00e9visualisation HTML",
+            "2": "Streaming SSE basique",
+            "3": "Galerie avec vitrine statique"
           }
         }
       }
     },
     "roadmap": {
       "kicker": "Feuille de route",
-      "title": "Où nous allons",
-      "description": "Priorités actuelles et prochaines étapes.",
+      "title": "O\u00f9 nous allons",
+      "description": "Priorit\u00e9s actuelles et prochaines \u00e9tapes.",
       "phases": {
-        "now": { "label": "Maintenant", "title": "En cours" },
-        "next": { "label": "Ensuite", "title": "À venir" },
-        "later": { "label": "Plus tard", "title": "À l'horizon" }
+        "now": { "label": "Maintenant", "title": "v0.3 \u2014 Version actuelle", "status": "En cours" },
+        "next": { "label": "Ensuite", "title": "v0.4 \u2014 Bient\u00f4t", "status": "Planifi\u00e9" },
+        "later": { "label": "Plus tard", "title": "v1.0 \u2014 Vision", "status": "En exploration" }
       },
       "items": {
         "now": {
-          "0": "Prévisualisation live WebContainer",
-          "1": "Chat d'itération",
-          "2": "Estimateur de coûts",
-          "3": "Connexion API galerie"
+          "0": "Refonte frontend Next.js 16",
+          "1": "Pipeline parall\u00e8le MCP",
+          "2": "Pr\u00e9visualisation sandbox Docker",
+          "3": "Profils de flotte (\u00c9conomique/\u00c9quilibr\u00e9/Qualit\u00e9)",
+          "4": "Pages l\u00e9gales conformes au RGPD",
+          "5": "Internationalisation FR/EN"
         },
         "next": {
           "0": "Mode GPU local NVIDIA NIM",
-          "1": "Configuration de déploiement Docker",
-          "2": "Authentification utilisateur",
-          "3": "Historique des générations"
+          "1": "API galerie avec captures d'\u00e9cran r\u00e9elles",
+          "2": "Mode it\u00e9ration/\u00e9dition",
+          "3": "Biblioth\u00e8que de composants shadcn/ui",
+          "4": "Fronti\u00e8res de chargement/erreur"
         },
         "later": {
-          "0": "Espaces d'équipe",
-          "1": "Routage de modèles personnalisé",
-          "2": "Système de plugins",
-          "3": "SSO entreprise"
+          "0": "G\u00e9n\u00e9ration de sites multi-pages",
+          "1": "Int\u00e9gration base de donn\u00e9es (Supabase)",
+          "2": "D\u00e9ploiement en un clic sur Vercel/Scaleway",
+          "3": "Collaboration en \u00e9quipe",
+          "4": "Support de domaine personnalis\u00e9",
+          "5": "Marketplace de plugins"
         }
+      },
+      "featureRequest": {
+        "title": "Une id\u00e9e de fonctionnalit\u00e9\u00a0?",
+        "cta": "Dites-nous ce qu'il vous faut"
       }
     },
     "status": {
