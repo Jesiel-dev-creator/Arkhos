@@ -6,7 +6,7 @@ export default function AboutPage() {
   const t = useTranslations("pages.about");
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-20">
+    <div className="mx-auto max-w-6xl px-4 py-20">
       <div className="max-w-3xl">
         <p className="text-xs uppercase tracking-[0.22em] text-[var(--brand)]">{t("kicker")}</p>
         <h1 className="mt-4 font-[var(--font-display)] text-5xl font-extrabold tracking-tight text-[var(--text-primary)]">{t("title")}</h1>

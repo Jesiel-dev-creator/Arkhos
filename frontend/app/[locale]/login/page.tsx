@@ -68,6 +68,7 @@ export default function LoginPage() {
                 button_label: t("signIn"),
                 social_provider_text: t("continueWith"),
                 link_text: t("noAccount"),
+                loading_button_label: t("loading"),
               },
               sign_up: {
                 email_label: t("email"),
@@ -75,10 +76,21 @@ export default function LoginPage() {
                 button_label: t("signUp"),
                 social_provider_text: t("continueWith"),
                 link_text: t("hasAccount"),
+                loading_button_label: t("loading"),
+                confirmation_text: t("checkEmail"),
               },
               magic_link: {
                 email_input_label: t("email"),
                 button_label: t("sendMagicLink"),
+                loading_button_label: t("loading"),
+                confirmation_text: t("checkEmail"),
+              },
+              forgotten_password: {
+                email_label: t("email"),
+                button_label: t("resetPassword"),
+                link_text: t("backToSignIn"),
+                loading_button_label: t("loading"),
+                confirmation_text: t("checkEmail"),
               },
             },
           }}

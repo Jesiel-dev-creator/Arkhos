@@ -35,10 +35,10 @@ export default function BlogPage() {
               {POST_DATES[post]}
             </time>
             <p className="mt-3 text-xs uppercase tracking-[0.2em] text-[var(--brand)]">{t(`posts.${post}.tag`)}</p>
-            <h2 className="mt-3 text-xl font-[var(--font-display)] text-[var(--text-primary)]">{t(`posts.${post}.title`)}</h2>
+            <h2 className="mt-3 text-xl font-[var(--font-body)] font-bold text-[var(--text-primary)]">{t(`posts.${post}.title`)}</h2>
             <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--text-secondary)]">{t(`posts.${post}.excerpt`)}</p>
             <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--brand)] transition-colors group-hover:text-[var(--brand-light)]">
-              Read more <ArrowRight className="h-3.5 w-3.5" />
+              {t("readMore")} <ArrowRight className="h-3.5 w-3.5" />
             </span>
           </Link>
         ))}

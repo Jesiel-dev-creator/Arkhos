@@ -11,21 +11,7 @@ import { cn } from "@/lib/utils";
 
 type Profile = "budget" | "balanced" | "quality";
 
-const PLACEHOLDER_PHRASES = [
-  "A modern bakery website with online ordering...",
-  "A SaaS landing page with pricing and testimonials...",
-  "A portfolio site with project showcase...",
-  "An elegant restaurant website with reservations...",
-];
-
-const TEMPLATES: Record<string, { label: string; prompt: string }> = {
-  bakery: { label: "Bakery", prompt: "A modern bakery website with online ordering, daily specials, and a gallery of fresh pastries." },
-  saas: { label: "SaaS", prompt: "A SaaS landing page with hero, features grid, pricing table, testimonials, and signup CTA." },
-  portfolio: { label: "Portfolio", prompt: "A minimal developer portfolio with project showcase, about section, and contact form." },
-  restaurant: { label: "Restaurant", prompt: "An elegant restaurant website with menu, reservations, photo gallery, and location map." },
-  agency: { label: "Agency", prompt: "A creative agency site with case studies, team section, services grid, and contact page." },
-  ecommerce: { label: "E-commerce", prompt: "An e-commerce storefront with product grid, filters, cart, and checkout flow." },
-};
+const TEMPLATE_KEYS = ["bakery", "saas", "portfolio", "restaurant", "agency", "ecommerce"] as const;
 
 export default function NewProjectPage() {
   const t = useTranslations("newProject");
@@ -33,14 +19,18 @@ export default function NewProjectPage() {
   const searchParams = useSearchParams();
   const { session } = useAuthContext();
 
+  const placeholderPhrases = Array.from({ length: 4 }, (_, i) => t(`placeholders.${i}`));
+
   const templateKey = searchParams.get("template");
-  const initialPrompt = templateKey && TEMPLATES[templateKey] ? TEMPLATES[templateKey].prompt : "";
+  const initialPrompt = templateKey && TEMPLATE_KEYS.includes(templateKey as typeof TEMPLATE_KEYS[number])
+    ? t(`templatePrompts.${templateKey}`)
+    : "";
 
   const [prompt, setPrompt] = useState(initialPrompt);
   const [profile, setProfile] = useState<Profile>("balanced");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const placeholder = useTypingPlaceholder(PLACEHOLDER_PHRASES);
+  const placeholder = useTypingPlaceholder(placeholderPhrases);
 
   const handleGenerate = useCallback(async () => {
     if (!prompt.trim() || loading || !session) return;
@@ -117,22 +107,25 @@ export default function NewProjectPage() {
           {t("templates")}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2">
-          {Object.entries(TEMPLATES).map(([key, { label }]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setPrompt(TEMPLATES[key].prompt)}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer",
-                "focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none",
-                prompt === TEMPLATES[key].prompt
-                  ? "bg-[var(--brand)]/10 text-[var(--brand)] border border-[var(--brand)]/20"
-                  : "bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--elevated)]",
-              )}
-            >
-              {label}
-            </button>
-          ))}
+          {TEMPLATE_KEYS.map((key) => {
+            const templatePrompt = t(`templatePrompts.${key}`);
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setPrompt(templatePrompt)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer",
+                  "focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none",
+                  prompt === templatePrompt
+                    ? "bg-[var(--brand)]/10 text-[var(--brand)] border border-[var(--brand)]/20"
+                    : "bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--elevated)]",
+                )}
+              >
+                {t(`templateLabels.${key}`)}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

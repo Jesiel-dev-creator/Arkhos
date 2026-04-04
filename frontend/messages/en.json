@@ -4,7 +4,29 @@
     "subtitle": "Describe your website and our AI agents will build it live.",
     "generate": "Generate",
     "generating": "Generating...",
-    "templates": "Or start from a template"
+    "templates": "Or start from a template",
+    "placeholders": {
+      "0": "A modern bakery website with online ordering...",
+      "1": "A SaaS landing page with pricing and testimonials...",
+      "2": "A portfolio site with project showcase...",
+      "3": "An elegant restaurant website with reservations..."
+    },
+    "templateLabels": {
+      "bakery": "Bakery",
+      "saas": "SaaS",
+      "portfolio": "Portfolio",
+      "restaurant": "Restaurant",
+      "agency": "Agency",
+      "ecommerce": "E-commerce"
+    },
+    "templatePrompts": {
+      "bakery": "A modern bakery website with online ordering, daily specials, and a gallery of fresh pastries.",
+      "saas": "A SaaS landing page with hero, features grid, pricing table, testimonials, and signup CTA.",
+      "portfolio": "A minimal developer portfolio with project showcase, about section, and contact form.",
+      "restaurant": "An elegant restaurant website with menu, reservations, photo gallery, and location map.",
+      "agency": "A creative agency site with case studies, team section, services grid, and contact page.",
+      "ecommerce": "An e-commerce storefront with product grid, filters, cart, and checkout flow."
+    }
   },
   "dashboard": {
     "kicker": "Dashboard",
@@ -83,7 +105,11 @@
     "continueWith": "Continue with",
     "noAccount": "Don't have an account? Sign up",
     "hasAccount": "Already have an account? Sign in",
-    "sendMagicLink": "Send magic link"
+    "sendMagicLink": "Send magic link",
+    "resetPassword": "Send reset link",
+    "backToSignIn": "Back to sign in",
+    "loading": "Loading...",
+    "checkEmail": "Check your email for a confirmation link."
   },
   "generate": {
     "title": "Generate",
@@ -305,6 +331,8 @@
           "description": "A restrained, type-led layout built to highlight case studies, craft, and a distinct point of view."
         }
       },
+      "buildLikeThis": "Build something like this",
+      "recentGenerations": "Recent generations",
       "ctaBody": "Ready to generate your own version instead of browsing examples?",
       "ctaAction": "Start generating"
     },
@@ -312,6 +340,7 @@
       "kicker": "Docs",
       "title": "How ArkhosAI works, from prompt to production output.",
       "description": "The generator is built around a transparent pipeline, typed frontend surfaces, and a backend designed for streaming and reviewability.",
+      "learnMore": "Learn more",
       "sections": {
         "start": {
           "title": "Start with a prompt",
@@ -349,7 +378,34 @@
     "changelog": {
       "kicker": "Changelog",
       "title": "What's new in ArkhosAI",
-      "description": "Release notes and feature updates."
+      "description": "Release notes and feature updates.",
+      "entries": {
+        "v030": {
+          "items": {
+            "0": "Next.js 16.2 frontend rebuild",
+            "1": "Electric Indigo design system",
+            "2": "WebContainer live preview",
+            "3": "Iteration chat",
+            "4": "Cost estimator"
+          }
+        },
+        "v020": {
+          "items": {
+            "0": "Tramontane v0.2.3 integration",
+            "1": "Fleet profiles (Budget/Balanced/Quality)",
+            "2": "Parallel Designer + Architect",
+            "3": "Smart skill injection"
+          }
+        },
+        "v010": {
+          "items": {
+            "0": "Initial release",
+            "1": "5-agent pipeline",
+            "2": "SSE streaming",
+            "3": "Basic HTML generation"
+          }
+        }
+      }
     },
     "roadmap": {
       "kicker": "Roadmap",
@@ -359,6 +415,26 @@
         "now": { "label": "Now", "title": "In progress" },
         "next": { "label": "Next", "title": "Up next" },
         "later": { "label": "Later", "title": "On the horizon" }
+      },
+      "items": {
+        "now": {
+          "0": "WebContainer live preview",
+          "1": "Iteration chat",
+          "2": "Cost estimator",
+          "3": "Gallery API connection"
+        },
+        "next": {
+          "0": "NVIDIA NIM local GPU mode",
+          "1": "Docker deployment config",
+          "2": "User authentication",
+          "3": "Generation history"
+        },
+        "later": {
+          "0": "Team workspaces",
+          "1": "Custom model routing",
+          "2": "Plugin system",
+          "3": "Enterprise SSO"
+        }
       }
     },
     "status": {
@@ -366,9 +442,12 @@
       "title": "System status",
       "description": "Current operational status of the ArkhosAI platform.",
       "api": "API Server",
+      "sandbox": "Sandbox Server",
       "checking": "Checking...",
       "operational": "Operational",
-      "down": "Unreachable"
+      "down": "Unreachable",
+      "lastChecked": "Last checked",
+      "refresh": "Refresh"
     },
     "contact": {
       "kicker": "Contact",
@@ -376,13 +455,17 @@
       "description": "Questions, feedback, or partnership inquiries.",
       "email": "Email",
       "messageLabel": "Message",
+      "messagePlaceholder": "Tell us how we can help...",
       "send": "Send message",
-      "success": "Message sent. We'll get back to you soon."
+      "success": "Message sent. We'll get back to you soon.",
+      "companyEmail": "hello@arkhos.ai",
+      "companyLocation": "Orléans, France — Bleucommerce SAS"
     },
     "blog": {
       "kicker": "Blog",
       "title": "Notes on AI website generation, product design, and agent pipelines.",
       "description": "A place for implementation details, product decisions, and the tradeoffs behind building ArkhosAI in public.",
+      "readMore": "Read more",
       "posts": {
         "shipping": {
           "tag": "Product",
@@ -436,6 +519,10 @@
     "usage": "Usage",
     "generationsThisMonth": "Generations this month",
     "billingComingSoon": "Billing and plan upgrades coming soon."
+  },
+  "notFound": {
+    "message": "This page does not exist or has been moved.",
+    "backHome": "Back to home"
   },
   "legal": {
     "privacy": {

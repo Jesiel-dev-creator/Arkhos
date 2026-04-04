@@ -563,7 +563,7 @@ function PreviewSkeleton({ agent, completed, total, t }: {
 }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-3xl rounded-xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden shadow-lg shadow-[var(--void)]/50">
+      <div className="w-full max-w-3xl rounded-xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden">
         {/* macOS chrome */}
         <div className="flex items-center px-4 py-3 border-b border-[var(--border)] bg-[var(--surface)]/30">
           <div className="flex items-center gap-2">

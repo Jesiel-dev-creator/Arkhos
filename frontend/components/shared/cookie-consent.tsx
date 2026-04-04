@@ -129,7 +129,7 @@ export function CookieConsent() {
                 <p className="text-xs font-medium text-[var(--text-primary)]">{t("categories.essential.title")}</p>
                 <p className="text-[10px] text-[var(--text-muted)]">{t("categories.essential.description")}</p>
               </div>
-              <div className="shrink-0 ml-4">
+              <div className="shrink-0 ml-4" aria-disabled="true">
                 <div className="w-9 h-5 rounded-full bg-[var(--brand)] relative cursor-not-allowed opacity-60">
                   <div className="absolute right-0.5 top-0.5 w-4 h-4 rounded-full bg-white" />
                 </div>
@@ -155,18 +155,10 @@ export function CookieConsent() {
                   role="switch"
                   aria-checked={preferences[cat]}
                   onClick={() => toggleCategory(cat)}
-                  className="shrink-0 ml-4 w-9 h-5 rounded-full relative transition-colors duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none"
-                  style={{
-                    backgroundColor: preferences[cat]
-                      ? "var(--brand)"
-                      : "var(--elevated)",
-                  }}
+                  className={`shrink-0 ml-4 w-9 h-5 rounded-full relative transition-colors duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:outline-none ${preferences[cat] ? "bg-[var(--brand)]" : "bg-[var(--elevated)]"}`}
                 >
                   <div
-                    className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all duration-200"
-                    style={{
-                      left: preferences[cat] ? "calc(100% - 18px)" : "2px",
-                    }}
+                    className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all duration-200 ${preferences[cat] ? "right-0.5" : "left-0.5"}`}
                   />
                 </button>
               </div>

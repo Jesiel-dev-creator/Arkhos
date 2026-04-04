@@ -158,7 +158,11 @@ async def _run_pipeline_mcp(
             await generation.event_queue.put(sse_event)
 
             # Parse SSE data to capture metadata for result endpoint
+            current_event: str | None = None
             for line in sse_event.split("\n"):
+                if line.startswith("event: "):
+                    current_event = line[7:]
+                    continue
                 if not line.startswith("data: "):
                     continue
                 try:
@@ -173,6 +177,9 @@ async def _run_pipeline_mcp(
                     generation.metadata["files"] = data["files"]
                 if "plan" in data:
                     generation.plan = data["plan"]
+                # Capture sandbox preview URL when sandbox completes
+                if current_event == "sandbox_complete" and data.get("preview_url"):
+                    generation.metadata["preview_url"] = data["preview_url"]
 
         generation.status = GenerationStatus.COMPLETE
         generation.metadata["total_cost_eur"] = total_cost
@@ -310,7 +317,10 @@ async def _run_build(
             logger.warning("QUEUE PUT #%d: %s (%d bytes)", event_count, event_type, len(sse_event))
             await generation.event_queue.put(sse_event)
 
+            current_event_type: str | None = None
             for line in sse_event.split("\n"):
+                if line.startswith("event: "):
+                    current_event_type = line[7:]
                 if not line.startswith("data: "):
                     continue
                 try:
@@ -324,6 +334,9 @@ async def _run_build(
                 # v0.2: capture multi-file React project
                 if "files" in data and "file_count" in data:
                     generation.metadata["files"] = data["files"]
+                # Capture sandbox preview URL when sandbox completes
+                if current_event_type == "sandbox_complete" and data.get("preview_url"):
+                    generation.metadata["preview_url"] = data["preview_url"]
 
         generation.status = GenerationStatus.COMPLETE
         generation.metadata["total_cost_eur"] = total_cost
@@ -501,7 +514,15 @@ async def result(generation_id: str) -> dict[str, Any]:
             status_code=500, detail=generation.error or "Generation failed"
         )
 
-    return {"html": generation.html, "metadata": generation.metadata}
+    result_data: dict[str, Any] = {
+        "html": generation.html,
+        "metadata": generation.metadata,
+    }
+    # Include preview_url at top level if available (also in metadata)
+    if "preview_url" in generation.metadata:
+        result_data["preview_url"] = generation.metadata["preview_url"]
+
+    return result_data
 
 
 @router.get("/gallery")
@@ -624,7 +645,10 @@ async def _run_iteration(
         ):
             await generation.event_queue.put(sse_event)
 
+            current_event_type: str | None = None
             for line in sse_event.split("\n"):
+                if line.startswith("event: "):
+                    current_event_type = line[7:]
                 if not line.startswith("data: "):
                     continue
                 try:
@@ -637,6 +661,9 @@ async def _run_iteration(
                     generation.html = data["html"]
                 if "files" in data and "file_count" in data:
                     generation.metadata["files"] = data["files"]
+                # Capture sandbox preview URL when sandbox completes
+                if current_event_type == "sandbox_complete" and data.get("preview_url"):
+                    generation.metadata["preview_url"] = data["preview_url"]
 
         generation.status = GenerationStatus.COMPLETE
         generation.metadata["total_cost_eur"] = total_cost

@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Check, X, Minus, Clock, Coins } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { AnimatedHero, AnimatedSection, StaggerGrid, StaggerItem } from "@/components/shared/motion";
 
 const DEMO_STEPS = ["step1", "step2", "step3", "step4"] as const;
 
@@ -49,13 +50,13 @@ export default function Home() {
 
   return (
     <div className="relative overflow-hidden">
-      {/* Radial glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.18),transparent_42%)]" />
-      <div className="absolute inset-x-0 top-24 h-72 bg-[linear-gradient(180deg,rgba(99,102,241,0.14),transparent)] blur-3xl" />
+      {/* Radial glow — pointer-events-none so links remain clickable */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.18),transparent_42%)] pointer-events-none" />
+      <div className="absolute inset-x-0 top-24 h-72 bg-[linear-gradient(180deg,rgba(99,102,241,0.14),transparent)] blur-3xl pointer-events-none" />
 
       {/* ── Hero — cinematic marketing ── */}
       <section className="relative mx-auto max-w-6xl px-4 py-24 sm:py-32">
-        <div className="max-w-3xl">
+        <AnimatedHero className="max-w-3xl">
           <p className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">
             {t("hero.kicker")}
           </p>
@@ -73,22 +74,22 @@ export default function Home() {
               {t("hero.cta")}
             </Link>
           </div>
-        </div>
+        </AnimatedHero>
       </section>
 
       {/* ── Live Demo ── */}
       <section className="mx-auto max-w-6xl px-4 py-20">
-        <div className="max-w-3xl">
+        <AnimatedSection className="max-w-3xl">
           <p className="text-xs uppercase tracking-[0.22em] text-[var(--brand)]">{t("demo.kicker")}</p>
-          <h2 className="mt-4 font-[var(--font-display)] text-4xl sm:text-5xl font-extrabold tracking-tight text-[var(--text-primary)]">
+          <h2 className="mt-4 font-[var(--font-body)] text-4xl sm:text-5xl font-bold tracking-tight text-[var(--text-primary)]">
             {t("demo.title")}
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-[var(--text-secondary)]">{t("demo.description")}</p>
-        </div>
+        </AnimatedSection>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <StaggerGrid className="mt-12 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           {/* Terminal */}
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden">
+          <StaggerItem><div className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] overflow-hidden">
             <div className="flex items-center gap-1.5 border-b border-[var(--border)] px-4 py-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[var(--error)]/60" />
               <span className="w-2.5 h-2.5 rounded-full bg-[var(--warning)]/60" />
@@ -121,10 +122,10 @@ export default function Home() {
                 </span>
               </div>
             </div>
-          </div>
+          </div></StaggerItem>
 
           {/* Pipeline viz */}
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-5">
+          <StaggerItem><div className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-5">
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-muted)]">Pipeline</p>
             <div className="mt-4 space-y-0">
               {(["Planner", "Designer", "Architect", "Builder", "Reviewer"] as const).map((agent, i) => (
@@ -142,19 +143,19 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
+          </div></StaggerItem>
+        </StaggerGrid>
       </section>
 
       {/* ── Comparison strip ── */}
       <section className="mx-auto max-w-6xl px-4 py-20">
-        <div className="max-w-3xl">
+        <AnimatedSection className="max-w-3xl">
           <p className="text-xs uppercase tracking-[0.22em] text-[var(--brand)]">{t("comparison.kicker")}</p>
           <h2 className="mt-4 font-[var(--font-display)] text-4xl sm:text-5xl font-extrabold tracking-tight text-[var(--text-primary)]">
             {t("comparison.title")}
           </h2>
-        </div>
-        <div className="mt-12 overflow-x-auto">
+        </AnimatedSection>
+        <AnimatedSection delay={0.15} className="mt-12 overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-[var(--border)]">
@@ -177,13 +178,13 @@ export default function Home() {
               ))}
             </tbody>
           </table>
-        </div>
+        </AnimatedSection>
       </section>
 
       {/* ── CTA ── */}
       <section className="mx-auto max-w-6xl px-4 py-20">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-8 sm:p-12 text-center">
-          <h2 className="font-[var(--font-display)] text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-primary)]">
+        <AnimatedSection className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-8 sm:p-12 text-center">
+          <h2 className="font-[var(--font-body)] text-3xl sm:text-4xl font-bold tracking-tight text-[var(--text-primary)]">
             {t("cta.title")}
           </h2>
           <p className="mt-3 text-sm text-[var(--text-secondary)] max-w-lg mx-auto">
@@ -197,7 +198,7 @@ export default function Home() {
               {t("cta.action")}
             </Link>
           </div>
-        </div>
+        </AnimatedSection>
       </section>
     </div>
   );

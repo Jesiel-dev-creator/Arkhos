@@ -4,7 +4,29 @@
     "subtitle": "Décrivez votre site et nos agents IA le construiront en direct.",
     "generate": "Générer",
     "generating": "Génération...",
-    "templates": "Ou commencer avec un modèle"
+    "templates": "Ou commencer avec un modèle",
+    "placeholders": {
+      "0": "Un site de boulangerie moderne avec commande en ligne...",
+      "1": "Une landing page SaaS avec tarifs et témoignages...",
+      "2": "Un site portfolio avec vitrine de projets...",
+      "3": "Un site de restaurant élégant avec réservations..."
+    },
+    "templateLabels": {
+      "bakery": "Boulangerie",
+      "saas": "SaaS",
+      "portfolio": "Portfolio",
+      "restaurant": "Restaurant",
+      "agency": "Agence",
+      "ecommerce": "E-commerce"
+    },
+    "templatePrompts": {
+      "bakery": "Un site de boulangerie moderne avec commande en ligne, spécialités du jour et galerie de viennoiseries.",
+      "saas": "Une landing page SaaS avec hero, grille de fonctionnalités, tableau de prix, témoignages et CTA d'inscription.",
+      "portfolio": "Un portfolio développeur minimaliste avec vitrine de projets, section à propos et formulaire de contact.",
+      "restaurant": "Un site de restaurant élégant avec menu, réservations, galerie photo et carte de localisation.",
+      "agency": "Un site d'agence créative avec études de cas, section équipe, grille de services et page de contact.",
+      "ecommerce": "Une boutique en ligne avec grille de produits, filtres, panier et tunnel de paiement."
+    }
   },
   "dashboard": {
     "kicker": "Tableau de bord",
@@ -83,7 +105,11 @@
     "continueWith": "Continuer avec",
     "noAccount": "Pas de compte\u00a0? Inscrivez-vous",
     "hasAccount": "Déjà un compte\u00a0? Connectez-vous",
-    "sendMagicLink": "Envoyer le lien magique"
+    "sendMagicLink": "Envoyer le lien magique",
+    "resetPassword": "Envoyer le lien de réinitialisation",
+    "backToSignIn": "Retour à la connexion",
+    "loading": "Chargement...",
+    "checkEmail": "Vérifiez votre e-mail pour un lien de confirmation."
   },
   "generate": {
     "title": "Générer",
@@ -305,13 +331,16 @@
           "description": "Une mise en page sobre et typographique pour mettre en valeur les études de cas et le point de vue."
         }
       },
-      "ctaBody": "Prêt à générer votre propre version au lieu de parcourir des exemples ?",
+      "buildLikeThis": "Créer un site similaire",
+      "recentGenerations": "Générations récentes",
+      "ctaBody": "Prêt à générer votre propre version au lieu de parcourir des exemples\u00a0?",
       "ctaAction": "Commencer"
     },
     "docs": {
       "kicker": "Documentation",
       "title": "Comment ArkhosAI fonctionne, du prompt jusqu'au rendu final.",
       "description": "Le générateur repose sur un pipeline transparent, des surfaces frontend typées et un backend conçu pour le streaming et la revue.",
+      "learnMore": "En savoir plus",
       "sections": {
         "start": {
           "title": "Commencer par un prompt",
@@ -349,7 +378,34 @@
     "changelog": {
       "kicker": "Journal des modifications",
       "title": "Nouveautés de ArkhosAI",
-      "description": "Notes de version et mises à jour."
+      "description": "Notes de version et mises à jour.",
+      "entries": {
+        "v030": {
+          "items": {
+            "0": "Refonte du frontend Next.js 16.2",
+            "1": "Design system Electric Indigo",
+            "2": "Prévisualisation live WebContainer",
+            "3": "Chat d'itération",
+            "4": "Estimateur de coûts"
+          }
+        },
+        "v020": {
+          "items": {
+            "0": "Intégration Tramontane v0.2.3",
+            "1": "Profils de flotte (Économique/Équilibré/Qualité)",
+            "2": "Designer + Architecte en parallèle",
+            "3": "Injection intelligente de compétences"
+          }
+        },
+        "v010": {
+          "items": {
+            "0": "Version initiale",
+            "1": "Pipeline à 5 agents",
+            "2": "Streaming SSE",
+            "3": "Génération HTML de base"
+          }
+        }
+      }
     },
     "roadmap": {
       "kicker": "Feuille de route",
@@ -359,6 +415,26 @@
         "now": { "label": "Maintenant", "title": "En cours" },
         "next": { "label": "Ensuite", "title": "À venir" },
         "later": { "label": "Plus tard", "title": "À l'horizon" }
+      },
+      "items": {
+        "now": {
+          "0": "Prévisualisation live WebContainer",
+          "1": "Chat d'itération",
+          "2": "Estimateur de coûts",
+          "3": "Connexion API galerie"
+        },
+        "next": {
+          "0": "Mode GPU local NVIDIA NIM",
+          "1": "Configuration de déploiement Docker",
+          "2": "Authentification utilisateur",
+          "3": "Historique des générations"
+        },
+        "later": {
+          "0": "Espaces d'équipe",
+          "1": "Routage de modèles personnalisé",
+          "2": "Système de plugins",
+          "3": "SSO entreprise"
+        }
       }
     },
     "status": {
@@ -366,9 +442,12 @@
       "title": "Statut opérationnel",
       "description": "État actuel de la plateforme ArkhosAI.",
       "api": "Serveur API",
+      "sandbox": "Serveur Sandbox",
       "checking": "Vérification...",
       "operational": "Opérationnel",
-      "down": "Inaccessible"
+      "down": "Inaccessible",
+      "lastChecked": "Dernière vérification",
+      "refresh": "Actualiser"
     },
     "contact": {
       "kicker": "Contact",
@@ -376,13 +455,17 @@
       "description": "Questions, retours ou demandes de partenariat.",
       "email": "E-mail",
       "messageLabel": "Message",
+      "messagePlaceholder": "Dites-nous comment nous pouvons vous aider...",
       "send": "Envoyer",
-      "success": "Message envoyé. Nous reviendrons vers vous bientôt."
+      "success": "Message envoyé. Nous reviendrons vers vous bientôt.",
+      "companyEmail": "hello@arkhos.ai",
+      "companyLocation": "Orléans, France — Bleucommerce SAS"
     },
     "blog": {
       "kicker": "Blog",
       "title": "Notes sur la génération de sites par IA, le design produit et les pipelines d'agents.",
       "description": "Un espace pour les détails d'implémentation, les décisions produit et les arbitrages derrière la construction publique de ArkhosAI.",
+      "readMore": "Lire la suite",
       "posts": {
         "shipping": {
           "tag": "Produit",
@@ -436,6 +519,10 @@
     "usage": "Utilisation",
     "generationsThisMonth": "Générations ce mois-ci",
     "billingComingSoon": "Facturation et changement de forfait bientôt disponibles."
+  },
+  "notFound": {
+    "message": "Cette page n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
   },
   "legal": {
     "privacy": {

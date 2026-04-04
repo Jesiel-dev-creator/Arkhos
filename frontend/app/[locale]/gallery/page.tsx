@@ -64,13 +64,13 @@ export default function GalleryPage() {
             <div className={`relative h-48 ${SHOWCASE_GRADIENTS[item]} border-b border-[var(--border)]`}>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100 bg-[var(--void)]/60">
                 <span className="flex items-center gap-2 text-sm font-medium text-[var(--text-primary)]">
-                  Build something like this <ArrowRight className="h-4 w-4" />
+                  {t("buildLikeThis")} <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
             </div>
             <div className="p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--brand)]">{t(`items.${item}.tag`)}</p>
-              <h2 className="mt-3 text-xl font-[var(--font-display)] text-[var(--text-primary)]">
+              <h2 className="mt-3 text-xl font-[var(--font-body)] font-bold text-[var(--text-primary)]">
                 {t(`items.${item}.title`)}
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
@@ -89,7 +89,7 @@ export default function GalleryPage() {
       ) : items.length > 0 ? (
         <>
           <h2 className="mt-16 text-xs uppercase tracking-[0.22em] text-[var(--brand)]">
-            Recent generations
+            {t("recentGenerations")}
           </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (

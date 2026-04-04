@@ -1,9 +1,9 @@
 import { useTranslations } from "next-intl";
 
 const PHASES = [
-  { key: "now", items: ["WebContainer live preview", "Iteration chat", "Cost estimator", "Gallery API connection"] },
-  { key: "next", items: ["NVIDIA NIM local GPU mode", "Docker deployment config", "User authentication", "Generation history"] },
-  { key: "later", items: ["Team workspaces", "Custom model routing", "Plugin system", "Enterprise SSO"] },
+  { key: "now", count: 4 },
+  { key: "next", count: 4 },
+  { key: "later", count: 4 },
 ] as const;
 
 export default function RoadmapPage() {
@@ -19,12 +19,12 @@ export default function RoadmapPage() {
         {PHASES.map((phase) => (
           <div key={phase.key} className="rounded-2xl border border-[var(--border)] bg-[var(--deep)] p-5">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--brand)]">{t(`phases.${phase.key}.label`)}</p>
-            <p className="mt-2 text-lg font-[var(--font-display)] font-bold text-[var(--text-primary)]">{t(`phases.${phase.key}.title`)}</p>
+            <p className="mt-2 text-lg font-[var(--font-body)] font-bold text-[var(--text-primary)]">{t(`phases.${phase.key}.title`)}</p>
             <ul className="mt-3 space-y-1.5">
-              {phase.items.map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+              {Array.from({ length: phase.count }, (_, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                   <span className="w-1 h-1 rounded-full bg-[var(--brand)] shrink-0" />
-                  {item}
+                  {t(`items.${phase.key}.${i}`)}
                 </li>
               ))}
             </ul>
