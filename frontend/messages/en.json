@@ -56,20 +56,46 @@
     "signOut": "Sign out"
   },
   "hero": {
-    "kicker": "Open-source AI builder",
-    "title": "Build production websites with AI agents.",
-    "subtitle": "EU sovereign. Transparent cost. Open source. Powered by Mistral.",
-    "cta": "Start building \u2192"
+    "kicker": "AI Website Generator",
+    "title": "Ship production websites in seconds",
+    "subtitle": "Describe what you want. Five AI agents design, architect, and build it live. Download a production-ready React project — for \u20ac0.005.",
+    "cta": "Start building free \u2192",
+    "cta2": "See how it works",
+    "trust": "EU hosted \u00b7 Open source \u00b7 \u20ac0.005 per generation",
+    "screenshotAlt": "Product screenshot — coming soon"
+  },
+  "social": {
+    "poweredBy": "Powered by Mistral AI",
+    "hostedOn": "Hosted on Scaleway",
+    "builtWith": "Built with Tramontane"
   },
   "cta": {
     "title": "Ready to build?",
-    "description": "Sign in and generate your first production website in under a minute.",
-    "action": "Start building \u2192"
+    "description": "Sign up and generate your first production website in under a minute. Free, no credit card required.",
+    "action": "Start building free \u2192"
+  },
+  "howItWorks": {
+    "kicker": "How it works",
+    "title": "Three steps. One prompt.",
+    "description": "No templates. No drag-and-drop. Just describe what you need.",
+    "step1": {
+      "title": "Describe",
+      "body": "Write a prompt describing your website. Our Planner agent analyzes your needs and creates a detailed specification."
+    },
+    "step2": {
+      "title": "Generate",
+      "body": "Five specialized AI agents work in parallel — designing, architecting, building, and reviewing your site in real time."
+    },
+    "step3": {
+      "title": "Ship",
+      "body": "Download a production-ready React project with Tailwind CSS. Deploy anywhere — Vercel, Netlify, or self-host."
+    }
   },
   "demo": {
     "kicker": "See it in action",
     "title": "From prompt to production in seconds",
     "description": "Watch the multi-agent pipeline plan, design, and build — with full cost transparency at every step.",
+    "caption": "Real generation output — Planner \u2192 Designer \u2192 Architect \u2192 Builder \u2192 Reviewer",
     "prompt": "A SaaS landing page for a project management tool with pricing, features, and testimonials",
     "step1": "Planner analyzes prompt",
     "step2": "Designer + Architect run in parallel",
@@ -97,6 +123,67 @@
     "no": "No",
     "planned": "Planned",
     "partial": "Partial"
+  },
+  "features": {
+    "kicker": "Features",
+    "title": "Everything you need to ship faster",
+    "pipeline": {
+      "title": "Multi-Agent Pipeline",
+      "body": "Five specialized AI agents work together — Planner, Designer, Architect, Builder, Reviewer. Each optimized for its role with intelligent model routing."
+    },
+    "sovereign": {
+      "title": "EU Sovereign",
+      "body": "Your data never leaves the EU. Hosted on Scaleway Paris, powered by Mistral AI Paris. GDPR compliant by design, not by afterthought."
+    },
+    "cost": {
+      "title": "\u20ac0.005 per generation",
+      "body": "Real-time cost transparency. See exactly what each agent costs. No hidden fees, no surprise bills."
+    },
+    "opensource": {
+      "title": "Open Source",
+      "body": "MIT licensed. Fork it, self-host it, extend it. Built on Tramontane, our open-source agent framework."
+    },
+    "preview": {
+      "title": "Live Preview",
+      "body": "Watch your site build in real time. Docker sandbox with hot-reload — files appear as agents generate them."
+    },
+    "profiles": {
+      "title": "Fleet Profiles",
+      "body": "Budget, Balanced, or Quality. Choose your speed-cost tradeoff. The router picks the optimal model for each agent."
+    },
+    "visualAlt": "Feature illustration — coming soon"
+  },
+  "testimonial": {
+    "quote": "ArkhosAI generated a complete landing page in 18 seconds for \u20ac0.005. The multi-agent approach produces surprisingly coherent results — each agent genuinely improves on the previous one's work.",
+    "author": "Early Beta Tester",
+    "role": "Developer, Paris"
+  },
+  "pricingPreview": {
+    "kicker": "Pricing",
+    "title": "Start free, scale as you grow",
+    "description": "No credit card required. Start generating today.",
+    "free": {
+      "name": "Free",
+      "price": "\u20ac0",
+      "desc": "3 generations per day"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "\u20ac9.99/mo",
+      "desc": "Unlimited generations"
+    },
+    "team": {
+      "name": "Team",
+      "price": "Custom",
+      "desc": "Dedicated support"
+    },
+    "seeAll": "See full pricing \u2192"
+  },
+  "opensource": {
+    "title": "Open source. Self-hostable. MIT licensed.",
+    "description": "ArkhosAI is built in the open. Inspect the code, self-host on your infrastructure, or contribute to the project.",
+    "cta": "Star on GitHub",
+    "community": "Join the community"
   },
   "auth": {
     "titleSignIn": "Welcome back",

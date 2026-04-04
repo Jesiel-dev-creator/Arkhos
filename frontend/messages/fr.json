@@ -56,20 +56,46 @@
     "signOut": "Se déconnecter"
   },
   "hero": {
-    "kicker": "Générateur IA open source",
-    "title": "Créez des sites de production avec des agents IA.",
-    "subtitle": "Souveraineté européenne. Coûts transparents. Open source. Propulsé par Mistral.",
-    "cta": "Commencer \u2192"
+    "kicker": "Générateur de sites par IA",
+    "title": "Créez des sites web en quelques secondes",
+    "subtitle": "Décrivez ce que vous voulez. Cinq agents IA conçoivent, architecturent et construisent en direct. Téléchargez un projet React prêt pour la production — pour 0,005\u00a0\u20ac.",
+    "cta": "Commencer gratuitement \u2192",
+    "cta2": "Voir comment ça marche",
+    "trust": "Hébergé en UE \u00b7 Open source \u00b7 0,005\u00a0\u20ac par génération",
+    "screenshotAlt": "Capture d'écran du produit — bientôt disponible"
+  },
+  "social": {
+    "poweredBy": "Propulsé par Mistral AI",
+    "hostedOn": "Hébergé sur Scaleway",
+    "builtWith": "Construit avec Tramontane"
   },
   "cta": {
     "title": "Prêt à créer\u00a0?",
-    "description": "Connectez-vous et générez votre premier site de production en moins d'une minute.",
-    "action": "Commencer \u2192"
+    "description": "Inscrivez-vous et générez votre premier site de production en moins d'une minute. Gratuit, sans carte bancaire.",
+    "action": "Commencer gratuitement \u2192"
+  },
+  "howItWorks": {
+    "kicker": "Comment ça marche",
+    "title": "Trois étapes. Un prompt.",
+    "description": "Pas de templates. Pas de glisser-déposer. Décrivez simplement ce qu'il vous faut.",
+    "step1": {
+      "title": "Décrivez",
+      "body": "Rédigez un prompt décrivant votre site. Notre agent Planificateur analyse vos besoins et crée une spécification détaillée."
+    },
+    "step2": {
+      "title": "Générez",
+      "body": "Cinq agents IA spécialisés travaillent en parallèle — conception, architecture, développement et revue de votre site en temps réel."
+    },
+    "step3": {
+      "title": "Publiez",
+      "body": "Téléchargez un projet React prêt pour la production avec Tailwind CSS. Déployez où vous voulez — Vercel, Netlify ou auto-hébergement."
+    }
   },
   "demo": {
     "kicker": "Voyez par vous-même",
     "title": "Du prompt à la production en quelques secondes",
     "description": "Suivez le pipeline multi-agents qui planifie, conçoit et construit — avec une transparence totale des coûts à chaque étape.",
+    "caption": "Sortie réelle — Planificateur \u2192 Designer \u2192 Architecte \u2192 Développeur \u2192 Vérificateur",
     "prompt": "Une landing page SaaS pour un outil de gestion de projet avec tarifs, fonctionnalités et témoignages",
     "step1": "Le Planificateur analyse le prompt",
     "step2": "Designer + Architecte en parallèle",
@@ -97,6 +123,67 @@
     "no": "Non",
     "planned": "Prévu",
     "partial": "Partiel"
+  },
+  "features": {
+    "kicker": "Fonctionnalités",
+    "title": "Tout ce qu'il faut pour livrer plus vite",
+    "pipeline": {
+      "title": "Pipeline multi-agent",
+      "body": "Cinq agents IA spécialisés collaborent — Planificateur, Designer, Architecte, Développeur, Vérificateur. Chacun optimisé pour son rôle grâce au routage intelligent de modèles."
+    },
+    "sovereign": {
+      "title": "Souveraineté européenne",
+      "body": "Vos données ne quittent jamais l'UE. Hébergé sur Scaleway Paris, propulsé par Mistral AI Paris. Conforme au RGPD par conception, pas par ajout."
+    },
+    "cost": {
+      "title": "0,005\u00a0\u20ac par génération",
+      "body": "Transparence des coûts en temps réel. Voyez exactement ce que chaque agent coûte. Aucun frais caché, aucune surprise."
+    },
+    "opensource": {
+      "title": "Open Source",
+      "body": "Licence MIT. Forkez, auto-hébergez, étendez. Construit sur Tramontane, notre framework open source d'orchestration d'agents."
+    },
+    "preview": {
+      "title": "Aperçu en direct",
+      "body": "Regardez votre site se construire en temps réel. Sandbox Docker avec rechargement à chaud — les fichiers apparaissent au fur et à mesure."
+    },
+    "profiles": {
+      "title": "Profils de flotte",
+      "body": "Économique, Équilibré ou Qualité. Choisissez votre compromis vitesse-coût. Le routeur sélectionne le modèle optimal pour chaque agent."
+    },
+    "visualAlt": "Illustration des fonctionnalités — bientôt disponible"
+  },
+  "testimonial": {
+    "quote": "ArkhosAI a généré une landing page complète en 18 secondes pour 0,005\u00a0\u20ac. L'approche multi-agent produit des résultats étonnamment cohérents — chaque agent améliore réellement le travail du précédent.",
+    "author": "Testeur bêta",
+    "role": "Développeur, Paris"
+  },
+  "pricingPreview": {
+    "kicker": "Tarifs",
+    "title": "Commencez gratuitement, évoluez à votre rythme",
+    "description": "Aucune carte bancaire requise. Commencez à générer dès aujourd'hui.",
+    "free": {
+      "name": "Gratuit",
+      "price": "0\u00a0\u20ac",
+      "desc": "3 générations par jour"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "9,99\u00a0\u20ac/mois",
+      "desc": "Générations illimitées"
+    },
+    "team": {
+      "name": "Équipe",
+      "price": "Sur mesure",
+      "desc": "Support dédié"
+    },
+    "seeAll": "Voir tous les tarifs \u2192"
+  },
+  "opensource": {
+    "title": "Open source. Auto-hébergeable. Licence MIT.",
+    "description": "ArkhosAI est construit en toute transparence. Inspectez le code, auto-hébergez sur votre infrastructure ou contribuez au projet.",
+    "cta": "Star sur GitHub",
+    "community": "Rejoindre la communauté"
   },
   "auth": {
     "titleSignIn": "Bon retour",
